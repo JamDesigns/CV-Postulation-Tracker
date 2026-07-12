@@ -1,0 +1,42 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+.compact-file-upload .filepond--root {
+    height: auto !important;
+    min-height: 2.65rem !important;
+    margin-bottom: 0 !important;
+}
+
+.compact-file-upload .filepond--drop-label {
+    min-height: 2.65rem !important;
+}
+
+.compact-file-upload .filepond--drop-label label {
+    padding-block: 0.5rem !important;
+}
+
+.compact-file-upload .filepond--panel-root {
+    min-height: 2.65rem !important;
+}
+
+.compact-file-upload .filepond--list-scroller {
+    margin-top: 0rem !important;
+    margin-bottom: 0rem !important;
+}
+
+.compact-file-upload .filepond--item {
+    margin-top: 0 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.compact-file-upload .filepond--open-icon,
+.compact-file-upload .filepond--download-icon {
+    background-color: var(--primary-600) !important;
+}
+
+.compact-file-upload .filepond--open-icon:hover,
+.compact-file-upload .filepond--download-icon:hover {
+    background-color: var(--primary-500) !important;
+}

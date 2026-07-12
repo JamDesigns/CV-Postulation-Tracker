@@ -1,0 +1,63 @@
+<?php
+
+return [
+    'application_status' => [
+        'pending' => 'Pendiente',
+        'sent' => 'Enviado',
+        'responded' => 'Respondido',
+        'interview' => 'Entrevista',
+        'technical_test' => 'Prueba técnica',
+        'follow_up_sent' => 'Seguimiento enviado',
+        'rejected' => 'Descartado',
+        'paused' => 'En pausa',
+        'hired' => 'Contratado',
+    ],
+
+    'work_mode' => [
+        'remote' => 'Remoto',
+        'hybrid' => 'Híbrido',
+        'onsite' => 'Presencial',
+        'not_specified' => 'No especificado',
+    ],
+
+    'source_type' => [
+        'linkedin' => 'LinkedIn',
+        'infojobs' => 'InfoJobs',
+        'indeed' => 'Indeed',
+        'agency' => 'Agencia',
+        'recruiter' => 'Recruiter',
+        'email' => 'Email',
+        'company_website' => 'Web de empresa',
+        'other' => 'Otro',
+    ],
+
+    'cv_language' => [
+        'spanish' => 'Español',
+        'english' => 'Inglés',
+    ],
+
+    'base_profile' => [
+        'full_stack' => 'Full Stack',
+        'frontend_angular' => 'Frontend Angular',
+        'backend_php' => 'Backend PHP',
+        'backend_node' => 'Backend Node.js',
+        'custom' => 'Personalizado',
+    ],
+
+    'interview_type' => [
+        'hr' => 'RRHH',
+        'technical' => 'Técnica',
+        'client' => 'Cliente',
+        'culture_fit' => 'Cultural',
+        'final' => 'Final',
+        'other' => 'Otra',
+    ],
+
+    'interview_result' => [
+        'pending' => 'Pendiente',
+        'passed' => 'Superada',
+        'rejected' => 'Descartada',
+        'waiting_feedback' => 'Esperando feedback',
+        'cancelled' => 'Cancelada',
+    ],
+];
