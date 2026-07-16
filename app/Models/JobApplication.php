@@ -3,11 +3,13 @@ namespace App\Models;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\CvLanguage;
+use App\Enums\NextActionUrgency;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 class JobApplication extends Model
 {
@@ -87,6 +89,39 @@ class JobApplication extends Model
             ->first();
 
         return $technicalDossierVersion ? (int) $technicalDossierVersion->getKey() : null;
+    }
+
+    public function nextActionUrgency(): NextActionUrgency
+    {
+        if ($this->next_action_at === null || $this->next_action_at === '') {
+            return NextActionUrgency::NoDate;
+        }
+
+        $nextActionDate = $this->next_action_at instanceof Carbon
+            ? $this->next_action_at->copy()->startOfDay()
+            : Carbon::parse($this->next_action_at)->startOfDay();
+
+        $today = Carbon::today();
+
+        if ($nextActionDate->isBefore($today)) {
+            return NextActionUrgency::Overdue;
+        }
+
+        if ($nextActionDate->isToday()) {
+            return NextActionUrgency::Today;
+        }
+
+        return NextActionUrgency::Upcoming;
+    }
+
+    public function nextActionUrgencyLabel(): string
+    {
+        return $this->nextActionUrgency()->label();
+    }
+
+    public function nextActionUrgencyColor(): string
+    {
+        return $this->nextActionUrgency()->color();
     }
 
     public function cvVersion(): BelongsTo

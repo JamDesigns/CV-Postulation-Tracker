@@ -34,6 +34,7 @@ return [
         'next_step'                         => 'Next step',
         'next_action_at'                    => 'Next action date',
         'technical_dossier_version_id'      => 'Sent dossier version',
+        'next_action_urgency'               => 'Urgency',
     ],
 
     'actions'            => [

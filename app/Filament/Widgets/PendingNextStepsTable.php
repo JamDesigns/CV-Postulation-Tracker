@@ -1,23 +1,25 @@
 <?php
-
 namespace App\Filament\Widgets;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\NextActionUrgency;
 use App\Models\JobApplication;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Database\Eloquent\Builder;
 
 class PendingNextStepsTable extends TableWidget
 {
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
         return $table
-            ->heading(__('dashboard.widgets.pending_next_steps.heading'))
+            ->header(view('filament.widgets.pending-next-steps-table-header'))
             ->emptyStateHeading(__('dashboard.widgets.pending_next_steps.empty'))
             ->query(
                 JobApplication::query()
@@ -32,6 +34,22 @@ class PendingNextStepsTable extends TableWidget
                     ->orderBy('next_action_at', 'asc')
                     ->latest('sent_at')
             )
+            ->filters([
+                SelectFilter::make('next_action_urgency')
+                    ->label(__('dashboard.widgets.pending_next_steps.urgency'))
+                    ->options(NextActionUrgency::options())
+                    ->query(function (Builder $query, array $data): Builder {
+                        $value = $data['value'] ?? null;
+
+                        return match ($value) {
+                            NextActionUrgency::Overdue->value  => $query->where('next_action_at', '<', today(), 'and'),
+                            NextActionUrgency::Today->value    => $query->whereDate('next_action_at', '=', today(), 'and'),
+                            NextActionUrgency::Upcoming->value => $query->where('next_action_at', '>', today(), 'and'),
+                            NextActionUrgency::NoDate->value   => $query->whereNull('next_action_at', 'and'),
+                            default                            => $query,
+                        };
+                    }),
+            ])
             ->columns([
                 TextColumn::make('company_name')
                     ->label(__('dashboard.widgets.pending_next_steps.company'))
@@ -48,9 +66,9 @@ class PendingNextStepsTable extends TableWidget
 
                 TextColumn::make('status')
                     ->label(__('dashboard.widgets.pending_next_steps.status'))
-                    ->formatStateUsing(fn(ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
-                        ? $state->label()
-                        : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
+                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                            ? $state->label()
+                            : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
                     ->badge(),
 
                 TextColumn::make('next_step')
@@ -61,6 +79,9 @@ class PendingNextStepsTable extends TableWidget
                 TextColumn::make('next_action_at')
                     ->label(__('dashboard.widgets.pending_next_steps.next_action_at'))
                     ->date('d/m/Y')
+                    ->badge()
+                    ->color(fn($record): string => $record->nextActionUrgencyColor())
+                    ->placeholder('-')
                     ->sortable(),
 
                 TextColumn::make('sent_at')

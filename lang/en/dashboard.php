@@ -30,6 +30,7 @@ return [
             'next_step' => 'Next step',
             'sent_at' => 'Sent',
             'next_action_at' => 'Next action',
+            'urgency' => 'Urgency',
         ],
         'upcoming_interviews' => [
             'heading' => 'Upcoming interviews',

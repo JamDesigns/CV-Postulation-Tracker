@@ -3,6 +3,7 @@ namespace App\Filament\Resources\JobApplications\Tables;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\JobApplicationEventType;
+use App\Enums\NextActionUrgency;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
 use App\Models\JobApplication;
@@ -22,6 +23,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class JobApplicationsTable
 {
@@ -55,8 +57,19 @@ class JobApplicationsTable
 
                 TextColumn::make('sent_at')
                     ->label(__('job-applications.fields.sent_at'))
+                    ->wrapHeader()
                     ->date('d/m/Y')
                     ->sortable(),
+
+                TextColumn::make('next_action_at')
+                    ->label(__('job-applications.fields.next_action_at'))
+                    ->wrapHeader()
+                    ->date('d/m/Y')
+                    ->badge()
+                    ->color(fn(JobApplication $record): string => $record->nextActionUrgencyColor())
+                    ->placeholder('-')
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('source')
                     ->label(__('job-applications.fields.source'))
@@ -135,6 +148,21 @@ class JobApplicationsTable
                 SelectFilter::make('status')
                     ->label(__('job-applications.fields.status'))
                     ->options(ApplicationStatus::options()),
+
+                SelectFilter::make('next_action_urgency')
+                    ->label(__('job-applications.fields.next_action_urgency'))
+                    ->options(NextActionUrgency::options())
+                    ->query(function (Builder $query, array $data): Builder {
+                        $value = $data['value'] ?? null;
+
+                        return match ($value) {
+                            NextActionUrgency::Overdue->value  => $query->where('next_action_at', '<', today(), 'and'),
+                            NextActionUrgency::Today->value    => $query->whereDate('next_action_at', '=', today(), 'and'),
+                            NextActionUrgency::Upcoming->value => $query->where('next_action_at', '>', today(), 'and'),
+                            NextActionUrgency::NoDate->value   => $query->whereNull('next_action_at', 'and'),
+                            default                            => $query,
+                        };
+                    }),
 
                 SelectFilter::make('source')
                     ->label(__('job-applications.fields.source'))
@@ -239,7 +267,7 @@ class JobApplicationsTable
                             ApplicationStatus::Interview,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
@@ -290,7 +318,7 @@ class JobApplicationsTable
                             ApplicationStatus::TechnicalTest,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
@@ -341,7 +369,7 @@ class JobApplicationsTable
                             ApplicationStatus::TechnicalTest,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
@@ -477,7 +505,7 @@ class JobApplicationsTable
                             ApplicationStatus::Paused,
                             ApplicationStatus::Rejected,
                         ], true))
-                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
