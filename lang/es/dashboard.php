@@ -30,6 +30,7 @@ return [
             'next_step' => 'Próximo paso',
             'sent_at' => 'Enviado',
             'next_action_at' => 'Próxima acción',
+            'urgency' => 'Urgencia',
         ],
         'upcoming_interviews' => [
             'heading' => 'Próximas entrevistas',

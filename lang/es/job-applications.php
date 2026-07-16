@@ -34,6 +34,7 @@ return [
         'next_step'                         => 'Próximo paso',
         'next_action_at'                    => 'Fecha próxima acción',
         'technical_dossier_version_id'      => 'Versión de dosier enviada',
+        'next_action_urgency'               => 'Urgencia',
     ],
 
     'actions'            => [
