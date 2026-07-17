@@ -52,8 +52,7 @@ class JobApplicationsTable
                             ? $state->label()
                             : ApplicationStatus::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
 
                 TextColumn::make('sent_at')
                     ->label(__('job-applications.fields.sent_at'))
@@ -100,7 +99,8 @@ class JobApplicationsTable
                     ->searchable()
                     ->wrap()
                     ->lineClamp(3)
-                    ->limit(50),
+                    ->limit(50)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cv_pdf_file')
                     ->label(__('cv-versions.fields.pdf_path'))
@@ -130,7 +130,8 @@ class JobApplicationsTable
                     ->label(__('job-applications.fields.dossier_sent'))
                     ->boolean()
                     ->alignCenter()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label('Creado')

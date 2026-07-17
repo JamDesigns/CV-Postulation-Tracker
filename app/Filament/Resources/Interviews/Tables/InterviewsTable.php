@@ -38,7 +38,8 @@ class InterviewsTable
                 TextColumn::make('interview_at')
                     ->label(__('interviews.fields.interview_at'))
                     ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->wrapHeader(),
 
                 TextColumn::make('interview_type')
                     ->label(__('interviews.fields.interview_type'))

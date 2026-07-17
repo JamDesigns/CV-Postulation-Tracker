@@ -39,17 +39,23 @@ class TechnicalDossierVersionsTable
                 IconColumn::make('pdf_path')
                     ->label(__('technical-dossier-versions.fields.pdf_path'))
                     ->boolean()
-                    ->state(fn($record): bool => filled($record->pdf_path)),
+                    ->state(fn($record): bool => filled($record->pdf_path))
+                    ->alignCenter()
+                    ->wrapHeader(),
 
                 IconColumn::make('docx_path')
                     ->label(__('technical-dossier-versions.fields.docx_path'))
                     ->boolean()
-                    ->state(fn($record): bool => filled($record->docx_path)),
+                    ->state(fn($record): bool => filled($record->docx_path))
+                    ->alignCenter()
+                    ->wrapHeader(),
 
                 IconColumn::make('is_active')
                     ->label(__('technical-dossier-versions.fields.is_active'))
                     ->boolean()
-                    ->sortable(),
+                    ->sortable()
+                    ->alignCenter()
+                    ->wrapHeader(),
 
                 TextColumn::make('published_at')
                     ->label(__('technical-dossier-versions.fields.published_at'))
