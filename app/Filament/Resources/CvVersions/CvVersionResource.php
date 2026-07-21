@@ -6,7 +6,6 @@ use App\Filament\Resources\CvVersions\Pages\CreateCvVersion;
 use App\Filament\Resources\CvVersions\Pages\EditCvVersion;
 use App\Filament\Resources\CvVersions\Pages\ListCvVersions;
 use App\Filament\Resources\CvVersions\Pages\ViewCvVersion;
-use App\Filament\Resources\CvVersions\RelationManagers\JobApplicationsRelationManager;
 use App\Filament\Resources\CvVersions\Schemas\CvVersionForm;
 use App\Filament\Resources\CvVersions\Schemas\CvVersionInfolist;
 use App\Filament\Resources\CvVersions\Tables\CvVersionsTable;
@@ -65,7 +64,6 @@ class CvVersionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            JobApplicationsRelationManager::class,
         ];
     }
 
