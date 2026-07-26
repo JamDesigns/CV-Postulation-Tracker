@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources\Interviews\Tables;
 
 use App\Enums\InterviewResult;
@@ -43,18 +42,21 @@ class InterviewsTable
 
                 TextColumn::make('interview_type')
                     ->label(__('interviews.fields.interview_type'))
-                    ->formatStateUsing(fn(InterviewType|string|null $state): ?string => $state instanceof InterviewType
-                        ? $state->label()
-                        : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
+                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                            ? $state->label()
+                            : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
                     ->sortable(),
 
                 TextColumn::make('result')
                     ->label(__('interviews.fields.result'))
-                    ->formatStateUsing(fn(InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
-                        ? $state->label()
-                        : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
+                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                            ? $state->label()
+                            : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
+                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                            ? $state->color()
+                            : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
 
                 TextColumn::make('created_at')

@@ -13,10 +13,16 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class InterviewsRelationManager extends RelationManager
 {
     protected static string $relationship = 'interviews';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return __('interviews.plural_model_label');
+    }
 
     public function isReadOnly(): bool
     {
@@ -56,6 +62,9 @@ class InterviewsRelationManager extends RelationManager
                             ? $state->label()
                             : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
+                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                            ? $state->color()
+                            : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
             ])
             ->headerActions([

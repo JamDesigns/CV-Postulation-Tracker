@@ -146,6 +146,9 @@ class CvVersionsTable
                                                                     ? $state->label()
                                                                     : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                                                             ->badge()
+                                                            ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                                                                    ? $state->color()
+                                                                    : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                                                             ->placeholder('-'),
 
                                                         TextEntry::make('notes')

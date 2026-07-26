@@ -69,7 +69,10 @@ class PendingNextStepsTable extends TableWidget
                     ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
-                    ->badge(),
+                    ->badge()
+                    ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                            ? $state->color()
+                            : ApplicationStatus::tryFrom((string) $state)?->color() ?? 'info'),
 
                 TextColumn::make('next_step')
                     ->label(__('dashboard.widgets.pending_next_steps.next_step'))

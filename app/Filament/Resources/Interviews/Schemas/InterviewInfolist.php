@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources\Interviews\Schemas;
 
 use App\Enums\InterviewResult;
@@ -33,17 +32,20 @@ class InterviewInfolist
 
                                 TextEntry::make('interview_type')
                                     ->label(__('interviews.fields.interview_type'))
-                                    ->formatStateUsing(fn(InterviewType|string|null $state): ?string => $state instanceof InterviewType
-                                        ? $state->label()
-                                        : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
+                                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                                            ? $state->label()
+                                            : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                                     ->badge(),
 
                                 TextEntry::make('result')
                                     ->label(__('interviews.fields.result'))
-                                    ->formatStateUsing(fn(InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
-                                        ? $state->label()
-                                        : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
-                                    ->badge(),
+                                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                                            ? $state->label()
+                                            : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
+                                    ->badge()
+                                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                                            ? $state->color()
+                                            : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info'),
                             ])
                             ->columns(2),
 

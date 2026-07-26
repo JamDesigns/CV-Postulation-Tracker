@@ -39,7 +39,10 @@ class JobApplicationInfolist
                                 ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
                                         ? $state->label()
                                         : ApplicationStatus::tryFrom($state ?? '')?->label() ?? $state)
-                                ->badge(),
+                                ->badge()
+                                ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                                        ? $state->color()
+                                        : ApplicationStatus::tryFrom($state ?? '')?->color() ?? 'info'),
 
                             TextEntry::make('sent_at')
                                 ->label(__('job-applications.fields.sent_at'))
