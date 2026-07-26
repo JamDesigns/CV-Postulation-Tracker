@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Widgets;
 
 use App\Enums\InterviewResult;
@@ -13,7 +12,7 @@ class UpcomingInterviewsTable extends TableWidget
 {
     protected static ?int $sort = 3;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
@@ -48,17 +47,20 @@ class UpcomingInterviewsTable extends TableWidget
 
                 TextColumn::make('interview_type')
                     ->label(__('dashboard.widgets.upcoming_interviews.type'))
-                    ->formatStateUsing(fn(InterviewType|string|null $state): ?string => $state instanceof InterviewType
-                        ? $state->label()
-                        : InterviewType::tryFrom((string) $state)?->label() ?? $state)
+                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                            ? $state->label()
+                            : InterviewType::tryFrom((string) $state)?->label() ?? $state)
                     ->badge(),
 
                 TextColumn::make('result')
                     ->label(__('dashboard.widgets.upcoming_interviews.result'))
-                    ->formatStateUsing(fn(InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
-                        ? $state->label()
-                        : InterviewResult::tryFrom((string) $state)?->label() ?? $state)
-                    ->badge(),
+                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                            ? $state->label()
+                            : InterviewResult::tryFrom((string) $state)?->label() ?? $state)
+                    ->badge()
+                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                            ? $state->color()
+                            : InterviewResult::tryFrom((string) $state)?->color() ?? 'info'),
 
                 TextColumn::make('people')
                     ->label(__('dashboard.widgets.upcoming_interviews.people'))

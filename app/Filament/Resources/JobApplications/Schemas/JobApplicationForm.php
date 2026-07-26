@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources\JobApplications\Schemas;
 
 use App\Enums\ApplicationStatus;
@@ -170,6 +169,9 @@ class JobApplicationForm
                                             ])
                                             ->columnSpanFull(),
                                     ])
+                                    ->createOptionAction(fn(\Filament\Actions\Action $action): \Filament\Actions\Action => $action
+                                            ->label(__('cv-versions.actions.create'))
+                                            ->modalHeading(__('cv-versions.actions.create')))
                                     // ->required()
                                     ->live(),
 
@@ -179,14 +181,14 @@ class JobApplicationForm
                                             ->label(__('job-applications.fields.dossier_sent'))
                                             ->default(false)
                                             ->live()
-                                            ->disabled(fn (Get $get): bool => $get('cv_version_id') === null || $get('cv_version_id') === ''),
+                                            ->disabled(fn(Get $get): bool => $get('cv_version_id') === null || $get('cv_version_id') === ''),
 
-                                        Text::make(fn (Get $get, $record = null): string => self::technicalDossierVersionPreviewLabel(
+                                        Text::make(fn(Get $get, $record = null): string => self::technicalDossierVersionPreviewLabel(
                                             $get('cv_version_id'),
                                             $record,
                                         ))
                                             ->color('gray')
-                                            ->visible(fn (Get $get): bool => (bool) $get('dossier_sent')),
+                                            ->visible(fn(Get $get): bool => (bool) $get('dossier_sent')),
                                     ])
                                     ->columnSpan(1),
 
@@ -232,8 +234,7 @@ class JobApplicationForm
             return self::technicalDossierVersionLabel($record->technicalDossierVersion);
         }
 
-        return self::activeTechnicalDossierVersionLabelForCv($cvVersionId)
-            ?? __('job-applications.fields.no_active_dossier_for_cv_language');
+        return self::activeTechnicalDossierVersionLabelForCv($cvVersionId) ?? __('job-applications.fields.no_active_dossier_for_cv_language');
     }
 
     private static function activeTechnicalDossierVersionLabelForCv(int | string | null $cvVersionId): ?string

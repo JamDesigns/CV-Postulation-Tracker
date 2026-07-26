@@ -52,6 +52,9 @@ class JobApplicationsTable
                             ? $state->label()
                             : ApplicationStatus::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
+                    ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                            ? $state->color()
+                            : ApplicationStatus::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
 
                 TextColumn::make('sent_at')
