@@ -10,7 +10,7 @@ class ApplicationsByWorkModeChart extends ChartWidget
 {
     protected static ?int $sort = 7;
 
-    protected int | string | array $columnSpan = 1;
+    protected int|string|array $columnSpan = 1;
 
     public function getHeading(): string
     {
@@ -28,7 +28,7 @@ class ApplicationsByWorkModeChart extends ChartWidget
         $workModes = WorkMode::cases();
 
         $backgroundColors = array_map(
-            fn(WorkMode $workMode): string => match ($workMode) {
+            fn (WorkMode $workMode): string => match ($workMode) {
                 WorkMode::Remote => '#10b981',
                 WorkMode::Hybrid => '#f59e0b',
                 WorkMode::Onsite => '#f43f5e',
@@ -41,7 +41,7 @@ class ApplicationsByWorkModeChart extends ChartWidget
             'datasets' => [
                 [
                     'data' => array_map(
-                        fn(WorkMode $workMode): int => $counts[$workMode->value] ?? 0,
+                        fn (WorkMode $workMode): int => $counts[$workMode->value] ?? 0,
                         $workModes,
                     ),
                     'backgroundColor' => $backgroundColors,
@@ -49,7 +49,7 @@ class ApplicationsByWorkModeChart extends ChartWidget
                 ],
             ],
             'labels' => array_map(
-                fn(WorkMode $workMode): string => $workMode->label(),
+                fn (WorkMode $workMode): string => $workMode->label(),
                 $workModes,
             ),
         ];

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\JobApplications\Tables;
 
 use App\Enums\ApplicationStatus;
@@ -48,11 +49,11 @@ class JobApplicationsTable
 
                 TextColumn::make('status')
                     ->label(__('job-applications.fields.status'))
-                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                    ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
-                    ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                    ->color(fn (ApplicationStatus|string|null $state): string => $state instanceof ApplicationStatus
                             ? $state->color()
                             : ApplicationStatus::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
@@ -68,14 +69,14 @@ class JobApplicationsTable
                     ->wrapHeader()
                     ->date('d/m/Y')
                     ->badge()
-                    ->color(fn(JobApplication $record): string => $record->nextActionUrgencyColor())
+                    ->color(fn (JobApplication $record): string => $record->nextActionUrgencyColor())
                     ->placeholder('-')
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('source')
                     ->label(__('job-applications.fields.source'))
-                    ->formatStateUsing(fn(SourceType | string | null $state): ?string => $state instanceof SourceType
+                    ->formatStateUsing(fn (SourceType|string|null $state): ?string => $state instanceof SourceType
                             ? $state->label()
                             : SourceType::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
@@ -85,7 +86,7 @@ class JobApplicationsTable
 
                 TextColumn::make('work_mode')
                     ->label(__('job-applications.fields.work_mode'))
-                    ->formatStateUsing(fn(WorkMode | string | null $state): ?string => $state instanceof WorkMode
+                    ->formatStateUsing(fn (WorkMode|string|null $state): ?string => $state instanceof WorkMode
                             ? $state->label()
                             : WorkMode::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
@@ -107,21 +108,21 @@ class JobApplicationsTable
 
                 TextColumn::make('cv_pdf_file')
                     ->label(__('cv-versions.fields.pdf_path'))
-                    ->state(fn($record): ?string => $record->cvVersion?->pdf_path ? $record->cvVersion->pdfFriendlyName() : null)
+                    ->state(fn ($record): ?string => $record->cvVersion?->pdf_path ? $record->cvVersion->pdfFriendlyName() : null)
                     ->placeholder('-')
-                    ->icon(fn($record): ?Heroicon => $record->cvVersion?->pdf_path ? Heroicon::ArrowTopRightOnSquare : null)
+                    ->icon(fn ($record): ?Heroicon => $record->cvVersion?->pdf_path ? Heroicon::ArrowTopRightOnSquare : null)
                     ->iconColor('primary')
-                    ->url(fn($record): ?string => $record->cvVersion?->pdf_path ? route('filament.admin.cv-versions.pdf', $record->cvVersion) : null)
+                    ->url(fn ($record): ?string => $record->cvVersion?->pdf_path ? route('filament.admin.cv-versions.pdf', $record->cvVersion) : null)
                     ->openUrlInNewTab()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cv_docx_file')
                     ->label(__('cv-versions.fields.docx_path'))
-                    ->state(fn($record): ?string => $record->cvVersion?->docx_path ? $record->cvVersion->docxFriendlyName() : null)
+                    ->state(fn ($record): ?string => $record->cvVersion?->docx_path ? $record->cvVersion->docxFriendlyName() : null)
                     ->placeholder('-')
-                    ->icon(fn($record): ?Heroicon => $record->cvVersion?->docx_path ? Heroicon::ArrowDownTray : null)
+                    ->icon(fn ($record): ?Heroicon => $record->cvVersion?->docx_path ? Heroicon::ArrowDownTray : null)
                     ->iconColor('primary')
-                    ->url(fn($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
+                    ->url(fn ($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('recruiter_name')
@@ -137,13 +138,13 @@ class JobApplicationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('job-applications.fields.created_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('updated_at')
-                    ->label('Actualizado')
+                    ->label(__('job-applications.fields.updated_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -160,11 +161,11 @@ class JobApplicationsTable
                         $value = $data['value'] ?? null;
 
                         return match ($value) {
-                            NextActionUrgency::Overdue->value  => $query->where('next_action_at', '<', today(), 'and'),
-                            NextActionUrgency::Today->value    => $query->whereDate('next_action_at', '=', today(), 'and'),
+                            NextActionUrgency::Overdue->value => $query->where('next_action_at', '<', today(), 'and'),
+                            NextActionUrgency::Today->value => $query->whereDate('next_action_at', '=', today(), 'and'),
                             NextActionUrgency::Upcoming->value => $query->where('next_action_at', '>', today(), 'and'),
-                            NextActionUrgency::NoDate->value   => $query->whereNull('next_action_at', 'and'),
-                            default                            => $query,
+                            NextActionUrgency::NoDate->value => $query->whereNull('next_action_at', 'and'),
+                            default => $query,
                         };
                     }),
 
@@ -191,16 +192,16 @@ class JobApplicationsTable
                         ->icon(Heroicon::PaperAirplane)
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(fn($record): bool => $record->status === ApplicationStatus::Pending)
+                        ->visible(fn ($record): bool => $record->status === ApplicationStatus::Pending)
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $nextStep       = __('job-applications.quick_actions.next_steps.send_follow_up');
-                            $nextActionAt   = today()->addDays(7);
+                            $nextStep = __('job-applications.quick_actions.next_steps.send_follow_up');
+                            $nextActionAt = today()->addDays(7);
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::Sent->value,
-                                'sent_at'        => today(),
-                                'next_step'      => $nextStep,
+                                'status' => ApplicationStatus::Sent->value,
+                                'sent_at' => today(),
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -220,18 +221,18 @@ class JobApplicationsTable
                         ->icon(Heroicon::ChatBubbleLeftRight)
                         ->color('info')
                         ->requiresConfirmation()
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Sent,
                             ApplicationStatus::FollowUpSent,
                         ], true))
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $nextStep       = __('job-applications.quick_actions.next_steps.review_response');
-                            $nextActionAt   = today()->addDays(2);
+                            $nextStep = __('job-applications.quick_actions.next_steps.review_response');
+                            $nextActionAt = today()->addDays(2);
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::Responded->value,
-                                'next_step'      => $nextStep,
+                                'status' => ApplicationStatus::Responded->value,
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -265,23 +266,23 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Sent,
                             ApplicationStatus::Responded,
                             ApplicationStatus::Interview,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
-                            $nextStep     = trim((string) ($data['next_step'] ?? ''));
-                            $notes        = trim((string) ($data['notes_to_append'] ?? ''));
+                            $nextStep = trim((string) ($data['next_step'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
                             $nextActionAt = $data['next_action_at'] ?? null;
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::TechnicalTest->value,
-                                'next_step'      => $nextStep,
+                                'status' => ApplicationStatus::TechnicalTest->value,
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -315,24 +316,24 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Sent,
                             ApplicationStatus::Responded,
                             ApplicationStatus::Interview,
                             ApplicationStatus::TechnicalTest,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
-                            $nextStep     = trim((string) ($data['next_step'] ?? ''));
-                            $notes        = trim((string) ($data['notes_to_append'] ?? ''));
+                            $nextStep = trim((string) ($data['next_step'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
                             $nextActionAt = $data['next_action_at'] ?? null;
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::FollowUpSent->value,
-                                'next_step'      => $nextStep,
+                                'status' => ApplicationStatus::FollowUpSent->value,
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -365,7 +366,7 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Pending,
                             ApplicationStatus::Sent,
                             ApplicationStatus::Responded,
@@ -373,17 +374,17 @@ class JobApplicationsTable
                             ApplicationStatus::TechnicalTest,
                             ApplicationStatus::FollowUpSent,
                         ], true))
-                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
-                            $nextStep     = trim((string) ($data['next_step'] ?? ''));
-                            $notes        = trim((string) ($data['notes_to_append'] ?? ''));
+                            $nextStep = trim((string) ($data['next_step'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
                             $nextActionAt = $data['next_action_at'] ?? null;
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::Paused->value,
-                                'next_step'      => $nextStep,
+                                'status' => ApplicationStatus::Paused->value,
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -407,7 +408,7 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Pending,
                             ApplicationStatus::Sent,
                             ApplicationStatus::Responded,
@@ -418,11 +419,11 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $notes          = trim((string) ($data['notes_to_append'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::Rejected->value,
-                                'next_step'      => null,
+                                'status' => ApplicationStatus::Rejected->value,
+                                'next_step' => null,
                                 'next_action_at' => null,
                             ])->save();
 
@@ -446,7 +447,7 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Responded,
                             ApplicationStatus::Interview,
                             ApplicationStatus::TechnicalTest,
@@ -454,11 +455,11 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $notes          = trim((string) ($data['notes_to_append'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
-                                'status'         => ApplicationStatus::Hired->value,
-                                'next_step'      => null,
+                                'status' => ApplicationStatus::Hired->value,
+                                'next_step' => null,
                                 'next_action_at' => null,
                             ])->save();
 
@@ -481,12 +482,12 @@ class JobApplicationsTable
                             Select::make('status_to')
                                 ->label(__('job-applications.quick_actions.fields.status_to'))
                                 ->options([
-                                    ApplicationStatus::Pending->value       => ApplicationStatus::Pending->label(),
-                                    ApplicationStatus::Sent->value          => ApplicationStatus::Sent->label(),
-                                    ApplicationStatus::Responded->value     => ApplicationStatus::Responded->label(),
-                                    ApplicationStatus::Interview->value     => ApplicationStatus::Interview->label(),
+                                    ApplicationStatus::Pending->value => ApplicationStatus::Pending->label(),
+                                    ApplicationStatus::Sent->value => ApplicationStatus::Sent->label(),
+                                    ApplicationStatus::Responded->value => ApplicationStatus::Responded->label(),
+                                    ApplicationStatus::Interview->value => ApplicationStatus::Interview->label(),
                                     ApplicationStatus::TechnicalTest->value => ApplicationStatus::TechnicalTest->label(),
-                                    ApplicationStatus::FollowUpSent->value  => ApplicationStatus::FollowUpSent->label(),
+                                    ApplicationStatus::FollowUpSent->value => ApplicationStatus::FollowUpSent->label(),
                                 ])
                                 ->default(ApplicationStatus::Sent->value)
                                 ->required(),
@@ -505,22 +506,22 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5),
                         ])
-                        ->visible(fn($record): bool => in_array($record->status, [
+                        ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Paused,
                             ApplicationStatus::Rejected,
                         ], true))
-                        ->modalSubmitAction(fn(Action $action): Action => $action->color('primary'))
+                        ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
 
-                            $statusTo     = $data['status_to'];
-                            $nextStep     = trim((string) ($data['next_step'] ?? ''));
-                            $notes        = trim((string) ($data['notes_to_append'] ?? ''));
+                            $statusTo = $data['status_to'];
+                            $nextStep = trim((string) ($data['next_step'] ?? ''));
+                            $notes = trim((string) ($data['notes_to_append'] ?? ''));
                             $nextActionAt = $data['next_action_at'] ?? null;
 
                             $record->forceFill([
-                                'status'         => $statusTo,
-                                'next_step'      => $nextStep,
+                                'status' => $statusTo,
+                                'next_step' => $nextStep,
                                 'next_action_at' => $nextActionAt,
                             ])->save();
 
@@ -550,17 +551,17 @@ class JobApplicationsTable
         JobApplicationEventType $type,
         string $title,
         ?string $body,
-        ApplicationStatus | string | null $statusFrom,
-        ApplicationStatus | string | null $statusTo,
+        ApplicationStatus|string|null $statusFrom,
+        ApplicationStatus|string|null $statusTo,
         $nextActionAt = null,
     ): void {
         $record->events()->create([
-            'type'           => $type->value,
-            'occurred_at'    => now(),
-            'title'          => $title,
-            'body'           => $body,
-            'status_from'    => self::statusValue($statusFrom),
-            'status_to'      => self::statusValue($statusTo),
+            'type' => $type->value,
+            'occurred_at' => now(),
+            'title' => $title,
+            'body' => $body,
+            'status_from' => self::statusValue($statusFrom),
+            'status_to' => self::statusValue($statusTo),
             'next_action_at' => $nextActionAt,
         ]);
     }
@@ -568,7 +569,7 @@ class JobApplicationsTable
     private static function eventBody(?string $mainText, ?string $notes = null): ?string
     {
         $mainText = trim((string) $mainText);
-        $notes    = trim((string) $notes);
+        $notes = trim((string) $notes);
 
         if ($mainText === '') {
             return $notes !== '' ? $notes : null;
@@ -579,7 +580,7 @@ class JobApplicationsTable
             : "{$mainText}\n\n{$notes}";
     }
 
-    private static function statusValue(ApplicationStatus | string | null $status): ?string
+    private static function statusValue(ApplicationStatus|string|null $status): ?string
     {
         if ($status instanceof ApplicationStatus) {
             return $status->value;

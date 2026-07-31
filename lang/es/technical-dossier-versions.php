@@ -11,10 +11,17 @@ return [
         'plural_label' => 'dosieres técnicos',
     ],
 
+    'actions' => [
+        'open_pdf' => 'Abrir PDF',
+        'download_docx' => 'Descargar DOCX',
+    ],
+
     'sections' => [
         'main' => 'Datos principales',
         'files' => 'Archivos',
         'content' => 'Contenido',
+        'form' => 'Formulario de versión del dosier técnico',
+        'details' => 'Detalles de la versión del dosier técnico',
     ],
 
     'fields' => [

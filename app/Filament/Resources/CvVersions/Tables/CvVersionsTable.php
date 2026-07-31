@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\CvVersions\Tables;
 
 use App\Enums\BaseProfile;
@@ -40,32 +41,32 @@ class CvVersionsTable
 
                 TextColumn::make('language')
                     ->label(__('cv-versions.fields.language'))
-                    ->formatStateUsing(fn(?string $state): ?string => CvLanguage::tryFrom($state)?->label() ?? $state)
+                    ->formatStateUsing(fn (?string $state): ?string => CvLanguage::tryFrom($state)?->label() ?? $state)
                     ->sortable(),
 
                 TextColumn::make('base_profile')
                     ->label(__('cv-versions.fields.base_profile'))
-                    ->formatStateUsing(fn(?string $state): ?string => BaseProfile::tryFrom($state)?->label() ?? $state)
+                    ->formatStateUsing(fn (?string $state): ?string => BaseProfile::tryFrom($state)?->label() ?? $state)
                     ->sortable(),
 
                 TextColumn::make('pdf_path')
                     ->label(__('cv-versions.fields.pdf_path'))
-                    ->state(fn($record): ?string => $record->pdf_path ? $record->pdfFriendlyName() : null)
+                    ->state(fn ($record): ?string => $record->pdf_path ? $record->pdfFriendlyName() : null)
                     ->placeholder('-')
-                    ->icon(fn($record): ?Heroicon => $record->pdf_path ? Heroicon::ArrowTopRightOnSquare : null)
+                    ->icon(fn ($record): ?Heroicon => $record->pdf_path ? Heroicon::ArrowTopRightOnSquare : null)
                     ->iconColor('primary')
-                    ->url(fn($record): ?string => $record->pdf_path ? route('filament.admin.cv-versions.pdf', $record) : null)
+                    ->url(fn ($record): ?string => $record->pdf_path ? route('filament.admin.cv-versions.pdf', $record) : null)
                     ->openUrlInNewTab()
                     ->toggleable()
                     ->limit(40),
 
                 TextColumn::make('docx_path')
                     ->label(__('cv-versions.fields.docx_path'))
-                    ->state(fn($record): ?string => $record->docx_path ? $record->docxFriendlyName() : null)
+                    ->state(fn ($record): ?string => $record->docx_path ? $record->docxFriendlyName() : null)
                     ->placeholder('-')
-                    ->icon(fn($record): ?Heroicon => $record->docx_path ? Heroicon::ArrowDownTray : null)
+                    ->icon(fn ($record): ?Heroicon => $record->docx_path ? Heroicon::ArrowDownTray : null)
                     ->iconColor('primary')
-                    ->url(fn($record): ?string => $record->docx_path ? route('filament.admin.cv-versions.docx', $record) : null)
+                    ->url(fn ($record): ?string => $record->docx_path ? route('filament.admin.cv-versions.docx', $record) : null)
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->limit(40),
 
@@ -78,13 +79,13 @@ class CvVersionsTable
                     ->toggleable(),
 
                 TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('cv-versions.fields.created_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('updated_at')
-                    ->label('Actualizado')
+                    ->label(__('cv-versions.fields.updated_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -111,100 +112,100 @@ class CvVersionsTable
                         ->slideOver()
                         ->modalWidth('7xl')
                         ->modalSubmitAction(false)
-                        ->schema(fn($record): array=> $record->jobApplication
+                        ->schema(fn ($record): array => $record->jobApplication
                                 ? [
-                                 ...JobApplicationInfolist::components(),
+                                    ...JobApplicationInfolist::components(),
 
-                                Tabs::make('Related job application details')
-                                    ->tabs([
-                                        Tab::make(__('cv-application-detail-modal.related.interviews'))
-                                            ->schema([
-                                                RepeatableEntry::make('interviews')
-                                                    ->label(__('cv-application-detail-modal.related.interviews'))
-                                                    ->placeholder(__('cv-application-detail-modal.related.no_interviews'))
-                                                    ->schema([
-                                                        TextEntry::make('interview_at')
-                                                            ->label(__('cv-application-detail-modal.interviews.interview_at'))
-                                                            ->dateTime('d/m/Y H:i')
-                                                            ->placeholder('-'),
+                                    Tabs::make(__('cv-application-detail-modal.heading'))
+                                        ->tabs([
+                                            Tab::make(__('cv-application-detail-modal.related.interviews'))
+                                                ->schema([
+                                                    RepeatableEntry::make('interviews')
+                                                        ->label(__('cv-application-detail-modal.related.interviews'))
+                                                        ->placeholder(__('cv-application-detail-modal.related.no_interviews'))
+                                                        ->schema([
+                                                            TextEntry::make('interview_at')
+                                                                ->label(__('cv-application-detail-modal.interviews.interview_at'))
+                                                                ->dateTime('d/m/Y H:i')
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('interview_type')
-                                                            ->label(__('cv-application-detail-modal.interviews.interview_type'))
-                                                            ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
-                                                                    ? $state->label()
-                                                                    : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
-                                                            ->badge()
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('interview_type')
+                                                                ->label(__('cv-application-detail-modal.interviews.interview_type'))
+                                                                ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
+                                                                        ? $state->label()
+                                                                        : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
+                                                                ->badge()
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('people')
-                                                            ->label(__('cv-application-detail-modal.interviews.people'))
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('people')
+                                                                ->label(__('cv-application-detail-modal.interviews.people'))
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('result')
-                                                            ->label(__('cv-application-detail-modal.interviews.result'))
-                                                            ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
-                                                                    ? $state->label()
-                                                                    : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
-                                                            ->badge()
-                                                            ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
-                                                                    ? $state->color()
-                                                                    : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('result')
+                                                                ->label(__('cv-application-detail-modal.interviews.result'))
+                                                                ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
+                                                                        ? $state->label()
+                                                                        : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
+                                                                ->badge()
+                                                                ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
+                                                                        ? $state->color()
+                                                                        : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('notes')
-                                                            ->label(__('cv-application-detail-modal.interviews.notes'))
-                                                            ->placeholder('-')
-                                                            ->columnSpanFull(),
-                                                    ])
-                                                    ->columns(4)
-                                                    ->grid(1),
-                                            ]),
+                                                            TextEntry::make('notes')
+                                                                ->label(__('cv-application-detail-modal.interviews.notes'))
+                                                                ->placeholder('-')
+                                                                ->columnSpanFull(),
+                                                        ])
+                                                        ->columns(4)
+                                                        ->grid(1),
+                                                ]),
 
-                                        Tab::make(__('cv-application-detail-modal.related.events'))
-                                            ->schema([
-                                                RepeatableEntry::make('events')
-                                                    ->label(__('cv-application-detail-modal.related.events'))
-                                                    ->placeholder(__('cv-application-detail-modal.related.no_events'))
-                                                    ->schema([
-                                                        TextEntry::make('occurred_at')
-                                                            ->label(__('cv-application-detail-modal.events.occurred_at'))
-                                                            ->dateTime('d/m/Y H:i')
-                                                            ->placeholder('-'),
+                                            Tab::make(__('cv-application-detail-modal.related.events'))
+                                                ->schema([
+                                                    RepeatableEntry::make('events')
+                                                        ->label(__('cv-application-detail-modal.related.events'))
+                                                        ->placeholder(__('cv-application-detail-modal.related.no_events'))
+                                                        ->schema([
+                                                            TextEntry::make('occurred_at')
+                                                                ->label(__('cv-application-detail-modal.events.occurred_at'))
+                                                                ->dateTime('d/m/Y H:i')
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('type')
-                                                            ->label(__('cv-application-detail-modal.events.type'))
-                                                            ->formatStateUsing(fn(JobApplicationEventType | string | null $state): ?string => $state instanceof JobApplicationEventType
-                                                                    ? $state->label()
-                                                                    : JobApplicationEventType::tryFrom((string) $state)?->label() ?? $state)
-                                                            ->badge()
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('type')
+                                                                ->label(__('cv-application-detail-modal.events.type'))
+                                                                ->formatStateUsing(fn (JobApplicationEventType|string|null $state): ?string => $state instanceof JobApplicationEventType
+                                                                        ? $state->label()
+                                                                        : JobApplicationEventType::tryFrom((string) $state)?->label() ?? $state)
+                                                                ->badge()
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('title')
-                                                            ->label(__('cv-application-detail-modal.events.title'))
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('title')
+                                                                ->label(__('cv-application-detail-modal.events.title'))
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('next_action_at')
-                                                            ->label(__('cv-application-detail-modal.events.next_action_at'))
-                                                            ->date('d/m/Y')
-                                                            ->placeholder('-'),
+                                                            TextEntry::make('next_action_at')
+                                                                ->label(__('cv-application-detail-modal.events.next_action_at'))
+                                                                ->date('d/m/Y')
+                                                                ->placeholder('-'),
 
-                                                        TextEntry::make('body')
-                                                            ->label(__('cv-application-detail-modal.events.body'))
-                                                            ->placeholder('-')
-                                                            ->columnSpanFull(),
-                                                    ])
-                                                    ->columns(4)
-                                                    ->grid(1),
-                                            ]),
-                                    ])
-                                    ->columnSpanFull(),
-                            ]
-                                :[])
+                                                            TextEntry::make('body')
+                                                                ->label(__('cv-application-detail-modal.events.body'))
+                                                                ->placeholder('-')
+                                                                ->columnSpanFull(),
+                                                        ])
+                                                        ->columns(4)
+                                                        ->grid(1),
+                                                ]),
+                                        ])
+                                        ->columnSpanFull(),
+                                ]
+                                : [])
                         ->mountUsing(function (Schema $schema, $record): void {
                             $schema->record($record->jobApplication);
                             $schema->fill();
                         })
-                        ->visible(fn($record): bool => $record->jobApplication()->exists()),
+                        ->visible(fn ($record): bool => $record->jobApplication()->exists()),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

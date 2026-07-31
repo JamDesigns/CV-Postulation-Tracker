@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'overdue'  => 'Vencida',
-    'today'    => 'Hoy',
+    'overdue' => 'Vencida',
+    'today' => 'Hoy',
     'upcoming' => 'Próxima',
-    'no_date'  => 'Sin fecha',
+    'no_date' => 'Sin fecha',
 ];

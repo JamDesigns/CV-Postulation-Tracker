@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\Interviews\Tables;
 
 use App\Enums\InterviewResult;
@@ -42,7 +43,7 @@ class InterviewsTable
 
                 TextColumn::make('interview_type')
                     ->label(__('interviews.fields.interview_type'))
-                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                    ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
                             ? $state->label()
                             : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
@@ -50,23 +51,23 @@ class InterviewsTable
 
                 TextColumn::make('result')
                     ->label(__('interviews.fields.result'))
-                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                    ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
                             ? $state->label()
                             : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
-                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                    ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
                             ? $state->color()
                             : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
 
                 TextColumn::make('created_at')
-                    ->label('Creado')
+                    ->label(__('interviews.fields.created_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('updated_at')
-                    ->label('Actualizado')
+                    ->label(__('interviews.fields.updated_at'))
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -84,20 +85,20 @@ class InterviewsTable
                     ->label(__('interviews.fields.interview_at'))
                     ->schema([
                         DatePicker::make('interview_from')
-                            ->label('Desde'),
+                            ->label(__('interviews.fields.interview_from')),
 
                         DatePicker::make('interview_until')
-                            ->label('Hasta'),
+                            ->label(__('interviews.fields.interview_until')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
                                 $data['interview_from'] ?? null,
-                                fn(Builder $query, string $date): Builder => $query->whereDate('interview_at', '>=', $date),
+                                fn (Builder $query, string $date): Builder => $query->whereDate('interview_at', '>=', $date),
                             )
                             ->when(
                                 $data['interview_until'] ?? null,
-                                fn(Builder $query, string $date): Builder => $query->whereDate('interview_at', '<=', $date),
+                                fn (Builder $query, string $date): Builder => $query->whereDate('interview_at', '<=', $date),
                             );
                     }),
             ])

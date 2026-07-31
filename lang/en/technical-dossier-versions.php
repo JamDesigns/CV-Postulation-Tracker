@@ -11,10 +11,17 @@ return [
         'plural_label' => 'technical dossiers',
     ],
 
+    'actions' => [
+        'open_pdf' => 'Open PDF',
+        'download_docx' => 'Download DOCX',
+    ],
+
     'sections' => [
         'main' => 'Main details',
         'files' => 'Files',
         'content' => 'Content',
+        'form' => 'Technical dossier version form',
+        'details' => 'Technical dossier version details',
     ],
 
     'fields' => [

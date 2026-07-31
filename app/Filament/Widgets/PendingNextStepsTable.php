@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Widgets;
 
 use App\Enums\ApplicationStatus;
@@ -42,11 +43,11 @@ class PendingNextStepsTable extends TableWidget
                         $value = $data['value'] ?? null;
 
                         return match ($value) {
-                            NextActionUrgency::Overdue->value  => $query->where('next_action_at', '<', today(), 'and'),
-                            NextActionUrgency::Today->value    => $query->whereDate('next_action_at', '=', today(), 'and'),
+                            NextActionUrgency::Overdue->value => $query->where('next_action_at', '<', today(), 'and'),
+                            NextActionUrgency::Today->value => $query->whereDate('next_action_at', '=', today(), 'and'),
                             NextActionUrgency::Upcoming->value => $query->where('next_action_at', '>', today(), 'and'),
-                            NextActionUrgency::NoDate->value   => $query->whereNull('next_action_at', 'and'),
-                            default                            => $query,
+                            NextActionUrgency::NoDate->value => $query->whereNull('next_action_at', 'and'),
+                            default => $query,
                         };
                     }),
             ])
@@ -66,11 +67,11 @@ class PendingNextStepsTable extends TableWidget
 
                 TextColumn::make('status')
                     ->label(__('dashboard.widgets.pending_next_steps.status'))
-                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                    ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
-                    ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                    ->color(fn (ApplicationStatus|string|null $state): string => $state instanceof ApplicationStatus
                             ? $state->color()
                             : ApplicationStatus::tryFrom((string) $state)?->color() ?? 'info'),
 
@@ -83,7 +84,7 @@ class PendingNextStepsTable extends TableWidget
                     ->label(__('dashboard.widgets.pending_next_steps.next_action_at'))
                     ->date('d/m/Y')
                     ->badge()
-                    ->color(fn($record): string => $record->nextActionUrgencyColor())
+                    ->color(fn ($record): string => $record->nextActionUrgencyColor())
                     ->placeholder('-')
                     ->sortable(),
 

@@ -10,7 +10,7 @@ class ApplicationsByStatusChart extends ChartWidget
 {
     protected static ?int $sort = 5;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     protected function getData(): array
     {
@@ -23,7 +23,7 @@ class ApplicationsByStatusChart extends ChartWidget
         $statuses = ApplicationStatus::cases();
 
         $backgroundColors = array_map(
-            fn(ApplicationStatus $status): string => match ($status) {
+            fn (ApplicationStatus $status): string => match ($status) {
                 ApplicationStatus::Pending => '#d1d5db',
                 ApplicationStatus::Sent => '#3b82f6',
                 ApplicationStatus::Responded => '#14b8a6',
@@ -41,7 +41,7 @@ class ApplicationsByStatusChart extends ChartWidget
             'datasets' => [
                 [
                     'data' => array_map(
-                        fn(ApplicationStatus $status): int => $counts[$status->value] ?? 0,
+                        fn (ApplicationStatus $status): int => $counts[$status->value] ?? 0,
                         $statuses,
                     ),
                     'backgroundColor' => $backgroundColors,
@@ -49,7 +49,7 @@ class ApplicationsByStatusChart extends ChartWidget
                 ],
             ],
             'labels' => array_map(
-                fn(ApplicationStatus $status): string => $status->label(),
+                fn (ApplicationStatus $status): string => $status->label(),
                 $statuses,
             ),
         ];

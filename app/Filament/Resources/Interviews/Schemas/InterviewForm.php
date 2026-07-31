@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\Interviews\Schemas;
 
 use App\Enums\InterviewResult;
@@ -20,21 +21,21 @@ class InterviewForm
     public static function components(bool $includeJobApplicationSelect = true): array
     {
         return [
-            Tabs::make('Interview form')
+            Tabs::make(__('interviews.sections.form'))
                 ->tabs([
                     Tabs\Tab::make(__('interviews.sections.main'))
                         ->schema([
-                             ...($includeJobApplicationSelect ? [
+                            ...($includeJobApplicationSelect ? [
                                 Select::make('job_application_id')
                                     ->label(__('interviews.fields.job_application_id'))
                                     ->relationship('jobApplication', 'job_title')
                                     ->getOptionLabelFromRecordUsing(
-                                        fn($record) : string => "{$record->company_name} - {$record->job_title}"
+                                        fn ($record): string => "{$record->company_name} - {$record->job_title}"
                                     )
                                     ->searchable(['company_name', 'job_title'])
                                     ->preload()
                                     ->required(),
-                            ]:[]),
+                            ] : []),
 
                             DateTimePicker::make('interview_at')
                                 ->label(__('interviews.fields.interview_at'))

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\JobApplications\Schemas;
 
 use App\Enums\ApplicationStatus;
@@ -24,7 +25,7 @@ class JobApplicationInfolist
     public static function components(): array
     {
         return [
-            Tabs::make('Job application details')
+            Tabs::make(__('job-applications.sections.details'))
                 ->tabs([
                     Tabs\Tab::make(__('job-applications.sections.main'))
                         ->schema([
@@ -36,11 +37,11 @@ class JobApplicationInfolist
 
                             TextEntry::make('status')
                                 ->label(__('job-applications.fields.status'))
-                                ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                                ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                                         ? $state->label()
                                         : ApplicationStatus::tryFrom($state ?? '')?->label() ?? $state)
                                 ->badge()
-                                ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                                ->color(fn (ApplicationStatus|string|null $state): string => $state instanceof ApplicationStatus
                                         ? $state->color()
                                         : ApplicationStatus::tryFrom($state ?? '')?->color() ?? 'info'),
 
@@ -56,21 +57,21 @@ class JobApplicationInfolist
                             TextEntry::make('job_url')
                                 ->label(__('job-applications.fields.job_url'))
                                 ->placeholder('-')
-                                ->url(fn(?string $state): ?string => $state)
+                                ->url(fn (?string $state): ?string => $state)
                                 ->openUrlInNewTab()
                                 ->copyable()
                                 ->columnSpanFull(),
 
                             TextEntry::make('source')
                                 ->label(__('job-applications.fields.source'))
-                                ->formatStateUsing(fn(SourceType | string | null $state): ?string => $state instanceof SourceType
+                                ->formatStateUsing(fn (SourceType|string|null $state): ?string => $state instanceof SourceType
                                         ? $state->label()
                                         : SourceType::tryFrom($state ?? '')?->label() ?? $state)
                                 ->badge(),
 
                             TextEntry::make('work_mode')
                                 ->label(__('job-applications.fields.work_mode'))
-                                ->formatStateUsing(fn(WorkMode | string | null $state): ?string => $state instanceof WorkMode
+                                ->formatStateUsing(fn (WorkMode|string|null $state): ?string => $state instanceof WorkMode
                                         ? $state->label()
                                         : WorkMode::tryFrom($state ?? '')?->label() ?? $state)
                                 ->badge(),
@@ -97,33 +98,33 @@ class JobApplicationInfolist
                                     TextEntry::make('cv_pdf_file')
                                         ->label(__('cv-versions.fields.pdf_path'))
                                         ->placeholder('-')
-                                        ->state(fn($record): ?string => $record->cvVersion?->pdf_path ? $record->cvVersion->pdfFriendlyName() : null)
+                                        ->state(fn ($record): ?string => $record->cvVersion?->pdf_path ? $record->cvVersion->pdfFriendlyName() : null)
                                         ->prefixAction(
                                             Action::make('openCvPdf')
-                                                ->label('Abrir PDF')
+                                                ->label(__('cv-versions.actions.open_pdf'))
                                                 ->icon(Heroicon::ArrowTopRightOnSquare)
                                                 ->iconButton()
-                                                ->tooltip('Abrir PDF')
+                                                ->tooltip(__('cv-versions.actions.open_pdf'))
                                                 ->color('primary')
-                                                ->url(fn($record): ?string => $record->cvVersion?->pdf_path ? route('filament.admin.cv-versions.pdf', $record->cvVersion) : null)
+                                                ->url(fn ($record): ?string => $record->cvVersion?->pdf_path ? route('filament.admin.cv-versions.pdf', $record->cvVersion) : null)
                                                 ->openUrlInNewTab()
-                                                ->visible(fn($record): bool => filled($record->cvVersion?->pdf_path)),
+                                                ->visible(fn ($record): bool => filled($record->cvVersion?->pdf_path)),
                                         )
                                         ->limit(60),
 
                                     TextEntry::make('cv_docx_file')
                                         ->label(__('cv-versions.fields.docx_path'))
                                         ->placeholder('-')
-                                        ->state(fn($record): ?string => $record->cvVersion?->docx_path ? $record->cvVersion->docxFriendlyName() : null)
+                                        ->state(fn ($record): ?string => $record->cvVersion?->docx_path ? $record->cvVersion->docxFriendlyName() : null)
                                         ->prefixAction(
                                             Action::make('downloadCvDocx')
-                                                ->label('Descargar DOCX')
+                                                ->label(__('cv-versions.actions.download_docx'))
                                                 ->icon(Heroicon::ArrowDownTray)
                                                 ->iconButton()
-                                                ->tooltip('Descargar DOCX')
+                                                ->tooltip(__('cv-versions.actions.download_docx'))
                                                 ->color('primary')
-                                                ->url(fn($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
-                                                ->visible(fn($record): bool => filled($record->cvVersion?->docx_path)),
+                                                ->url(fn ($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
+                                                ->visible(fn ($record): bool => filled($record->cvVersion?->docx_path)),
                                         )
                                         ->limit(60),
                                 ]),
@@ -134,61 +135,61 @@ class JobApplicationInfolist
                                         ->label(__('job-applications.fields.dossier_sent'))
                                         ->boolean()
                                         ->state(false)
-                                        ->visible(fn($record): bool => ! ((bool) $record->dossier_sent && filled($record->technical_dossier_version_id))),
+                                        ->visible(fn ($record): bool => ! ((bool) $record->dossier_sent && filled($record->technical_dossier_version_id))),
 
                                     TextEntry::make('technicalDossierVersion.name')
                                         ->label(__('job-applications.fields.technical_dossier_version_id'))
                                         ->placeholder('-')
-                                        ->formatStateUsing(fn($record): ?string => $record->technicalDossierVersion
+                                        ->formatStateUsing(fn ($record): ?string => $record->technicalDossierVersion
                                                 ? "{$record->technicalDossierVersion->name} {$record->technicalDossierVersion->version_label}"
                                                 : null)
-                                        ->visible(fn($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id)),
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id)),
 
                                     TextEntry::make('technical_dossier_pdf_file')
                                         ->label(__('technical-dossier-versions.fields.pdf_path'))
                                         ->placeholder('-')
-                                        ->state(fn($record): ?string => $record->technicalDossierVersion?->pdf_path
+                                        ->state(fn ($record): ?string => $record->technicalDossierVersion?->pdf_path
                                                 ? $record->technicalDossierVersion->pdfFriendlyName()
                                                 : null)
                                         ->prefixAction(
                                             Action::make('openTechnicalDossierPdf')
-                                                ->label('Abrir PDF')
+                                                ->label(__('technical-dossier-versions.actions.open_pdf'))
                                                 ->icon(Heroicon::ArrowTopRightOnSquare)
                                                 ->iconButton()
-                                                ->tooltip('Abrir PDF')
+                                                ->tooltip(__('technical-dossier-versions.actions.open_pdf'))
                                                 ->color('primary')
-                                                ->url(fn($record): ?string => $record->technicalDossierVersion?->pdf_path
+                                                ->url(fn ($record): ?string => $record->technicalDossierVersion?->pdf_path
                                                         ? route('filament.admin.technical-dossier-versions.pdf', [
-                                                        'technicalDossierVersion' => $record->technicalDossierVersion,
-                                                    ])
+                                                            'technicalDossierVersion' => $record->technicalDossierVersion,
+                                                        ])
                                                         : null)
                                                 ->openUrlInNewTab()
-                                                ->visible(fn($record): bool => filled($record->technicalDossierVersion?->pdf_path)),
+                                                ->visible(fn ($record): bool => filled($record->technicalDossierVersion?->pdf_path)),
                                         )
-                                        ->visible(fn($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
                                         ->limit(60),
 
                                     TextEntry::make('technical_dossier_docx_file')
                                         ->label(__('technical-dossier-versions.fields.docx_path'))
                                         ->placeholder('-')
-                                        ->state(fn($record): ?string => $record->technicalDossierVersion?->docx_path
+                                        ->state(fn ($record): ?string => $record->technicalDossierVersion?->docx_path
                                                 ? $record->technicalDossierVersion->docxFriendlyName()
                                                 : null)
                                         ->prefixAction(
                                             Action::make('downloadTechnicalDossierDocx')
-                                                ->label('Descargar DOCX')
+                                                ->label(__('technical-dossier-versions.actions.download_docx'))
                                                 ->icon(Heroicon::ArrowDownTray)
                                                 ->iconButton()
-                                                ->tooltip('Descargar DOCX')
+                                                ->tooltip(__('technical-dossier-versions.actions.download_docx'))
                                                 ->color('primary')
-                                                ->url(fn($record): ?string => $record->technicalDossierVersion?->docx_path
+                                                ->url(fn ($record): ?string => $record->technicalDossierVersion?->docx_path
                                                         ? route('filament.admin.technical-dossier-versions.docx', [
-                                                        'technicalDossierVersion' => $record->technicalDossierVersion,
-                                                    ])
+                                                            'technicalDossierVersion' => $record->technicalDossierVersion,
+                                                        ])
                                                         : null)
-                                                ->visible(fn($record): bool => filled($record->technicalDossierVersion?->docx_path)),
+                                                ->visible(fn ($record): bool => filled($record->technicalDossierVersion?->docx_path)),
                                         )
-                                        ->visible(fn($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
                                         ->limit(60),
                                 ]),
 
@@ -207,7 +208,7 @@ class JobApplicationInfolist
                             TextEntry::make('recruiter_url')
                                 ->label(__('job-applications.fields.recruiter_url'))
                                 ->placeholder('-')
-                                ->url(fn(?string $state): ?string => $state)
+                                ->url(fn (?string $state): ?string => $state)
                                 ->openUrlInNewTab()
                                 ->copyable(),
 
@@ -223,17 +224,17 @@ class JobApplicationInfolist
                         ])
                         ->columns(2),
 
-                    Tabs\Tab::make('Metadatos')
+                    Tabs\Tab::make(__('job-applications.sections.metadata'))
                         ->schema([
                             Section::make()
                                 ->schema([
                                     TextEntry::make('created_at')
-                                        ->label('Creado')
+                                        ->label(__('job-applications.fields.created_at'))
                                         ->dateTime('d/m/Y H:i')
                                         ->placeholder('-'),
 
                                     TextEntry::make('updated_at')
-                                        ->label('Actualizado')
+                                        ->label(__('job-applications.fields.updated_at'))
                                         ->dateTime('d/m/Y H:i')
                                         ->placeholder('-'),
                                 ])

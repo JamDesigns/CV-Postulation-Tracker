@@ -24,8 +24,6 @@ class InterviewResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $recordTitleAttribute = 'interview_at';
-
     public static function getModelLabel(): string
     {
         return __('interviews.model_label');

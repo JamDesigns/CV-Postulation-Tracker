@@ -18,4 +18,18 @@ class EditInterview extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    public function getTitle(): string
+    {
+        $jobApplication = $this->getRecord()->jobApplication;
+
+        $recordTitle = collect([
+            $jobApplication?->company_name,
+            $jobApplication?->job_title,
+        ])
+            ->filter()
+            ->implode(' — ');
+
+        return __('actions.edit').' '.$recordTitle;
+    }
 }
