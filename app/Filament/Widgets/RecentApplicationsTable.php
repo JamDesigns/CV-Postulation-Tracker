@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Widgets;
 
 use App\Enums\ApplicationStatus;
@@ -38,24 +39,24 @@ class RecentApplicationsTable extends TableWidget
 
                 TextColumn::make('status')
                     ->label(__('dashboard.widgets.recent_applications.status'))
-                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                    ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
-                    ->color(fn(ApplicationStatus | string | null $state): string => $state instanceof ApplicationStatus
+                    ->color(fn (ApplicationStatus|string|null $state): string => $state instanceof ApplicationStatus
                             ? $state->color()
                             : ApplicationStatus::tryFrom((string) $state)?->color() ?? 'info'),
 
                 TextColumn::make('source')
                     ->label(__('dashboard.widgets.recent_applications.source'))
-                    ->formatStateUsing(fn(SourceType | string | null $state): ?string => $state instanceof SourceType
+                    ->formatStateUsing(fn (SourceType|string|null $state): ?string => $state instanceof SourceType
                             ? $state->label()
                             : SourceType::tryFrom((string) $state)?->label() ?? $state)
                     ->badge(),
 
                 TextColumn::make('work_mode')
                     ->label(__('dashboard.widgets.recent_applications.work_mode'))
-                    ->formatStateUsing(fn(WorkMode | string | null $state): ?string => $state instanceof WorkMode
+                    ->formatStateUsing(fn (WorkMode|string|null $state): ?string => $state instanceof WorkMode
                             ? $state->label()
                             : WorkMode::tryFrom((string) $state)?->label() ?? $state)
                     ->badge(),

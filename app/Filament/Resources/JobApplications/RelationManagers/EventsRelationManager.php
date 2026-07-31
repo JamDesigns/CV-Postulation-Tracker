@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\JobApplications\RelationManagers;
 
 use App\Enums\ApplicationStatus;
@@ -79,6 +80,8 @@ class EventsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('job-application-events.model.label'))
+            ->pluralModelLabel(__('job-application-events.model.plural_label'))
             ->heading(__('job-application-events.navigation.label'))
             ->emptyStateHeading(__('job-application-events.empty'))
             ->defaultSort('occurred_at', 'desc')
@@ -91,7 +94,7 @@ class EventsRelationManager extends RelationManager
 
                 TextColumn::make('type')
                     ->label(__('job-application-events.fields.type'))
-                    ->formatStateUsing(fn(JobApplicationEventType | string | null $state): ?string => $state instanceof JobApplicationEventType
+                    ->formatStateUsing(fn (JobApplicationEventType|string|null $state): ?string => $state instanceof JobApplicationEventType
                             ? $state->label()
                             : JobApplicationEventType::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
@@ -111,7 +114,7 @@ class EventsRelationManager extends RelationManager
 
                 TextColumn::make('status_from')
                     ->label(__('job-application-events.fields.status_from'))
-                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                    ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
@@ -119,7 +122,7 @@ class EventsRelationManager extends RelationManager
 
                 TextColumn::make('status_to')
                     ->label(__('job-application-events.fields.status_to'))
-                    ->formatStateUsing(fn(ApplicationStatus | string | null $state): ?string => $state instanceof ApplicationStatus
+                    ->formatStateUsing(fn (ApplicationStatus|string|null $state): ?string => $state instanceof ApplicationStatus
                             ? $state->label()
                             : ApplicationStatus::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
@@ -138,7 +141,8 @@ class EventsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
+                    ViewAction::make()
+                        ->modalHeading(__('job-application-events.actions.view')),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

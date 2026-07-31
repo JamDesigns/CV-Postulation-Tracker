@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Widgets;
 
 use App\Enums\InterviewResult;
@@ -47,18 +48,18 @@ class UpcomingInterviewsTable extends TableWidget
 
                 TextColumn::make('interview_type')
                     ->label(__('dashboard.widgets.upcoming_interviews.type'))
-                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                    ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
                             ? $state->label()
                             : InterviewType::tryFrom((string) $state)?->label() ?? $state)
                     ->badge(),
 
                 TextColumn::make('result')
                     ->label(__('dashboard.widgets.upcoming_interviews.result'))
-                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                    ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
                             ? $state->label()
                             : InterviewResult::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
-                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                    ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
                             ? $state->color()
                             : InterviewResult::tryFrom((string) $state)?->color() ?? 'info'),
 

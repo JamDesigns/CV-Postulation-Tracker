@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\JobApplications\Schemas;
 
 use App\Enums\ApplicationStatus;
@@ -8,6 +9,7 @@ use App\Enums\SourceType;
 use App\Enums\WorkMode;
 use App\Models\CvVersion;
 use App\Models\TechnicalDossierVersion;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -26,7 +28,7 @@ class JobApplicationForm
     {
         return $schema
             ->components([
-                Tabs::make('Job application form')
+                Tabs::make(__('job-applications.sections.form'))
                     ->tabs([
                         Tabs\Tab::make(__('job-applications.sections.main'))
                             ->schema([
@@ -91,7 +93,7 @@ class JobApplicationForm
                                     ->searchable()
                                     ->preload()
                                     ->createOptionForm([
-                                        Tabs::make('CV version create form')
+                                        Tabs::make(__('cv-versions.sections.form'))
                                             ->tabs([
                                                 Tabs\Tab::make(__('cv-versions.sections.main'))
                                                     ->schema([
@@ -169,9 +171,9 @@ class JobApplicationForm
                                             ])
                                             ->columnSpanFull(),
                                     ])
-                                    ->createOptionAction(fn(\Filament\Actions\Action $action): \Filament\Actions\Action => $action
-                                            ->label(__('cv-versions.actions.create'))
-                                            ->modalHeading(__('cv-versions.actions.create')))
+                                    ->createOptionAction(fn (Action $action): Action => $action
+                                        ->label(__('cv-versions.actions.create'))
+                                        ->modalHeading(__('cv-versions.actions.create')))
                                     // ->required()
                                     ->live(),
 
@@ -181,14 +183,14 @@ class JobApplicationForm
                                             ->label(__('job-applications.fields.dossier_sent'))
                                             ->default(false)
                                             ->live()
-                                            ->disabled(fn(Get $get): bool => $get('cv_version_id') === null || $get('cv_version_id') === ''),
+                                            ->disabled(fn (Get $get): bool => $get('cv_version_id') === null || $get('cv_version_id') === ''),
 
-                                        Text::make(fn(Get $get, $record = null): string => self::technicalDossierVersionPreviewLabel(
+                                        Text::make(fn (Get $get, $record = null): string => self::technicalDossierVersionPreviewLabel(
                                             $get('cv_version_id'),
                                             $record,
                                         ))
                                             ->color('gray')
-                                            ->visible(fn(Get $get): bool => (bool) $get('dossier_sent')),
+                                            ->visible(fn (Get $get): bool => (bool) $get('dossier_sent')),
                                     ])
                                     ->columnSpan(1),
 
@@ -225,7 +227,7 @@ class JobApplicationForm
             ]);
     }
 
-    private static function technicalDossierVersionPreviewLabel(int | string | null $cvVersionId, $record = null): string
+    private static function technicalDossierVersionPreviewLabel(int|string|null $cvVersionId, $record = null): string
     {
         if (
             $record?->technicalDossierVersion
@@ -237,7 +239,7 @@ class JobApplicationForm
         return self::activeTechnicalDossierVersionLabelForCv($cvVersionId) ?? __('job-applications.fields.no_active_dossier_for_cv_language');
     }
 
-    private static function activeTechnicalDossierVersionLabelForCv(int | string | null $cvVersionId): ?string
+    private static function activeTechnicalDossierVersionLabelForCv(int|string|null $cvVersionId): ?string
     {
         if ($cvVersionId === null || $cvVersionId === '') {
             return null;

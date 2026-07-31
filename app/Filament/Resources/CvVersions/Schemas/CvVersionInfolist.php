@@ -16,7 +16,7 @@ class CvVersionInfolist
     {
         return $schema
             ->components([
-                Tabs::make('CV version details')
+                Tabs::make(__('cv-versions.sections.details'))
                     ->tabs([
                         Tabs\Tab::make(__('cv-versions.sections.main'))
                             ->schema([
@@ -25,12 +25,12 @@ class CvVersionInfolist
 
                                 TextEntry::make('language')
                                     ->label(__('cv-versions.fields.language'))
-                                    ->formatStateUsing(fn(?string $state): ?string => CvLanguage::tryFrom($state)?->label() ?? $state)
+                                    ->formatStateUsing(fn (?string $state): ?string => CvLanguage::tryFrom($state)?->label() ?? $state)
                                     ->badge(),
 
                                 TextEntry::make('base_profile')
                                     ->label(__('cv-versions.fields.base_profile'))
-                                    ->formatStateUsing(fn(?string $state): ?string => BaseProfile::tryFrom($state)?->label() ?? $state)
+                                    ->formatStateUsing(fn (?string $state): ?string => BaseProfile::tryFrom($state)?->label() ?? $state)
                                     ->badge(),
                             ])
                             ->columns(3),
@@ -40,33 +40,33 @@ class CvVersionInfolist
                                 TextEntry::make('pdf_path')
                                     ->label(__('cv-versions.fields.pdf_path'))
                                     ->placeholder('-')
-                                    ->formatStateUsing(fn(?string $state, $record): ?string => $state ? $record->pdfFriendlyName() : null)
+                                    ->formatStateUsing(fn (?string $state, $record): ?string => $state ? $record->pdfFriendlyName() : null)
                                     ->prefixAction(
                                         Action::make('openPdf')
-                                            ->label('Abrir PDF')
+                                            ->label(__('cv-versions.actions.open_pdf'))
+                                            ->tooltip(__('cv-versions.actions.open_pdf'))
                                             ->icon(Heroicon::ArrowTopRightOnSquare)
                                             ->iconButton()
-                                            ->tooltip('Abrir PDF')
                                             ->color('primary')
-                                            ->url(fn($record): ?string => $record->pdf_path ? route('filament.admin.cv-versions.pdf', $record) : null)
+                                            ->url(fn ($record): ?string => $record->pdf_path ? route('filament.admin.cv-versions.pdf', $record) : null)
                                             ->openUrlInNewTab()
-                                            ->visible(fn($record): bool => filled($record->pdf_path)),
+                                            ->visible(fn ($record): bool => filled($record->pdf_path)),
                                     )
                                     ->limit(60),
 
                                 TextEntry::make('docx_path')
                                     ->label(__('cv-versions.fields.docx_path'))
                                     ->placeholder('-')
-                                    ->formatStateUsing(fn(?string $state, $record): ?string => $state ? $record->docxFriendlyName() : null)
+                                    ->formatStateUsing(fn (?string $state, $record): ?string => $state ? $record->docxFriendlyName() : null)
                                     ->prefixAction(
                                         Action::make('downloadDocx')
-                                            ->label('Descargar DOCX')
+                                            ->label(__('cv-versions.actions.download_docx'))
+                                            ->tooltip(__('cv-versions.actions.download_docx'))
                                             ->icon(Heroicon::ArrowDownTray)
                                             ->iconButton()
-                                            ->tooltip('Descargar DOCX')
                                             ->color('primary')
-                                            ->url(fn($record): ?string => $record->docx_path ? route('filament.admin.cv-versions.docx', $record) : null)
-                                            ->visible(fn($record): bool => filled($record->docx_path)),
+                                            ->url(fn ($record): ?string => $record->docx_path ? route('filament.admin.cv-versions.docx', $record) : null)
+                                            ->visible(fn ($record): bool => filled($record->docx_path)),
                                     )
                                     ->limit(60),
                             ])
@@ -89,15 +89,15 @@ class CvVersionInfolist
                             ])
                             ->columns(2),
 
-                        Tabs\Tab::make('Metadatos')
+                        Tabs\Tab::make(__('cv-versions.sections.metadata'))
                             ->schema([
                                 TextEntry::make('created_at')
-                                    ->label('Creado')
+                                    ->label(__('cv-versions.fields.created_at'))
                                     ->dateTime('d/m/Y H:i')
                                     ->placeholder('-'),
 
                                 TextEntry::make('updated_at')
-                                    ->label('Actualizado')
+                                    ->label(__('cv-versions.fields.updated_at'))
                                     ->dateTime('d/m/Y H:i')
                                     ->placeholder('-'),
                             ])

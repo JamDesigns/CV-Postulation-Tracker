@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\TechnicalDossierVersions\Tables;
 
 use App\Enums\CvLanguage;
@@ -29,7 +30,7 @@ class TechnicalDossierVersionsTable
 
                 TextColumn::make('language')
                     ->label(__('technical-dossier-versions.fields.language'))
-                    ->formatStateUsing(fn(CvLanguage | string | null $state): ?string => $state instanceof CvLanguage
+                    ->formatStateUsing(fn (CvLanguage|string|null $state): ?string => $state instanceof CvLanguage
                             ? $state->label()
                             : CvLanguage::tryFrom((string) $state)?->label() ?? $state)
                     ->badge()
@@ -39,14 +40,14 @@ class TechnicalDossierVersionsTable
                 IconColumn::make('pdf_path')
                     ->label(__('technical-dossier-versions.fields.pdf_path'))
                     ->boolean()
-                    ->state(fn($record): bool => filled($record->pdf_path))
+                    ->state(fn ($record): bool => filled($record->pdf_path))
                     ->alignCenter()
                     ->wrapHeader(),
 
                 IconColumn::make('docx_path')
                     ->label(__('technical-dossier-versions.fields.docx_path'))
                     ->boolean()
-                    ->state(fn($record): bool => filled($record->docx_path))
+                    ->state(fn ($record): bool => filled($record->docx_path))
                     ->alignCenter()
                     ->wrapHeader(),
 

@@ -18,7 +18,7 @@ class TechnicalDossierVersionForm
     {
         return $schema
             ->components([
-                Tabs::make('Technical dossier version form')
+                Tabs::make(__('technical-dossier-versions.sections.form'))
                     ->tabs([
                         Tabs\Tab::make(__('technical-dossier-versions.sections.main'))
                             ->schema([
@@ -56,7 +56,7 @@ class TechnicalDossierVersionForm
                                     ->disk('local')
                                     ->directory('technical-dossier-versions/pdf')
                                     ->acceptedFileTypes(['application/pdf'])
-                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string | array | null $storedFileNames): ?array {
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): ?array {
                                         $uploadedFile = $component->getUploadedFile($file, $storedFileNames);
 
                                         if (! $uploadedFile) {
@@ -91,7 +91,7 @@ class TechnicalDossierVersionForm
                                         'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                     ])
                                     ->rules(['extensions:docx'])
-                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string | array | null $storedFileNames): ?array {
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): ?array {
                                         $uploadedFile = $component->getUploadedFile($file, $storedFileNames);
 
                                         if (! $uploadedFile) {

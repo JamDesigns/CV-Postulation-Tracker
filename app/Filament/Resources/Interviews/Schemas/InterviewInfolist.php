@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\Interviews\Schemas;
 
 use App\Enums\InterviewResult;
@@ -13,7 +14,7 @@ class InterviewInfolist
     {
         return $schema
             ->components([
-                Tabs::make('Interview details')
+                Tabs::make(__('interviews.sections.details'))
                     ->tabs([
                         Tabs\Tab::make(__('interviews.sections.main'))
                             ->schema([
@@ -32,18 +33,18 @@ class InterviewInfolist
 
                                 TextEntry::make('interview_type')
                                     ->label(__('interviews.fields.interview_type'))
-                                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                                    ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
                                             ? $state->label()
                                             : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                                     ->badge(),
 
                                 TextEntry::make('result')
                                     ->label(__('interviews.fields.result'))
-                                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                                    ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
                                             ? $state->label()
                                             : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                                     ->badge()
-                                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                                    ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
                                             ? $state->color()
                                             : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info'),
                             ])
@@ -80,15 +81,15 @@ class InterviewInfolist
                                     ->columnSpanFull(),
                             ]),
 
-                        Tabs\Tab::make('Metadatos')
+                        Tabs\Tab::make(__('interviews.sections.metadata'))
                             ->schema([
                                 TextEntry::make('created_at')
-                                    ->label('Creado')
+                                    ->label(__('interviews.fields.created_at'))
                                     ->dateTime('d/m/Y H:i')
                                     ->placeholder('-'),
 
                                 TextEntry::make('updated_at')
-                                    ->label('Actualizado')
+                                    ->label(__('interviews.fields.updated_at'))
                                     ->dateTime('d/m/Y H:i')
                                     ->placeholder('-'),
                             ])

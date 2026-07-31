@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\JobApplications\RelationManagers;
 
 use App\Enums\InterviewResult;
@@ -38,6 +39,8 @@ class InterviewsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modelLabel(__('interviews.model_label'))
+            ->pluralModelLabel(__('interviews.plural_model_label'))
             ->heading(__('interviews.plural_model_label'))
             ->emptyStateHeading(__('interviews.empty.heading'))
             ->emptyStateDescription(__('interviews.empty.description'))
@@ -50,7 +53,7 @@ class InterviewsRelationManager extends RelationManager
 
                 TextColumn::make('interview_type')
                     ->label(__('interviews.fields.interview_type'))
-                    ->formatStateUsing(fn(InterviewType | string | null $state): ?string => $state instanceof InterviewType
+                    ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
                             ? $state->label()
                             : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
@@ -58,11 +61,11 @@ class InterviewsRelationManager extends RelationManager
 
                 TextColumn::make('result')
                     ->label(__('interviews.fields.result'))
-                    ->formatStateUsing(fn(InterviewResult | string | null $state): ?string => $state instanceof InterviewResult
+                    ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
                             ? $state->label()
                             : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
-                    ->color(fn(InterviewResult | string | null $state): string => $state instanceof InterviewResult
+                    ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
                             ? $state->color()
                             : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                     ->sortable(),
@@ -74,7 +77,8 @@ class InterviewsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
+                    ViewAction::make()
+                        ->modalHeading(__('interviews.actions.view')),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

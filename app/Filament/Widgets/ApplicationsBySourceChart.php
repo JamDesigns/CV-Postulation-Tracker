@@ -10,7 +10,7 @@ class ApplicationsBySourceChart extends ChartWidget
 {
     protected static ?int $sort = 6;
 
-    protected int | string | array $columnSpan = 1;
+    protected int|string|array $columnSpan = 1;
 
     public function getHeading(): string
     {
@@ -28,7 +28,7 @@ class ApplicationsBySourceChart extends ChartWidget
         $sources = SourceType::cases();
 
         $backgroundColors = array_map(
-            fn(SourceType $source): string => match ($source) {
+            fn (SourceType $source): string => match ($source) {
                 SourceType::Linkedin => '#0a66c2',
                 SourceType::Infojobs => '#167db7',
                 SourceType::Indeed => '#2557a7',
@@ -45,7 +45,7 @@ class ApplicationsBySourceChart extends ChartWidget
             'datasets' => [
                 [
                     'data' => array_map(
-                        fn(SourceType $source): int => $counts[$source->value] ?? 0,
+                        fn (SourceType $source): int => $counts[$source->value] ?? 0,
                         $sources,
                     ),
                     'backgroundColor' => $backgroundColors,
@@ -53,7 +53,7 @@ class ApplicationsBySourceChart extends ChartWidget
                 ],
             ],
             'labels' => array_map(
-                fn(SourceType $source): string => $source->label(),
+                fn (SourceType $source): string => $source->label(),
                 $sources,
             ),
         ];

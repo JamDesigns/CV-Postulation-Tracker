@@ -17,7 +17,7 @@ class CvVersionForm
     {
         return $schema
             ->components([
-                Tabs::make('CV version form')
+                Tabs::make(__('cv-versions.sections.form'))
                     ->tabs([
                         Tabs\Tab::make(__('cv-versions.sections.main'))
                             ->schema([
@@ -49,7 +49,7 @@ class CvVersionForm
                                     ->disk('local')
                                     ->directory('cv-versions/pdf')
                                     ->acceptedFileTypes(['application/pdf'])
-                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string | array | null $storedFileNames): ?array {
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): ?array {
                                         $uploadedFile = $component->getUploadedFile($file, $storedFileNames);
 
                                         if (! $uploadedFile) {
@@ -84,7 +84,7 @@ class CvVersionForm
                                         'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                     ])
                                     ->rules(['extensions:docx'])
-                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string | array | null $storedFileNames): ?array {
+                                    ->getUploadedFileUsing(function (FileUpload $component, string $file, string|array|null $storedFileNames): ?array {
                                         $uploadedFile = $component->getUploadedFile($file, $storedFileNames);
 
                                         if (! $uploadedFile) {

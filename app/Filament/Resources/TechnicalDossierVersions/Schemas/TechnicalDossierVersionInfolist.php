@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources\TechnicalDossierVersions\Schemas;
 
 use App\Enums\CvLanguage;
@@ -15,7 +16,7 @@ class TechnicalDossierVersionInfolist
     {
         return $schema
             ->components([
-                Tabs::make('Technical dossier version infolist')
+                Tabs::make(__('technical-dossier-versions.sections.details'))
                     ->tabs([
                         Tabs\Tab::make(__('technical-dossier-versions.sections.main'))
                             ->schema([
@@ -27,7 +28,7 @@ class TechnicalDossierVersionInfolist
 
                                 TextEntry::make('language')
                                     ->label(__('technical-dossier-versions.fields.language'))
-                                    ->formatStateUsing(fn(CvLanguage | string | null $state): ?string => $state instanceof CvLanguage
+                                    ->formatStateUsing(fn (CvLanguage|string|null $state): ?string => $state instanceof CvLanguage
                                             ? $state->label()
                                             : CvLanguage::tryFrom((string) $state)?->label() ?? $state)
                                     ->badge(),
@@ -57,35 +58,35 @@ class TechnicalDossierVersionInfolist
                             ->schema([
                                 TextEntry::make('pdf_path')
                                     ->label(__('technical-dossier-versions.fields.pdf_path'))
-                                    ->formatStateUsing(fn($record): string => $record->pdfFriendlyName())
+                                    ->formatStateUsing(fn ($record): string => $record->pdfFriendlyName())
                                     ->placeholder('-')
                                     ->prefixAction(
                                         Action::make('openPdf')
                                             ->icon(Heroicon::ArrowTopRightOnSquare)
                                             ->color('primary')
-                                            ->url(fn($record): ?string => $record->pdf_path
+                                            ->url(fn ($record): ?string => $record->pdf_path
                                                     ? route('filament.admin.technical-dossier-versions.pdf', [
-                                                    'technicalDossierVersion' => $record,
-                                                ])
+                                                        'technicalDossierVersion' => $record,
+                                                    ])
                                                     : null)
                                             ->openUrlInNewTab()
-                                            ->visible(fn($record): bool => filled($record->pdf_path)),
+                                            ->visible(fn ($record): bool => filled($record->pdf_path)),
                                     ),
 
                                 TextEntry::make('docx_path')
                                     ->label(__('technical-dossier-versions.fields.docx_path'))
-                                    ->formatStateUsing(fn($record): string => $record->docxFriendlyName())
+                                    ->formatStateUsing(fn ($record): string => $record->docxFriendlyName())
                                     ->placeholder('-')
                                     ->prefixAction(
                                         Action::make('downloadDocx')
                                             ->icon(Heroicon::ArrowDownTray)
                                             ->color('primary')
-                                            ->url(fn($record): ?string => $record->docx_path
+                                            ->url(fn ($record): ?string => $record->docx_path
                                                     ? route('filament.admin.technical-dossier-versions.docx', [
-                                                    'technicalDossierVersion' => $record,
-                                                ])
+                                                        'technicalDossierVersion' => $record,
+                                                    ])
                                                     : null)
-                                            ->visible(fn($record): bool => filled($record->docx_path)),
+                                            ->visible(fn ($record): bool => filled($record->docx_path)),
                                     ),
                             ])
                             ->columns(2),
