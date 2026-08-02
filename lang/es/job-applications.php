@@ -42,6 +42,10 @@ return [
         'updated_at' => 'Actualizado',
     ],
 
+    'validation' => [
+        'duplicate' => 'Ya existe una postulación para esta empresa, oferta y URL.',
+    ],
+
     'actions' => [
         'mark_as_sent' => 'Marcar como enviada',
         'mark_as_responded' => 'Marcar como respondida',

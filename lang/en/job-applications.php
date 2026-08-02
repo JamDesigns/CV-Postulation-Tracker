@@ -42,6 +42,10 @@ return [
         'updated_at' => 'Updated',
     ],
 
+    'validation' => [
+        'duplicate' => 'A job application already exists for this company, job and URL.',
+    ],
+
     'actions' => [
         'mark_as_sent' => 'Mark as sent',
         'mark_as_responded' => 'Mark as responded',

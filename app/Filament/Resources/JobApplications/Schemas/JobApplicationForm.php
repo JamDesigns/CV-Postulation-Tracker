@@ -21,6 +21,8 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Validation\Rule;
 
 class JobApplicationForm
 {
@@ -40,7 +42,19 @@ class JobApplicationForm
                                 TextInput::make('job_title')
                                     ->label(__('job-applications.fields.job_title'))
                                     ->required()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->rule(fn (Get $get, $record) => Rule::unique('job_applications', 'job_title')
+                                        ->where(fn (Builder $query): Builder => $query
+                                            ->where('company_name', $get('company_name'))
+                                            ->when(
+                                                filled($get('job_url')),
+                                                fn (Builder $query): Builder => $query->where('job_url', $get('job_url')),
+                                                fn (Builder $query): Builder => $query->whereNull('job_url'),
+                                            ))
+                                        ->ignore($record))
+                                    ->validationMessages([
+                                        'unique' => __('job-applications.validation.duplicate'),
+                                    ]),
 
                                 Select::make('status')
                                     ->label(__('job-applications.fields.status'))
@@ -174,7 +188,7 @@ class JobApplicationForm
                                     ->createOptionAction(fn (Action $action): Action => $action
                                         ->label(__('cv-versions.actions.create'))
                                         ->modalHeading(__('cv-versions.actions.create')))
-                                    // ->required()
+                                // ->required()
                                     ->live(),
 
                                 Grid::make(1)
