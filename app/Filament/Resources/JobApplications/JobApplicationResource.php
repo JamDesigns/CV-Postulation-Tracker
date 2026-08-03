@@ -66,8 +66,8 @@ class JobApplicationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            InterviewsRelationManager::class,
             EventsRelationManager::class,
+            InterviewsRelationManager::class,
         ];
     }
 
