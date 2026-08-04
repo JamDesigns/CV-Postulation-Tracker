@@ -25,6 +25,10 @@ class CvVersionForm
                                     ->label(__('cv-versions.fields.name'))
                                     ->required()
                                     ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->validationMessages([
+                                        'unique' => __('cv-versions.validation.name_unique'),
+                                    ])
                                     ->columnSpanFull(),
 
                                 Select::make('language')
