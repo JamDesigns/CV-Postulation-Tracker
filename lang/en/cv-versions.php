@@ -31,4 +31,8 @@ return [
         'created_at' => 'Created',
         'updated_at' => 'Updated',
     ],
+
+    'validation' => [
+        'name_unique' => 'A CV with this internal name already exists.',
+    ],
 ];
