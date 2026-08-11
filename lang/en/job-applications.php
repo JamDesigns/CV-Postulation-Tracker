@@ -26,6 +26,7 @@ return [
         'work_mode' => 'Work mode',
         'recruiter_name' => 'Recruiter',
         'recruiter_url' => 'Recruiter URL',
+        'recruiter_email' => 'Recruiter email',
         'main_stack' => 'Main stack',
         'cv_version_id' => 'Submitted CV',
         'dossier_sent' => 'Dossier',
