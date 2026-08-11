@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Enums\ApplicationStatus;
@@ -25,6 +26,7 @@ class JobApplication extends Model
         'work_mode',
         'recruiter_name',
         'recruiter_url',
+        'recruiter_email',
         'main_stack',
         'dossier_sent',
         'technical_dossier_version_id',
@@ -38,12 +40,12 @@ class JobApplication extends Model
     protected function casts(): array
     {
         return [
-            'source'                       => SourceType::class,
-            'status'                       => ApplicationStatus::class,
-            'sent_at'                      => 'date',
-            'next_action_at'               => 'date',
-            'work_mode'                    => WorkMode::class,
-            'dossier_sent'                 => 'boolean',
+            'source' => SourceType::class,
+            'status' => ApplicationStatus::class,
+            'sent_at' => 'date',
+            'next_action_at' => 'date',
+            'work_mode' => WorkMode::class,
+            'dossier_sent' => 'boolean',
             'technical_dossier_version_id' => 'integer',
         ];
     }
@@ -63,7 +65,7 @@ class JobApplication extends Model
         });
     }
 
-    private static function activeTechnicalDossierVersionIdForCv(int | string | null $cvVersionId): ?int
+    private static function activeTechnicalDossierVersionIdForCv(int|string|null $cvVersionId): ?int
     {
         if ($cvVersionId === null || $cvVersionId === '') {
             return null;

@@ -212,6 +212,11 @@ class JobApplicationInfolist
                                 ->openUrlInNewTab()
                                 ->copyable(),
 
+                            TextEntry::make('recruiter_email')
+                                ->label(__('job-applications.fields.recruiter_email'))
+                                ->placeholder('-')
+                                ->copyable(),
+
                             TextEntry::make('next_step')
                                 ->label(__('job-applications.fields.next_step'))
                                 ->placeholder('-')

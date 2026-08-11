@@ -226,6 +226,11 @@ class JobApplicationForm
                                     ->label(__('job-applications.fields.recruiter_url'))
                                     ->url(),
 
+                                TextInput::make('recruiter_email')
+                                    ->label(__('job-applications.fields.recruiter_email'))
+                                    ->email()
+                                    ->maxLength(255),
+
                                 Textarea::make('next_step')
                                     ->label(__('job-applications.fields.next_step'))
                                     ->rows(3)
