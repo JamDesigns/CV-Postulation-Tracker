@@ -4,11 +4,15 @@ namespace App\Filament\Resources\JobApplications\Schemas;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\BaseProfile;
+use App\Enums\Currency;
 use App\Enums\CvLanguage;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
 use App\Models\CvVersion;
+use App\Models\JobApplication;
 use App\Models\TechnicalDossierVersion;
+use App\Services\ExchangeRateService;
+use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -84,12 +88,37 @@ class JobApplicationForm
                                 Select::make('work_mode')
                                     ->label(__('job-applications.fields.work_mode'))
                                     ->options(WorkMode::options())
-                                    ->default(WorkMode::NotSpecified->value)
+                                    ->default(WorkMode::Remote->value)
                                     ->required(),
 
                                 TextInput::make('location')
                                     ->label(__('job-applications.fields.location'))
                                     ->maxLength(255),
+
+                                TextInput::make('salary')
+                                    ->label(__('job-applications.fields.salary'))
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->step(0.01)
+                                    ->live(),
+
+                                Select::make('currency')
+                                    ->label(__('job-applications.fields.currency'))
+                                    ->options(Currency::options())
+                                    ->default(fn (): string => Currency::localForLocale()->value)
+                                    ->live(),
+
+                                Text::make(
+                                    fn (Get $get, ?JobApplication $record): string => self::salaryConversion(
+                                        $get,
+                                        $record,
+                                    ),
+                                )
+                                    ->visible(fn (Get $get): bool => self::shouldShowSalaryConversion($get))
+                                    ->color('gray')
+                                    ->extraAttributes([
+                                        'class' => 'block pt-0 lg:pt-8 text-sm',
+                                    ]),
 
                                 Textarea::make('main_stack')
                                     ->label(__('job-applications.fields.main_stack'))
@@ -293,5 +322,46 @@ class JobApplicationForm
     private static function technicalDossierVersionLabel(TechnicalDossierVersion $technicalDossierVersion): string
     {
         return "{$technicalDossierVersion->name} {$technicalDossierVersion->version_label}";
+    }
+
+    private static function shouldShowSalaryConversion(Get $get): bool
+    {
+        $currency = Currency::tryFrom((string) $get('currency'));
+
+        return filled($get('salary'))
+            && $currency !== null
+            && $currency !== Currency::localForLocale();
+    }
+
+    private static function salaryConversion(
+        Get $get,
+        ?JobApplication $jobApplication,
+    ): string {
+        $sourceCurrency = Currency::tryFrom((string) $get('currency'));
+        $targetCurrency = Currency::localForLocale();
+
+        if ($sourceCurrency === null) {
+            return '';
+        }
+
+        $rate = app(ExchangeRateService::class)->rateFor(
+            $jobApplication,
+            $sourceCurrency,
+            $targetCurrency,
+        );
+
+        if ($rate === null) {
+            return __('job-applications.salary_conversion.rate_unavailable');
+        }
+
+        return __(
+            'job-applications.salary_conversion.equivalent',
+            [
+                'amount' => CurrencyFormatter::format(
+                    (float) $get('salary') * $rate,
+                    $targetCurrency,
+                ),
+            ],
+        );
     }
 }

@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\JobApplications\Tables;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\Currency;
 use App\Enums\JobApplicationEventType;
 use App\Enums\NextActionUrgency;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
 use App\Models\JobApplication;
+use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -97,6 +99,25 @@ class JobApplicationsTable
                     ->searchable()
                     ->wrap()
                     ->lineClamp(2),
+
+                TextColumn::make('salary')
+                    ->label(__('job-applications.fields.salary'))
+                    ->state(function (JobApplication $record): ?string {
+                        if ($record->salary === null) {
+                            return null;
+                        }
+
+                        $currency = $record->currency instanceof Currency
+                            ? $record->currency
+                            : Currency::tryFrom((string) $record->currency);
+
+                        return $currency === null
+                            ? (string) $record->salary
+                            : CurrencyFormatter::format($record->salary, $currency);
+                    })
+                    ->placeholder('-')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cvVersion.name')
                     ->label(__('job-applications.fields.cv_version_id'))

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch): void {
+            $switch
+                ->locales(config('locales'))
+                ->flags([
+                    'es' => asset('flags/es.svg'),
+                    'en' => asset('flags/gb.svg'),
+                    'fr' => asset('flags/fr.svg'),
+                ])
+                ->nativeLabel();
+        });
     }
 }
