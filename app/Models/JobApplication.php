@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\Currency;
 use App\Enums\CvLanguage;
 use App\Enums\NextActionUrgency;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
+use App\Services\ExchangeRateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +26,9 @@ class JobApplication extends Model
         'sent_at',
         'location',
         'work_mode',
+        'salary',
+        'currency',
+        'language',
         'recruiter_name',
         'recruiter_url',
         'recruiter_email',
@@ -45,6 +50,8 @@ class JobApplication extends Model
             'sent_at' => 'date',
             'next_action_at' => 'date',
             'work_mode' => WorkMode::class,
+            'salary' => 'decimal:2',
+            'currency' => Currency::class,
             'dossier_sent' => 'boolean',
             'technical_dossier_version_id' => 'integer',
         ];
@@ -52,6 +59,12 @@ class JobApplication extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (JobApplication $jobApplication): void {
+            if (blank($jobApplication->language)) {
+                $jobApplication->language = app()->getLocale();
+            }
+        });
+
         static::saving(function (JobApplication $jobApplication): void {
             if (! $jobApplication->dossier_sent) {
                 $jobApplication->technical_dossier_version_id = null;
@@ -62,6 +75,33 @@ class JobApplication extends Model
             $jobApplication->technical_dossier_version_id = self::activeTechnicalDossierVersionIdForCv(
                 $jobApplication->cv_version_id,
             );
+        });
+
+        static::created(function (JobApplication $jobApplication): void {
+            app(ExchangeRateService::class)->replaceSnapshot($jobApplication);
+        });
+
+        static::updated(function (JobApplication $jobApplication): void {
+            $salaryWasAdded = $jobApplication->wasChanged('salary')
+                && $jobApplication->getOriginal('salary') === null;
+
+            $salaryOrCurrencyWasCleared = (
+                $jobApplication->wasChanged('salary')
+                || $jobApplication->wasChanged('currency')
+            ) && (
+                $jobApplication->salary === null
+                || $jobApplication->currency === null
+            );
+
+            $shouldReplaceSnapshot = $jobApplication->wasChanged('currency')
+                || $salaryWasAdded
+                || $salaryOrCurrencyWasCleared;
+
+            if (! $shouldReplaceSnapshot) {
+                return;
+            }
+
+            app(ExchangeRateService::class)->replaceSnapshot($jobApplication);
         });
     }
 
@@ -144,5 +184,10 @@ class JobApplication extends Model
     public function events(): HasMany
     {
         return $this->hasMany(JobApplicationEvent::class);
+    }
+
+    public function exchangeRates(): HasMany
+    {
+        return $this->hasMany(JobApplicationExchangeRate::class);
     }
 }

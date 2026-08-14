@@ -24,6 +24,9 @@ return [
         'sent_at' => 'Sent date',
         'location' => 'Location',
         'work_mode' => 'Work mode',
+        'salary' => 'Salary',
+        'currency' => 'Currency',
+        'language' => 'Language',
         'recruiter_name' => 'Recruiter',
         'recruiter_url' => 'Recruiter URL',
         'recruiter_email' => 'Recruiter email',
@@ -41,6 +44,12 @@ return [
         'next_action_urgency' => 'Urgency',
         'created_at' => 'Created',
         'updated_at' => 'Updated',
+        'salary_conversion' => 'Conversion',
+    ],
+
+    'salary_conversion' => [
+        'equivalent' => 'Approximate equivalent: :amount',
+        'rate_unavailable' => 'No saved exchange rate is available for this currency.',
     ],
 
     'validation' => [

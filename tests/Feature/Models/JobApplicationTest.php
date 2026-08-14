@@ -1,15 +1,38 @@
 <?php
 
+use App\Enums\Currency;
 use App\Enums\NextActionUrgency;
 use App\Models\CvVersion;
 use App\Models\JobApplication;
 use App\Models\TechnicalDossierVersion;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+
+$ecbXml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<gesmes:Envelope xmlns:gesmes="http://www.gesmes.org/xml/2002-08-01"
+    xmlns="http://www.ecb.int/vocabulary/2002-08-01/eurofxref">
+    <Cube>
+        <Cube time="2026-08-13">
+            <Cube currency="USD" rate="1.2000" />
+            <Cube currency="GBP" rate="0.8000" />
+        </Cube>
+    </Cube>
+</gesmes:Envelope>
+XML;
+
+beforeEach(function () {
+    Cache::forget('ecb.exchange_rates.latest');
+});
 
 afterEach(function () {
     Carbon::setTestNow();
+    app()->setLocale(config('app.locale'));
 });
 
 test('it stores the recruiter email', function () {
@@ -172,4 +195,159 @@ test('it returns upcoming urgency when the next action date is in the future', f
 
     expect($jobApplication->nextActionUrgency())
         ->toBe(NextActionUrgency::Upcoming);
+});
+
+test('it stores the locale and exchange rate snapshot when created with a salary', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    app()->setLocale('en');
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary' => 42000,
+        'currency' => Currency::USD,
+    ]);
+
+    $gbpRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->firstOrFail();
+
+    expect($jobApplication->language)->toBe('en')
+        ->and((float) $gbpRate->rate)->toBe(0.6666666667)
+        ->and($gbpRate->rate_date->toDateString())->toBe('2026-08-13');
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+});
+
+test('it preserves the historical rates when only the salary changes', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary' => 42000,
+        'currency' => Currency::USD,
+    ]);
+
+    $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->update(['rate' => 0.5]);
+
+    $jobApplication->forceFill([
+        'salary' => 43000,
+    ])->save();
+
+    $storedRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->value('rate');
+
+    expect((float) $storedRate)->toBe(0.5);
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+});
+
+test('it replaces the historical rates when the source currency changes', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary' => 42000,
+        'currency' => Currency::USD,
+    ]);
+
+    $jobApplication->forceFill([
+        'currency' => Currency::GBP,
+    ])->save();
+
+    $eurRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::EUR->value)
+        ->value('rate');
+
+    $usdRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::USD->value)
+        ->value('rate');
+
+    $gbpRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->value('rate');
+
+    expect((float) $eurRate)->toBe(1.25)
+        ->and((float) $usdRate)->toBe(1.5)
+        ->and((float) $gbpRate)->toBe(1.0);
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+});
+
+test('it deletes the exchange rates when the application is deleted', function () {
+    $jobApplication = JobApplication::withoutEvents(
+        fn (): JobApplication => JobApplication::query()->create([
+            'company_name' => 'Test Company',
+            'job_title' => 'Full Stack Developer',
+            'salary' => 42000,
+            'currency' => Currency::USD,
+        ]),
+    );
+
+    $exchangeRate = $jobApplication->exchangeRates()->create([
+        'currency' => Currency::EUR,
+        'rate' => 0.85,
+        'rate_date' => '2026-08-13',
+    ]);
+
+    JobApplication::query()
+        ->whereKey($jobApplication->getKey())
+        ->delete();
+
+    assertDatabaseMissing('job_application_exchange_rates', [
+        'id' => $exchangeRate->id,
+    ]);
+});
+
+test('it creates the snapshot when a salary is added later', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'currency' => Currency::USD,
+    ]);
+
+    assertDatabaseCount('job_application_exchange_rates', 0);
+
+    $jobApplication->forceFill([
+        'salary' => 42000,
+    ])->save();
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+});
+
+test('it clears the snapshot when the salary is removed', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary' => 42000,
+        'currency' => Currency::USD,
+    ]);
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+
+    $jobApplication->forceFill([
+        'salary' => null,
+    ])->save();
+
+    assertDatabaseCount('job_application_exchange_rates', 0);
 });

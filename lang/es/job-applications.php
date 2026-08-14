@@ -24,6 +24,9 @@ return [
         'sent_at' => 'Fecha de envío',
         'location' => 'Ubicación',
         'work_mode' => 'Modalidad',
+        'salary' => 'Salario',
+        'currency' => 'Moneda',
+        'language' => 'Idioma',
         'recruiter_name' => 'Recruiter',
         'recruiter_url' => 'URL del recruiter',
         'recruiter_email' => 'Email del recruiter',
@@ -41,6 +44,12 @@ return [
         'next_action_urgency' => 'Urgencia',
         'created_at' => 'Creado',
         'updated_at' => 'Actualizado',
+        'salary_conversion' => 'Conversión',
+    ],
+
+    'salary_conversion' => [
+        'equivalent' => 'Equivalente aproximado: :amount',
+        'rate_unavailable' => 'No hay un tipo de cambio guardado para esta moneda.',
     ],
 
     'validation' => [

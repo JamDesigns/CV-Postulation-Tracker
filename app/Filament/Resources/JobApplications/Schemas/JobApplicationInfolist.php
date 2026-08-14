@@ -3,8 +3,12 @@
 namespace App\Filament\Resources\JobApplications\Schemas;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\Currency;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
+use App\Models\JobApplication;
+use App\Services\ExchangeRateService;
+use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -79,6 +83,19 @@ class JobApplicationInfolist
                             TextEntry::make('location')
                                 ->label(__('job-applications.fields.location'))
                                 ->placeholder('-'),
+
+                            TextEntry::make('salary')
+                                ->label(__('job-applications.fields.salary'))
+                                ->state(fn (JobApplication $record): ?string => self::formattedSalary($record))
+                                ->placeholder('-'),
+
+                            TextEntry::make('salary_conversion')
+                                ->label(__('job-applications.fields.salary_conversion'))
+                                ->state(fn (JobApplication $record): string => self::salaryConversion($record))
+                                ->visible(
+                                    fn (JobApplication $record): bool => self::shouldShowSalaryConversion($record),
+                                )
+                                ->color('gray'),
 
                             TextEntry::make('main_stack')
                                 ->label(__('job-applications.fields.main_stack'))
@@ -248,5 +265,65 @@ class JobApplicationInfolist
                 ])
                 ->columnSpanFull(),
         ];
+    }
+
+    private static function currencyFor(JobApplication $jobApplication): ?Currency
+    {
+        return $jobApplication->currency instanceof Currency
+            ? $jobApplication->currency
+            : Currency::tryFrom((string) $jobApplication->currency);
+    }
+
+    private static function formattedSalary(JobApplication $jobApplication): ?string
+    {
+        $currency = self::currencyFor($jobApplication);
+
+        if ($jobApplication->salary === null || $currency === null) {
+            return null;
+        }
+
+        return CurrencyFormatter::format(
+            $jobApplication->salary,
+            $currency,
+        );
+    }
+
+    private static function shouldShowSalaryConversion(JobApplication $jobApplication): bool
+    {
+        $currency = self::currencyFor($jobApplication);
+
+        return $jobApplication->salary !== null
+            && $currency !== null
+            && $currency !== Currency::localForLocale();
+    }
+
+    private static function salaryConversion(JobApplication $jobApplication): string
+    {
+        $sourceCurrency = self::currencyFor($jobApplication);
+
+        if ($sourceCurrency === null) {
+            return '';
+        }
+
+        $targetCurrency = Currency::localForLocale();
+        $rate = app(ExchangeRateService::class)->rateFor(
+            $jobApplication,
+            $sourceCurrency,
+            $targetCurrency,
+        );
+
+        if ($rate === null) {
+            return __('job-applications.salary_conversion.rate_unavailable');
+        }
+
+        return __(
+            'job-applications.salary_conversion.equivalent',
+            [
+                'amount' => CurrencyFormatter::format(
+                    (float) $jobApplication->salary * $rate,
+                    $targetCurrency,
+                ),
+            ],
+        );
     }
 }
