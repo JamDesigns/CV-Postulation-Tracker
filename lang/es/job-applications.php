@@ -76,8 +76,10 @@ return [
         ],
 
         'next_steps' => [
+            'send_application' => 'Enviar candidatura',
             'send_follow_up' => 'Enviar seguimiento',
             'review_response' => 'Revisar respuesta / preparar siguiente paso',
+            'prepare_interview' => 'Preparar entrevista',
             'complete_technical_test' => 'Realizar prueba técnica',
             'wait_after_follow_up' => 'Esperar respuesta tras seguimiento',
             'review_paused_application' => 'Revisar candidatura pausada',

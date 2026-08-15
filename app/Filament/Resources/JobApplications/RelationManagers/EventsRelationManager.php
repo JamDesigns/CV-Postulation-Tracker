@@ -4,6 +4,7 @@ namespace App\Filament\Resources\JobApplications\RelationManagers;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\JobApplicationEventType;
+use App\Filament\Resources\JobApplications\Pages\ViewJobApplication;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -62,7 +63,15 @@ class EventsRelationManager extends RelationManager
                 Select::make('status_from')
                     ->label(__('job-application-events.fields.status_from'))
                     ->options(ApplicationStatus::options())
-                    ->nullable(),
+                    ->default(function (): ?string {
+                        $status = $this->getOwnerRecord()->status;
+
+                        return $status instanceof ApplicationStatus
+                            ? $status->value
+                            : $status;
+                    })
+                    ->disabled()
+                    ->dehydrated(),
 
                 Select::make('status_to')
                     ->label(__('job-application-events.fields.status_to'))
@@ -137,7 +146,10 @@ class EventsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->label(__('job-application-events.actions.create')),
+                    ->label(__('job-application-events.actions.create'))
+                    ->after(fn () => $this
+                        ->dispatch('job-application-updated')
+                        ->to(ViewJobApplication::class)),
             ])
             ->recordActions([
                 ActionGroup::make([

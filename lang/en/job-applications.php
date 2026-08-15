@@ -76,8 +76,10 @@ return [
         ],
 
         'next_steps' => [
+            'send_application' => 'Submit application',
             'send_follow_up' => 'Send follow-up',
             'review_response' => 'Review response / prepare next step',
+            'prepare_interview' => 'Prepare for interview',
             'complete_technical_test' => 'Complete technical test',
             'wait_after_follow_up' => 'Wait for response after follow-up',
             'review_paused_application' => 'Review paused application',

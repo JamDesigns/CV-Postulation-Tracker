@@ -576,7 +576,7 @@ class JobApplicationsTable
         ApplicationStatus|string|null $statusTo,
         $nextActionAt = null,
     ): void {
-        $record->events()->create([
+        $record->events()->createQuietly([
             'type' => $type->value,
             'occurred_at' => now(),
             'title' => $title,
