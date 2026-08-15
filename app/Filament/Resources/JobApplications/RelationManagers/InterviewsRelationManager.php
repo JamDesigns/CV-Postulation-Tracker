@@ -5,6 +5,7 @@ namespace App\Filament\Resources\JobApplications\RelationManagers;
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use App\Filament\Resources\Interviews\Schemas\InterviewForm;
+use App\Filament\Resources\JobApplications\Pages\ViewJobApplication;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -73,7 +74,10 @@ class InterviewsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->label(__('interviews.actions.create'))
-                    ->modalHeading(__('interviews.actions.create')),
+                    ->modalHeading(__('interviews.actions.create'))
+                    ->after(fn () => $this
+                        ->dispatch('job-application-updated')
+                        ->to(ViewJobApplication::class)),
             ])
             ->recordActions([
                 ActionGroup::make([
