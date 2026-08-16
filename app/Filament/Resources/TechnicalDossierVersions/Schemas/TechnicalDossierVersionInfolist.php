@@ -93,11 +93,6 @@ class TechnicalDossierVersionInfolist
 
                         Tabs\Tab::make(__('technical-dossier-versions.sections.content'))
                             ->schema([
-                                TextEntry::make('summary')
-                                    ->label(__('technical-dossier-versions.fields.summary'))
-                                    ->placeholder('-')
-                                    ->columnSpanFull(),
-
                                 TextEntry::make('content_snapshot')
                                     ->label(__('technical-dossier-versions.fields.content_snapshot'))
                                     ->placeholder('-')

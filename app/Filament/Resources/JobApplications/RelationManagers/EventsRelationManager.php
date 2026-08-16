@@ -22,9 +22,17 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use LaraZeus\SpatieTranslatable\Resources\RelationManagers\Concerns\Translatable;
+use Livewire\Attributes\Reactive;
 
 class EventsRelationManager extends RelationManager
 {
+    use Translatable;
+
+    /** @disregard P1110 Required to inherit the parent locale reactively. */
+    #[Reactive]
+    public ?string $activeLocale = null;
+
     protected static string $relationship = 'events';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
@@ -147,6 +155,14 @@ class EventsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->label(__('job-application-events.actions.create'))
+                    ->modalDescription(
+                        fn (): string => __('job-application-events.modal.content_language', [
+                            'locale' => ucfirst((string) \Locale::getDisplayLanguage(
+                                $this->activeLocale ?? app()->getLocale(),
+                                app()->getLocale(),
+                            )),
+                        ])
+                    )
                     ->after(fn () => $this
                         ->dispatch('job-application-updated')
                         ->to(ViewJobApplication::class)),
@@ -155,7 +171,15 @@ class EventsRelationManager extends RelationManager
                 ActionGroup::make([
                     ViewAction::make()
                         ->modalHeading(__('job-application-events.actions.view')),
-                    EditAction::make(),
+                    EditAction::make()
+                        ->modalDescription(
+                            fn (): string => __('job-application-events.modal.content_language', [
+                                'locale' => ucfirst((string) \Locale::getDisplayLanguage(
+                                    $this->activeLocale ?? app()->getLocale(),
+                                    app()->getLocale(),
+                                )),
+                            ])
+                        ),
                     DeleteAction::make(),
                 ]),
             ])

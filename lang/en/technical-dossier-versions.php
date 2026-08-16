@@ -30,7 +30,6 @@ return [
         'language' => 'Language',
         'pdf_path' => 'PDF file',
         'docx_path' => 'DOCX file',
-        'summary' => 'Summary',
         'content_snapshot' => 'Content summary',
         'is_active' => 'Active version',
         'published_at' => 'Publication date',

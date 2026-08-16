@@ -7,9 +7,20 @@ use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 class Interview extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = [
+        'people',
+        'expected_questions',
+        'strengths_to_defend',
+        'risks_to_clarify',
+        'notes',
+    ];
+
     protected $fillable = [
         'job_application_id',
         'interview_at',
