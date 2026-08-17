@@ -351,3 +351,70 @@ test('it clears the snapshot when the salary is removed', function () use ($ecbX
 
     assertDatabaseCount('job_application_exchange_rates', 0);
 });
+
+test('it stores translations for application content fields', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    $jobApplication
+        ->setTranslations('adaptation_summary', [
+            'es' => 'Resumen de adaptación',
+            'en' => 'Adaptation summary',
+            'fr' => 'Résumé de l’adaptation',
+        ])
+        ->setTranslations('next_step', [
+            'es' => 'Preparar entrevista',
+            'en' => 'Prepare interview',
+            'fr' => 'Préparer l’entretien',
+        ])
+        ->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->getTranslation('adaptation_summary', 'es', false))
+        ->toBe('Resumen de adaptación')
+        ->and($jobApplication->getTranslation('adaptation_summary', 'en', false))
+        ->toBe('Adaptation summary')
+        ->and($jobApplication->getTranslation('adaptation_summary', 'fr', false))
+        ->toBe('Résumé de l’adaptation')
+        ->and($jobApplication->getTranslation('next_step', 'es', false))
+        ->toBe('Preparar entrevista')
+        ->and($jobApplication->getTranslation('next_step', 'en', false))
+        ->toBe('Prepare interview')
+        ->and($jobApplication->getTranslation('next_step', 'fr', false))
+        ->toBe('Préparer l’entretien');
+});
+
+test('it returns application content for the selected locale', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    $jobApplication
+        ->setTranslations('adaptation_summary', [
+            'es' => 'Resumen de adaptación',
+            'en' => 'Adaptation summary',
+        ])
+        ->setTranslations('next_step', [
+            'es' => 'Preparar entrevista',
+            'en' => 'Prepare interview',
+        ])
+        ->save();
+
+    $jobApplication->setLocale('es');
+
+    expect($jobApplication->adaptation_summary)
+        ->toBe('Resumen de adaptación')
+        ->and($jobApplication->next_step)
+        ->toBe('Preparar entrevista');
+
+    $jobApplication->setLocale('en');
+
+    expect($jobApplication->adaptation_summary)
+        ->toBe('Adaptation summary')
+        ->and($jobApplication->next_step)
+        ->toBe('Prepare interview');
+});

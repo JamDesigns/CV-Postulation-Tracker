@@ -119,3 +119,82 @@ test('it does not synchronize the application when an historical event is edited
         ->and($jobApplication->next_action_at->toDateString())
         ->toBe('2026-08-22');
 });
+
+test('it stores translations for event content fields', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => [
+            'es' => 'Entrevista programada',
+        ],
+    ]);
+
+    $event
+        ->setTranslations('title', [
+            'es' => 'Entrevista programada',
+            'en' => 'Interview scheduled',
+            'fr' => 'Entretien programmé',
+        ])
+        ->setTranslations('body', [
+            'es' => 'Preparar la entrevista técnica',
+            'en' => 'Prepare the technical interview',
+            'fr' => 'Préparer l’entretien technique',
+        ])
+        ->save();
+
+    $event->refresh();
+
+    expect($event->getTranslation('title', 'es', false))
+        ->toBe('Entrevista programada')
+        ->and($event->getTranslation('title', 'en', false))
+        ->toBe('Interview scheduled')
+        ->and($event->getTranslation('title', 'fr', false))
+        ->toBe('Entretien programmé')
+        ->and($event->getTranslation('body', 'es', false))
+        ->toBe('Preparar la entrevista técnica')
+        ->and($event->getTranslation('body', 'en', false))
+        ->toBe('Prepare the technical interview')
+        ->and($event->getTranslation('body', 'fr', false))
+        ->toBe('Préparer l’entretien technique');
+});
+
+test('it returns event content for the selected locale', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => [
+            'es' => 'Nota manual',
+            'en' => 'Manual note',
+        ],
+        'body' => [
+            'es' => 'Contenido en español',
+            'en' => 'Content in English',
+        ],
+    ]);
+
+    $event->setLocale('es');
+
+    expect($event->title)
+        ->toBe('Nota manual')
+        ->and($event->body)
+        ->toBe('Contenido en español');
+
+    $event->setLocale('en');
+
+    expect($event->title)
+        ->toBe('Manual note')
+        ->and($event->body)
+        ->toBe('Content in English');
+});
