@@ -13,9 +13,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Spatie\Translatable\HasTranslations;
 
 class JobApplication extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = [
+        'adaptation_summary',
+        'next_step',
+    ];
+
     protected $fillable = [
         'cv_version_id',
         'company_name',

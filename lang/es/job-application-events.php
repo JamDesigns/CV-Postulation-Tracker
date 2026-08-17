@@ -41,5 +41,9 @@ return [
         'view' => 'Vista del evento',
     ],
 
+    'modal' => [
+        'content_language' => 'Idioma del contenido: :locale',
+    ],
+
     'empty' => 'Todavía no hay eventos registrados.',
 ];

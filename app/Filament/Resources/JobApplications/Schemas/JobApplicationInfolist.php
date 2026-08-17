@@ -234,15 +234,15 @@ class JobApplicationInfolist
                                 ->placeholder('-')
                                 ->copyable(),
 
-                            TextEntry::make('next_step')
-                                ->label(__('job-applications.fields.next_step'))
-                                ->placeholder('-')
-                                ->columnSpanFull(),
-
                             TextEntry::make('next_action_at')
                                 ->label(__('job-applications.fields.next_action_at'))
                                 ->date('d/m/Y')
                                 ->placeholder('-'),
+
+                            TextEntry::make('next_step')
+                                ->label(__('job-applications.fields.next_step'))
+                                ->placeholder('-')
+                                ->columnSpanFull(),
                         ])
                         ->columns(2),
 

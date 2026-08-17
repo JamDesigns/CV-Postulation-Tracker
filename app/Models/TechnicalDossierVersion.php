@@ -1,20 +1,28 @@
 <?php
+
 namespace App\Models;
 
 use App\Enums\CvLanguage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\Translatable\HasTranslations;
 
 class TechnicalDossierVersion extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = [
+        'content_snapshot',
+        'notes',
+    ];
+
     protected $fillable = [
         'name',
         'version_label',
         'language',
         'pdf_path',
         'docx_path',
-        'summary',
         'content_snapshot',
         'is_active',
         'published_at',
@@ -24,8 +32,8 @@ class TechnicalDossierVersion extends Model
     protected function casts(): array
     {
         return [
-            'language'     => CvLanguage::class,
-            'is_active'    => 'boolean',
+            'language' => CvLanguage::class,
+            'is_active' => 'boolean',
             'published_at' => 'date',
         ];
     }

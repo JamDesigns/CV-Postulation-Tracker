@@ -23,6 +23,10 @@ return [
         'form' => 'Formulaire de l’entretien',
     ],
 
+    'modal' => [
+        'content_language' => 'Langue du contenu : :locale',
+    ],
+
     'fields' => [
         'job_application_id' => 'Candidature',
         'interview_at' => 'Date de l’entretien',

@@ -260,14 +260,14 @@ class JobApplicationForm
                                     ->email()
                                     ->maxLength(255),
 
+                                DatePicker::make('next_action_at')
+                                    ->label(__('job-applications.fields.next_action_at')),
+
                                 Textarea::make('next_step')
                                     ->label(__('job-applications.fields.next_step'))
                                     ->rows(3)
                                     ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
                                     ->columnSpanFull(),
-
-                                DatePicker::make('next_action_at')
-                                    ->label(__('job-applications.fields.next_action_at')),
                             ])
                             ->columns(2),
                     ])

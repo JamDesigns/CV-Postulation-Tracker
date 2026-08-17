@@ -6,9 +6,17 @@ use App\Enums\ApplicationStatus;
 use App\Enums\JobApplicationEventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 class JobApplicationEvent extends Model
 {
+    use HasTranslations;
+
+    public array $translatable = [
+        'title',
+        'body',
+    ];
+
     protected $fillable = [
         'job_application_id',
         'type',
