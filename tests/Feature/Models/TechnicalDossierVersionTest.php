@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\TechnicalDossierVersion;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -128,4 +129,85 @@ test('it returns technical dossier content for the selected locale', function ()
         ->toBe('Technical content')
         ->and($dossier->notes)
         ->toBe('Notes in English');
+});
+
+test('it sanitizes the version label in friendly file names', function () {
+    $dossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Dosier técnico',
+        'version_label' => 'v2 / final: 2026',
+        'language' => 'spanish',
+        'is_active' => false,
+    ]);
+
+    expect($dossier->pdfFriendlyName())
+        ->toBe('Dosier_tecnico_Jose_Mosquera_SPANISH_v2_final_2026.pdf')
+        ->and($dossier->docxFriendlyName())
+        ->toBe('Dosier_tecnico_Jose_Mosquera_SPANISH_v2_final_2026.docx');
+});
+
+test('it deletes replaced technical dossier files after update', function () {
+    Storage::fake('local');
+
+    $oldPdfPath = 'technical-dossier-versions/pdf/old-dossier.pdf';
+    $oldDocxPath = 'technical-dossier-versions/docx/old-dossier.docx';
+    $newPdfPath = 'technical-dossier-versions/pdf/new-dossier.pdf';
+    $newDocxPath = 'technical-dossier-versions/docx/new-dossier.docx';
+
+    Storage::disk('local')->put($oldPdfPath, 'old pdf');
+    Storage::disk('local')->put($oldDocxPath, 'old docx');
+    Storage::disk('local')->put($newPdfPath, 'new pdf');
+    Storage::disk('local')->put($newDocxPath, 'new docx');
+
+    $dossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Replace Files Dossier',
+        'version_label' => 'v1',
+        'language' => 'spanish',
+        'is_active' => false,
+        'pdf_path' => $oldPdfPath,
+        'docx_path' => $oldDocxPath,
+    ]);
+
+    $dossier->forceFill([
+        'pdf_path' => $newPdfPath,
+        'docx_path' => $newDocxPath,
+    ])->save();
+
+    $disk = Storage::disk('local');
+
+    expect($disk->exists($oldPdfPath))
+        ->toBeFalse()
+        ->and($disk->exists($oldDocxPath))
+        ->toBeFalse()
+        ->and($disk->exists($newPdfPath))
+        ->toBeTrue()
+        ->and($disk->exists($newDocxPath))
+        ->toBeTrue();
+});
+
+test('it deletes technical dossier files when the dossier is deleted', function () {
+    Storage::fake('local');
+
+    $pdfPath = 'technical-dossier-versions/pdf/deleted-dossier.pdf';
+    $docxPath = 'technical-dossier-versions/docx/deleted-dossier.docx';
+
+    Storage::disk('local')->put($pdfPath, 'pdf');
+    Storage::disk('local')->put($docxPath, 'docx');
+
+    $dossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Deleted Files Dossier',
+        'version_label' => 'v1',
+        'language' => 'spanish',
+        'is_active' => false,
+        'pdf_path' => $pdfPath,
+        'docx_path' => $docxPath,
+    ]);
+
+    TechnicalDossierVersion::destroy($dossier->getKey());
+
+    $disk = Storage::disk('local');
+
+    expect($disk->exists($pdfPath))
+        ->toBeFalse()
+        ->and($disk->exists($docxPath))
+        ->toBeFalse();
 });

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,11 +43,55 @@ class JobApplicationEvent extends Model
     protected static function booted(): void
     {
         static::creating(function (JobApplicationEvent $event): void {
-            if ($event->status_from !== null) {
+            $jobApplication = $event->jobApplication;
+
+            if ($jobApplication === null) {
                 return;
             }
 
-            $event->status_from = $event->jobApplication?->status;
+            $hasNewerEvent = $jobApplication->events()
+                ->where('occurred_at', '>', $event->occurred_at)
+                ->exists();
+
+            $hasNewerInterview = $jobApplication->interviews()
+                ->where('interview_at', '>', $event->occurred_at)
+                ->exists();
+
+            if ($hasNewerEvent || $hasNewerInterview) {
+                if ($event->status_from === null) {
+                    $previousEvent = $jobApplication->events()
+                        ->where('occurred_at', '<', $event->occurred_at)
+                        ->whereNotNull('status_to')
+                        ->latest('occurred_at')
+                        ->first();
+
+                    $previousInterview = $jobApplication->interviews()
+                        ->where('interview_at', '<', $event->occurred_at)
+                        ->where('result', '<>', InterviewResult::Cancelled->value)
+                        ->latest('interview_at')
+                        ->first();
+
+                    if (
+                        $previousInterview !== null
+                        && (
+                            $previousEvent === null
+                            || $previousInterview->interview_at->gt($previousEvent->occurred_at)
+                        )
+                    ) {
+                        $event->status_from = $previousInterview->result === InterviewResult::Rejected
+                            ? ApplicationStatus::Rejected
+                            : ApplicationStatus::Interview;
+                    } else {
+                        $event->status_from = $previousEvent?->status_to;
+                    }
+                }
+
+                return;
+            }
+
+            if ($event->status_from === null) {
+                $event->status_from = $jobApplication->status;
+            }
         });
 
         static::created(function (JobApplicationEvent $event): void {
@@ -56,13 +101,37 @@ class JobApplicationEvent extends Model
                 return;
             }
 
+            $hasNewerEvent = $jobApplication->events()
+                ->where('id', '!=', $event->getKey())
+                ->where('occurred_at', '>', $event->occurred_at)
+                ->exists();
+
+            $hasNewerInterview = $jobApplication->interviews()
+                ->where('interview_at', '>', $event->occurred_at)
+                ->exists();
+
+            if ($hasNewerEvent || $hasNewerInterview) {
+                return;
+            }
+
+            $locale = $event->getLocale();
+
+            $jobApplication->setLocale($locale);
+
             $attributes = [
                 'next_action_at' => $event->next_action_at,
             ];
 
             if ($event->status_to instanceof ApplicationStatus) {
                 $attributes['status'] = $event->status_to;
-                $attributes['next_step'] = $event->status_to->nextStep();
+                $attributes['next_step'] = $event->status_to->nextStep($locale);
+
+                if (
+                    $event->status_to === ApplicationStatus::Sent
+                    && $jobApplication->sent_at === null
+                ) {
+                    $attributes['sent_at'] = $event->occurred_at->toDateString();
+                }
 
                 if (in_array($event->status_to, [
                     ApplicationStatus::Rejected,

@@ -11,7 +11,7 @@ enum WorkMode: string
 
     public function label(): string
     {
-        return __('enums.work_mode.' . $this->value);
+        return __('enums.work_mode.'.$this->value);
     }
 
     public static function options(): array

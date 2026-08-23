@@ -17,7 +17,7 @@ class TechnicalDossierVersionFileController extends Controller
             Storage::disk('local')->path($technicalDossierVersion->pdf_path),
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $technicalDossierVersion->pdfFriendlyName() . '"',
+                'Content-Disposition' => 'inline; filename="'.$technicalDossierVersion->pdfFriendlyName().'"',
             ],
         );
     }

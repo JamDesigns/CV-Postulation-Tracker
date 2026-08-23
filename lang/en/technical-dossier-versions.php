@@ -37,4 +37,8 @@ return [
         'created_at' => 'Created',
         'updated_at' => 'Updated',
     ],
+
+    'validation' => [
+        'duplicate' => 'A technical dossier version with the same name, version and language already exists.',
+    ],
 ];

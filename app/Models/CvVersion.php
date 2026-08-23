@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Translatable\HasTranslations;
 
 class CvVersion extends Model
@@ -28,9 +28,32 @@ class CvVersion extends Model
         'adaptation_notes',
     ];
 
-    public function jobApplications(): HasMany
+    protected static function booted(): void
     {
-        return $this->hasMany(JobApplication::class);
+        static::updated(function (CvVersion $cvVersion): void {
+            foreach (['pdf_path', 'docx_path'] as $attribute) {
+                if (! $cvVersion->wasChanged($attribute)) {
+                    continue;
+                }
+
+                $previousPath = $cvVersion->getOriginal($attribute);
+
+                if (blank($previousPath)) {
+                    continue;
+                }
+
+                Storage::disk('local')->delete($previousPath);
+            }
+        });
+
+        static::deleted(function (CvVersion $cvVersion): void {
+            Storage::disk('local')->delete(
+                array_filter([
+                    $cvVersion->pdf_path,
+                    $cvVersion->docx_path,
+                ]),
+            );
+        });
     }
 
     public function jobApplication(): HasOne

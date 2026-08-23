@@ -51,11 +51,41 @@ class Interview extends Model
                 return;
             }
 
+            $hasNewerEvent = $jobApplication->events()
+                ->where('occurred_at', '>', $interview->interview_at)
+                ->exists();
+
+            $hasNewerInterview = $jobApplication->interviews()
+                ->where('id', '!=', $interview->getKey())
+                ->where('interview_at', '>', $interview->interview_at)
+                ->exists();
+
+            if ($hasNewerEvent || $hasNewerInterview) {
+                return;
+            }
+
+            if ($interview->result === InterviewResult::Rejected) {
+                $jobApplication->forceFill([
+                    'status' => ApplicationStatus::Rejected,
+                    'next_step' => null,
+                    'next_action_at' => null,
+                ])->save();
+
+                return;
+            }
+
+            if ($interview->result === InterviewResult::Cancelled) {
+                return;
+            }
+
             $status = ApplicationStatus::Interview;
+            $locale = $interview->getLocale();
+
+            $jobApplication->setLocale($locale);
 
             $jobApplication->forceFill([
                 'status' => $status,
-                'next_step' => $status->nextStep(),
+                'next_step' => $status->nextStep($locale),
                 'next_action_at' => $interview->interview_at?->toDateString(),
             ])->save();
         });
