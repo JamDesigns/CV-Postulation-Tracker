@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\ApplicationStatus;
+use App\Enums\InterviewType;
 use App\Enums\JobApplicationEventType;
+use App\Models\CvVersion;
 use App\Models\JobApplication;
 
 test('it synchronizes the application when an event is created', function () {
@@ -29,6 +31,33 @@ test('it synchronizes the application when an event is created', function () {
         ->toBe(ApplicationStatus::Interview->nextStep())
         ->and($jobApplication->next_action_at->toDateString())
         ->toBe('2026-08-20');
+});
+
+test('it synchronizes the application next step using the event content locale', function () {
+    app()->setLocale('es');
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Locale Test Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $event = $jobApplication->events()->make([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'status_to' => ApplicationStatus::Interview,
+    ]);
+
+    $event->setLocale('en');
+    $event->setTranslation('title', 'en', 'Interview scheduled');
+    $event->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->getTranslation('next_step', 'en', false))
+        ->toBe(__('job-applications.quick_actions.next_steps.prepare_interview', [], 'en'))
+        ->and($jobApplication->getTranslation('next_step', 'es', false))
+        ->toBeNull();
 });
 
 test('it preserves the status and next step when the event has no destination status', function () {
@@ -197,4 +226,229 @@ test('it returns event content for the selected locale', function () {
         ->toBe('Manual note')
         ->and($event->body)
         ->toBe('Content in English');
+});
+
+test('it sets the application sent date when an event changes the status to sent', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Sent Event',
+        'language' => 'spanish',
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ApplicationSent,
+        'occurred_at' => '2026-08-15 10:30:00',
+        'title' => 'Application sent',
+        'status_to' => ApplicationStatus::Sent,
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->status)
+        ->toBe(ApplicationStatus::Sent)
+        ->and($jobApplication->sent_at?->toDateString())
+        ->toBe('2026-08-15');
+});
+
+test('it preserves the existing application sent date when another event changes the status to sent', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Existing Sent Date',
+        'language' => 'spanish',
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Responded,
+        'sent_at' => '2026-08-10',
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ApplicationSent,
+        'occurred_at' => '2026-08-15 10:30:00',
+        'title' => 'Application sent again',
+        'status_to' => ApplicationStatus::Sent,
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->sent_at?->toDateString())
+        ->toBe('2026-08-10');
+});
+
+test('it does not synchronize the application when an older historical event is created', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ResponseReceived,
+        'occurred_at' => '2026-08-20 10:00:00',
+        'title' => 'Response received',
+        'status_to' => ApplicationStatus::Responded,
+        'next_action_at' => '2026-08-22',
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => '2026-08-10 10:00:00',
+        'title' => 'Historical interview',
+        'status_to' => ApplicationStatus::Interview,
+        'next_action_at' => '2026-08-12',
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->status)
+        ->toBe(ApplicationStatus::Responded)
+        ->and($jobApplication->next_step)
+        ->toBe(ApplicationStatus::Responded->nextStep())
+        ->and($jobApplication->next_action_at?->toDateString())
+        ->toBe('2026-08-22');
+});
+
+test('it derives the previous status chronologically for an historical event', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Status Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ApplicationSent,
+        'occurred_at' => '2026-08-10 10:00:00',
+        'title' => 'Application sent',
+        'status_to' => ApplicationStatus::Sent,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ResponseReceived,
+        'occurred_at' => '2026-08-20 10:00:00',
+        'title' => 'Response received',
+        'status_to' => ApplicationStatus::Responded,
+    ]);
+
+    $historicalEvent = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => '2026-08-15 10:00:00',
+        'title' => 'Historical interview',
+        'status_to' => ApplicationStatus::Interview,
+    ]);
+
+    expect($historicalEvent->status_from)
+        ->toBe(ApplicationStatus::Sent);
+});
+
+test('it preserves an explicit previous status for an historical event', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Explicit Status Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ResponseReceived,
+        'occurred_at' => '2026-08-20 10:00:00',
+        'title' => 'Response received',
+        'status_to' => ApplicationStatus::Responded,
+    ]);
+
+    $historicalEvent = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => '2026-08-10 10:00:00',
+        'title' => 'Historical note',
+        'status_from' => ApplicationStatus::Sent,
+    ]);
+
+    expect($historicalEvent->status_from)
+        ->toBe(ApplicationStatus::Sent);
+});
+
+test('it does not synchronize the application when a newer interview exists', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Event With Interview Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ApplicationSent,
+        'occurred_at' => '2026-08-05 10:00:00',
+        'title' => 'Application sent',
+        'status_to' => ApplicationStatus::Sent,
+    ]);
+
+    $jobApplication->interviews()->create([
+        'interview_at' => '2026-08-20 10:30:00',
+        'interview_type' => InterviewType::Hr,
+    ]);
+
+    $historicalEvent = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ResponseReceived,
+        'occurred_at' => '2026-08-10 10:00:00',
+        'title' => 'Historical response',
+        'status_to' => ApplicationStatus::Responded,
+        'next_action_at' => '2026-08-12',
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($historicalEvent->status_from)
+        ->toBe(ApplicationStatus::Sent)
+        ->and($jobApplication->status)
+        ->toBe(ApplicationStatus::Interview)
+        ->and($jobApplication->next_action_at?->toDateString())
+        ->toBe('2026-08-20');
+});
+
+test('it derives the previous status from an earlier interview when creating an historical event', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Event After Interview Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ApplicationSent,
+        'occurred_at' => '2026-08-05 10:00:00',
+        'title' => 'Application sent',
+        'status_to' => ApplicationStatus::Sent,
+    ]);
+
+    $jobApplication->interviews()->create([
+        'interview_at' => '2026-08-10 10:30:00',
+        'interview_type' => InterviewType::Hr,
+    ]);
+
+    $jobApplication->events()->create([
+        'type' => JobApplicationEventType::TechnicalTest,
+        'occurred_at' => '2026-08-20 10:00:00',
+        'title' => 'Technical test assigned',
+        'status_to' => ApplicationStatus::TechnicalTest,
+        'next_action_at' => '2026-08-25',
+    ]);
+
+    $historicalEvent = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => '2026-08-15 10:00:00',
+        'title' => 'Historical note',
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($historicalEvent->status_from)
+        ->toBe(ApplicationStatus::Interview)
+        ->and($jobApplication->status)
+        ->toBe(ApplicationStatus::TechnicalTest)
+        ->and($jobApplication->next_action_at?->toDateString())
+        ->toBe('2026-08-25');
 });

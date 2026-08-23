@@ -37,4 +37,8 @@ return [
         'created_at' => 'Creado',
         'updated_at' => 'Actualizado',
     ],
+
+    'validation' => [
+        'duplicate' => 'Ya existe una versión del dosier técnico con el mismo nombre, versión e idioma.',
+    ],
 ];

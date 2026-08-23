@@ -74,9 +74,25 @@ class JobApplication extends Model
         });
 
         static::saving(function (JobApplication $jobApplication): void {
+            if (in_array($jobApplication->status, [
+                ApplicationStatus::Rejected,
+                ApplicationStatus::Hired,
+            ], true)) {
+                $jobApplication->next_step = null;
+                $jobApplication->next_action_at = null;
+            }
+
             if (! $jobApplication->dossier_sent) {
                 $jobApplication->technical_dossier_version_id = null;
 
+                return;
+            }
+
+            $shouldAssignTechnicalDossier = ! $jobApplication->exists
+                || $jobApplication->isDirty('dossier_sent')
+                || $jobApplication->isDirty('cv_version_id');
+
+            if (! $shouldAssignTechnicalDossier) {
                 return;
             }
 

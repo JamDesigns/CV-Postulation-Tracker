@@ -1,10 +1,12 @@
 <?php
 
+use App\Enums\ApplicationStatus;
 use App\Enums\Currency;
 use App\Enums\NextActionUrgency;
 use App\Models\CvVersion;
 use App\Models\JobApplication;
 use App\Models\TechnicalDossierVersion;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -417,4 +419,184 @@ test('it returns application content for the selected locale', function () {
         ->toBe('Adaptation summary')
         ->and($jobApplication->next_step)
         ->toBe('Prepare interview');
+});
+
+test('it preserves the technical dossier already sent when the application is updated', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Full Stack ES',
+        'language' => 'spanish',
+    ]);
+
+    $originalDossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Dosier técnico español',
+        'version_label' => 'v1',
+        'language' => 'spanish',
+        'is_active' => true,
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'dossier_sent' => true,
+    ]);
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBe($originalDossier->id);
+
+    $newDossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Dosier técnico español',
+        'version_label' => 'v2',
+        'language' => 'spanish',
+        'is_active' => true,
+    ]);
+
+    expect($newDossier->is_active)->toBeTrue()
+        ->and($originalDossier->fresh()->is_active)->toBeFalse();
+
+    $jobApplication->forceFill([
+        'recruiter_email' => 'recruiter@example.com',
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBe($originalDossier->id);
+});
+
+test('it assigns the active technical dossier when dossier sent is enabled later', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Backend ES',
+        'language' => 'spanish',
+    ]);
+
+    $activeDossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Dosier técnico backend',
+        'version_label' => 'v1',
+        'language' => 'spanish',
+        'is_active' => true,
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'Another Test Company',
+        'job_title' => 'Backend Developer',
+        'dossier_sent' => false,
+    ]);
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBeNull();
+
+    $jobApplication->forceFill([
+        'dossier_sent' => true,
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBe($activeDossier->id);
+});
+
+test('it reassigns the technical dossier when the CV changes', function () {
+    $spanishCv = CvVersion::query()->create([
+        'name' => 'CV Full Stack ES',
+        'language' => 'spanish',
+    ]);
+
+    $englishCv = CvVersion::query()->create([
+        'name' => 'CV Full Stack EN',
+        'language' => 'english',
+    ]);
+
+    $spanishDossier = TechnicalDossierVersion::query()->create([
+        'name' => 'Dosier técnico español',
+        'version_label' => 'v1',
+        'language' => 'spanish',
+        'is_active' => true,
+    ]);
+
+    $englishDossier = TechnicalDossierVersion::query()->create([
+        'name' => 'English technical dossier',
+        'version_label' => 'v1',
+        'language' => 'english',
+        'is_active' => true,
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'cv_version_id' => $spanishCv->id,
+        'company_name' => 'CV Change Company',
+        'job_title' => 'Full Stack Developer',
+        'dossier_sent' => true,
+    ]);
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBe($spanishDossier->id);
+
+    $jobApplication->forceFill([
+        'cv_version_id' => $englishCv->id,
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->technical_dossier_version_id)
+        ->toBe($englishDossier->id);
+});
+
+test('it prevents the same CV version from being assigned to multiple applications', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Unique Application',
+        'language' => 'spanish',
+    ]);
+
+    JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'First Company',
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    expect(fn () => JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_name' => 'Second Company',
+        'job_title' => 'Backend Developer',
+    ]))->toThrow(UniqueConstraintViolationException::class);
+});
+
+test('it allows multiple applications without a CV version', function () {
+    $firstApplication = JobApplication::query()->create([
+        'company_name' => 'First Pending Company',
+        'job_title' => 'Frontend Developer',
+    ]);
+
+    $secondApplication = JobApplication::query()->create([
+        'company_name' => 'Second Pending Company',
+        'job_title' => 'Backend Developer',
+    ]);
+
+    expect($firstApplication->cv_version_id)
+        ->toBeNull()
+        ->and($secondApplication->cv_version_id)
+        ->toBeNull();
+});
+
+test('it clears the next step and action date when the application reaches a final status', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Final Status Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Interview,
+        'next_step' => 'Prepare next interview',
+        'next_action_at' => '2026-08-25',
+    ]);
+
+    $jobApplication->forceFill([
+        'status' => ApplicationStatus::Rejected,
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->status)
+        ->toBe(ApplicationStatus::Rejected)
+        ->and($jobApplication->next_step)
+        ->toBeNull()
+        ->and($jobApplication->next_action_at)
+        ->toBeNull();
 });

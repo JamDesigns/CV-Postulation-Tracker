@@ -9,7 +9,7 @@ enum CvLanguage: string
 
     public function label(): string
     {
-        return __('enums.cv_language.' . $this->value);
+        return __('enums.cv_language.'.$this->value);
     }
 
     public static function options(): array

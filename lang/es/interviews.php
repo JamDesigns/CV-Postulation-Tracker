@@ -42,4 +42,8 @@ return [
         'interview_from' => 'Desde',
         'interview_until' => 'Hasta',
     ],
+
+    'validation' => [
+        'duplicate' => 'Ya existe una entrevista para esta postulación con la misma fecha y tipo.',
+    ],
 ];

@@ -42,4 +42,8 @@ return [
         'interview_from' => 'Du',
         'interview_until' => 'Au',
     ],
+
+    'validation' => [
+        'duplicate' => 'Un entretien existe déjà pour cette candidature avec la même date et le même type.',
+    ],
 ];

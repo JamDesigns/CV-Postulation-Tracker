@@ -41,10 +41,7 @@ class ApplicationStatsOverview extends StatsOverviewWidget
 
         $upcomingInterviews = Interview::query()
             ->where('interview_at', '>=', now(), 'and')
-            ->whereIn('result', [
-                InterviewResult::Pending->value,
-                InterviewResult::WaitingFeedback->value,
-            ], 'and', false)
+            ->where('result', '=', InterviewResult::Pending->value, 'and')
             ->count('*');
 
         $adaptedCvs = CvVersion::query()->count('*');

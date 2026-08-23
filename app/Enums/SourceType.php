@@ -15,7 +15,7 @@ enum SourceType: string
 
     public function label(): string
     {
-        return __('enums.source_type.' . $this->value);
+        return __('enums.source_type.'.$this->value);
     }
 
     public static function options(): array

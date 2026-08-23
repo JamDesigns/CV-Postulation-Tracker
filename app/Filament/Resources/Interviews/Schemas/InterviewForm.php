@@ -4,11 +4,16 @@ namespace App\Filament\Resources\Interviews\Schemas;
 
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
+use App\Models\Interview;
+use Closure;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Carbon;
 
 class InterviewForm
 {
@@ -39,7 +44,40 @@ class InterviewForm
 
                             DateTimePicker::make('interview_at')
                                 ->label(__('interviews.fields.interview_at'))
-                                ->seconds(false),
+                                ->seconds(false)
+                                ->rules([
+                                    fn (Get $get, $record, $livewire): Closure => function (
+                                        string $attribute,
+                                        $value,
+                                        Closure $fail
+                                    ) use ($get, $record, $livewire): void {
+                                        $jobApplicationId = $livewire instanceof RelationManager
+                                            ? $livewire->getOwnerRecord()->getKey()
+                                            : $get('job_application_id');
+
+                                        $interviewType = $get('interview_type');
+
+                                        if (blank($jobApplicationId) || blank($interviewType) || blank($value)) {
+                                            return;
+                                        }
+
+                                        $query = Interview::query()
+                                            ->where('job_application_id', $jobApplicationId)
+                                            ->where('interview_type', $interviewType)
+                                            ->where(
+                                                'interview_at',
+                                                Carbon::parse($value)->format('Y-m-d H:i:s'),
+                                            );
+
+                                        if ($record !== null) {
+                                            $query->whereKeyNot($record->getKey());
+                                        }
+
+                                        if ($query->exists()) {
+                                            $fail(__('interviews.validation.duplicate'));
+                                        }
+                                    },
+                                ]),
 
                             Select::make('interview_type')
                                 ->label(__('interviews.fields.interview_type'))

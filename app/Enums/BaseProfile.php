@@ -12,7 +12,7 @@ enum BaseProfile: string
 
     public function label(): string
     {
-        return __('enums.base_profile.' . $this->value);
+        return __('enums.base_profile.'.$this->value);
     }
 
     public static function options(): array

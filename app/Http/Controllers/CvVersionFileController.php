@@ -18,7 +18,7 @@ class CvVersionFileController extends Controller
 
         return response()->file($absolutePath, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $cvVersion->pdfFriendlyName() . '"',
+            'Content-Disposition' => 'inline; filename="'.$cvVersion->pdfFriendlyName().'"',
         ]);
     }
 

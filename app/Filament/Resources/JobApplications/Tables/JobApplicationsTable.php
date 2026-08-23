@@ -21,7 +21,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -151,13 +150,6 @@ class JobApplicationsTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                IconColumn::make('dossier_sent')
-                    ->label(__('job-applications.fields.dossier_sent'))
-                    ->boolean()
-                    ->alignCenter()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('created_at')
                     ->label(__('job-applications.fields.created_at'))
                     ->dateTime('d/m/Y H:i')
@@ -213,10 +205,16 @@ class JobApplicationsTable
                         ->icon(Heroicon::PaperAirplane)
                         ->color('success')
                         ->requiresConfirmation()
-                        ->visible(fn ($record): bool => $record->status === ApplicationStatus::Pending)
+                        ->visible(fn ($record): bool => $record->status === ApplicationStatus::Pending
+                            && $record->cv_version_id !== null)
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $nextStep = __('job-applications.quick_actions.next_steps.send_follow_up');
+                            $locale = $record->getLocale();
+                            $nextStep = __(
+                                'job-applications.quick_actions.next_steps.send_follow_up',
+                                [],
+                                $locale,
+                            );
                             $nextActionAt = today()->addDays(7);
 
                             $record->forceFill([
@@ -229,7 +227,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::ApplicationSent,
-                                __('job-application-events.types.application_sent'),
+                                __(
+                                    'job-application-events.types.application_sent',
+                                    [],
+                                    $locale,
+                                ),
                                 $nextStep,
                                 $previousStatus,
                                 ApplicationStatus::Sent,
@@ -248,7 +250,12 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $nextStep = __('job-applications.quick_actions.next_steps.review_response');
+                            $locale = $record->getLocale();
+                            $nextStep = __(
+                                'job-applications.quick_actions.next_steps.review_response',
+                                [],
+                                $locale,
+                            );
                             $nextActionAt = today()->addDays(2);
 
                             $record->forceFill([
@@ -260,7 +267,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::ResponseReceived,
-                                __('job-application-events.types.response_received'),
+                                __(
+                                    'job-application-events.types.response_received',
+                                    [],
+                                    $locale,
+                                ),
                                 $nextStep,
                                 $previousStatus,
                                 ApplicationStatus::Responded,
@@ -275,7 +286,11 @@ class JobApplicationsTable
                         ->schema([
                             Textarea::make('next_step')
                                 ->label(__('job-applications.quick_actions.fields.next_step'))
-                                ->default(__('job-applications.quick_actions.next_steps.complete_technical_test'))
+                                ->default(fn ($record): string => __(
+                                    'job-applications.quick_actions.next_steps.complete_technical_test',
+                                    [],
+                                    $record->getLocale(),
+                                ))
                                 ->required()
                                 ->rows(3),
 
@@ -296,6 +311,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -310,7 +326,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::TechnicalTest,
-                                __('job-application-events.types.technical_test'),
+                                __(
+                                    'job-application-events.types.technical_test',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 ApplicationStatus::TechnicalTest,
@@ -325,7 +345,11 @@ class JobApplicationsTable
                         ->schema([
                             Textarea::make('next_step')
                                 ->label(__('job-applications.quick_actions.fields.next_step'))
-                                ->default(__('job-applications.quick_actions.next_steps.wait_after_follow_up'))
+                                ->default(fn ($record): string => __(
+                                    'job-applications.quick_actions.next_steps.wait_after_follow_up',
+                                    [],
+                                    $record->getLocale(),
+                                ))
                                 ->required()
                                 ->rows(3),
 
@@ -347,6 +371,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -361,7 +386,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::FollowUpSent,
-                                __('job-application-events.types.follow_up_sent'),
+                                __(
+                                    'job-application-events.types.follow_up_sent',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 ApplicationStatus::FollowUpSent,
@@ -376,7 +405,11 @@ class JobApplicationsTable
                         ->schema([
                             Textarea::make('next_step')
                                 ->label(__('job-applications.quick_actions.fields.next_step'))
-                                ->default(__('job-applications.quick_actions.next_steps.review_paused_application'))
+                                ->default(fn ($record): string => __(
+                                    'job-applications.quick_actions.next_steps.review_paused_application',
+                                    [],
+                                    $record->getLocale(),
+                                ))
                                 ->required()
                                 ->rows(3),
 
@@ -398,6 +431,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -412,7 +446,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::Paused,
-                                __('job-application-events.types.paused'),
+                                __(
+                                    'job-application-events.types.paused',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 ApplicationStatus::Paused,
@@ -440,6 +478,7 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
@@ -451,7 +490,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::Rejected,
-                                __('job-application-events.types.rejected'),
+                                __(
+                                    'job-application-events.types.rejected',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 ApplicationStatus::Rejected,
@@ -476,6 +519,7 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
@@ -487,7 +531,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::Hired,
-                                __('job-application-events.types.hired'),
+                                __(
+                                    'job-application-events.types.hired',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 ApplicationStatus::Hired,
@@ -515,7 +563,11 @@ class JobApplicationsTable
 
                             Textarea::make('next_step')
                                 ->label(__('job-applications.quick_actions.fields.next_step'))
-                                ->default(__('job-applications.quick_actions.next_steps.reopened_application'))
+                                ->default(fn ($record): string => __(
+                                    'job-applications.quick_actions.next_steps.reopened_application',
+                                    [],
+                                    $record->getLocale(),
+                                ))
                                 ->required()
                                 ->rows(3),
 
@@ -534,6 +586,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
+                            $locale = $record->getLocale();
 
                             $statusTo = $data['status_to'];
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
@@ -549,7 +602,11 @@ class JobApplicationsTable
                             self::createApplicationEvent(
                                 $record,
                                 JobApplicationEventType::Reopened,
-                                __('job-application-events.types.reopened'),
+                                __(
+                                    'job-application-events.types.reopened',
+                                    [],
+                                    $locale,
+                                ),
                                 self::eventBody(null, $notes),
                                 $previousStatus,
                                 $statusTo,
@@ -576,15 +633,23 @@ class JobApplicationsTable
         ApplicationStatus|string|null $statusTo,
         $nextActionAt = null,
     ): void {
-        $record->events()->createQuietly([
+        $locale = $record->getLocale();
+
+        $event = $record->events()->make([
             'type' => $type->value,
             'occurred_at' => now(),
-            'title' => $title,
-            'body' => $body,
             'status_from' => self::statusValue($statusFrom),
             'status_to' => self::statusValue($statusTo),
             'next_action_at' => $nextActionAt,
         ]);
+
+        $event->setTranslation('title', $locale, $title);
+
+        if ($body !== null) {
+            $event->setTranslation('body', $locale, $body);
+        }
+
+        $event->saveQuietly();
     }
 
     private static function eventBody(?string $mainText, ?string $notes = null): ?string

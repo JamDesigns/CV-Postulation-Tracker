@@ -10,7 +10,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Validation\Rule;
 
 class TechnicalDossierVersionForm
 {
@@ -31,7 +34,15 @@ class TechnicalDossierVersionForm
                                 TextInput::make('version_label')
                                     ->label(__('technical-dossier-versions.fields.version_label'))
                                     ->required()
-                                    ->maxLength(50),
+                                    ->maxLength(50)
+                                    ->rule(fn (Get $get, $record) => Rule::unique('technical_dossier_versions', 'version_label')
+                                        ->where(fn (Builder $query): Builder => $query
+                                            ->where('name', $get('name'))
+                                            ->where('language', $get('language')))
+                                        ->ignore($record))
+                                    ->validationMessages([
+                                        'unique' => __('technical-dossier-versions.validation.duplicate'),
+                                    ]),
 
                                 Select::make('language')
                                     ->label(__('technical-dossier-versions.fields.language'))
