@@ -13,17 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use Spatie\Translatable\HasTranslations;
 
 class JobApplication extends Model
 {
-    use HasTranslations;
-
-    public array $translatable = [
-        'adaptation_summary',
-        'next_step',
-    ];
-
     protected $fillable = [
         'cv_version_id',
         'company_name',
@@ -36,7 +28,6 @@ class JobApplication extends Model
         'work_mode',
         'salary',
         'currency',
-        'language',
         'recruiter_name',
         'recruiter_url',
         'recruiter_email',
@@ -67,12 +58,6 @@ class JobApplication extends Model
 
     protected static function booted(): void
     {
-        static::creating(function (JobApplication $jobApplication): void {
-            if (blank($jobApplication->language)) {
-                $jobApplication->language = app()->getLocale();
-            }
-        });
-
         static::saving(function (JobApplication $jobApplication): void {
             if (in_array($jobApplication->status, [
                 ApplicationStatus::Rejected,

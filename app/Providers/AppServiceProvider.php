@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Illuminate\Support\ServiceProvider;
-use Spatie\Translatable\Facades\Translatable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Translatable::allowNullForTranslation();
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch): void {
             $switch
                 ->locales(config('locales'))

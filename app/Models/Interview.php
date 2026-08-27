@@ -7,20 +7,9 @@ use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Translatable\HasTranslations;
 
 class Interview extends Model
 {
-    use HasTranslations;
-
-    public array $translatable = [
-        'people',
-        'expected_questions',
-        'strengths_to_defend',
-        'risks_to_clarify',
-        'notes',
-    ];
-
     protected $fillable = [
         'job_application_id',
         'interview_at',
@@ -79,13 +68,10 @@ class Interview extends Model
             }
 
             $status = ApplicationStatus::Interview;
-            $locale = $interview->getLocale();
-
-            $jobApplication->setLocale($locale);
 
             $jobApplication->forceFill([
                 'status' => $status,
-                'next_step' => $status->nextStep($locale),
+                'next_step' => $status->nextStep(),
                 'next_action_at' => $interview->interview_at?->toDateString(),
             ])->save();
         });

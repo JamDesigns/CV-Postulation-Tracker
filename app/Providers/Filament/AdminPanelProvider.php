@@ -20,7 +20,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,9 +30,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->plugins([
-                SpatieTranslatablePlugin::make()
-                    ->defaultLocales(config('locales'))
-                    ->persist(),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()

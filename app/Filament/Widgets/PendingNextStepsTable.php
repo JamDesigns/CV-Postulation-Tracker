@@ -19,16 +19,14 @@ class PendingNextStepsTable extends TableWidget
 
     public function table(Table $table): Table
     {
-        $locale = app()->getLocale();
-        $nextStepColumn = "next_step->{$locale}";
 
         return $table
             ->header(view('filament.widgets.pending-next-steps-table-header'))
             ->emptyStateHeading(__('dashboard.widgets.pending_next_steps.empty'))
             ->query(
                 JobApplication::query()
-                    ->whereNotNull($nextStepColumn, 'and')
-                    ->where($nextStepColumn, '<>', '', 'and')
+                    ->whereNotNull('next_step', 'and')
+                    ->where('next_step', '<>', '', 'and')
                     ->whereNotIn('status', [
                         ApplicationStatus::Rejected->value,
                         ApplicationStatus::Hired->value,

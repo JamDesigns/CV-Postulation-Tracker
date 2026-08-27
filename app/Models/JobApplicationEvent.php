@@ -7,17 +7,9 @@ use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Translatable\HasTranslations;
 
 class JobApplicationEvent extends Model
 {
-    use HasTranslations;
-
-    public array $translatable = [
-        'title',
-        'body',
-    ];
-
     protected $fillable = [
         'job_application_id',
         'type',
@@ -114,17 +106,13 @@ class JobApplicationEvent extends Model
                 return;
             }
 
-            $locale = $event->getLocale();
-
-            $jobApplication->setLocale($locale);
-
             $attributes = [
                 'next_action_at' => $event->next_action_at,
             ];
 
             if ($event->status_to instanceof ApplicationStatus) {
                 $attributes['status'] = $event->status_to;
-                $attributes['next_step'] = $event->status_to->nextStep($locale);
+                $attributes['next_step'] = $event->status_to->nextStep();
 
                 if (
                     $event->status_to === ApplicationStatus::Sent

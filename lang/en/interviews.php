@@ -23,10 +23,6 @@ return [
         'form' => 'Interview form',
     ],
 
-    'modal' => [
-        'content_language' => 'Content language: :locale',
-    ],
-
     'fields' => [
         'job_application_id' => 'Job application',
         'interview_at' => 'Interview date',

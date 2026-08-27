@@ -15,12 +15,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 
 class TechnicalDossierVersionResource extends Resource
 {
-    use Translatable;
-
     protected static ?string $model = TechnicalDossierVersion::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;

@@ -9,7 +9,6 @@
         "php": "^8.3",
         "bezhansalleh/filament-language-switch": "^5.0",
         "filament/filament": "^4.0",
-        "lara-zeus/spatie-translatable": "^1.0",
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0"
     },

@@ -16,17 +16,9 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use LaraZeus\SpatieTranslatable\Resources\RelationManagers\Concerns\Translatable;
-use Livewire\Attributes\Reactive;
 
 class InterviewsRelationManager extends RelationManager
 {
-    use Translatable;
-
-    /** @disregard P1110 Required to inherit the parent locale reactively. */
-    #[Reactive]
-    public ?string $activeLocale = null;
-
     protected static string $relationship = 'interviews';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
@@ -83,14 +75,6 @@ class InterviewsRelationManager extends RelationManager
                 CreateAction::make()
                     ->label(__('interviews.actions.create'))
                     ->modalHeading(__('interviews.actions.create'))
-                    ->modalDescription(
-                        fn (): string => __('interviews.modal.content_language', [
-                            'locale' => ucfirst((string) \Locale::getDisplayLanguage(
-                                $this->activeLocale ?? app()->getLocale(),
-                                app()->getLocale(),
-                            )),
-                        ])
-                    )
                     ->after(fn () => $this
                         ->dispatch('job-application-updated')
                         ->to(ViewJobApplication::class)),
@@ -99,15 +83,7 @@ class InterviewsRelationManager extends RelationManager
                 ActionGroup::make([
                     ViewAction::make()
                         ->modalHeading(__('interviews.actions.view')),
-                    EditAction::make()
-                        ->modalDescription(
-                            fn (): string => __('interviews.modal.content_language', [
-                                'locale' => ucfirst((string) \Locale::getDisplayLanguage(
-                                    $this->activeLocale ?? app()->getLocale(),
-                                    app()->getLocale(),
-                                )),
-                            ])
-                        ),
+                    EditAction::make(),
                     DeleteAction::make(),
                 ]),
             ])
