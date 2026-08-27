@@ -5,18 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Translatable\HasTranslations;
 
 class CvVersion extends Model
 {
-    use HasTranslations;
-
-    public array $translatable = [
-        'highlighted_stack',
-        'highlighted_experience',
-        'adaptation_notes',
-    ];
-
     protected $fillable = [
         'name',
         'language',

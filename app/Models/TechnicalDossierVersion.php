@@ -7,17 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Spatie\Translatable\HasTranslations;
 
 class TechnicalDossierVersion extends Model
 {
-    use HasTranslations;
-
-    public array $translatable = [
-        'content_snapshot',
-        'notes',
-    ];
-
     protected $fillable = [
         'name',
         'version_label',

@@ -23,10 +23,6 @@ return [
         'form' => 'Formulario de entrevista',
     ],
 
-    'modal' => [
-        'content_language' => 'Idioma del contenido: :locale',
-    ],
-
     'fields' => [
         'job_application_id' => 'Postulación',
         'interview_at' => 'Fecha de entrevista',

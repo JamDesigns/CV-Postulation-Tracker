@@ -209,7 +209,7 @@ class JobApplicationsTable
                             && $record->cv_version_id !== null)
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
                             $nextStep = __(
                                 'job-applications.quick_actions.next_steps.send_follow_up',
                                 [],
@@ -250,7 +250,7 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
                             $nextStep = __(
                                 'job-applications.quick_actions.next_steps.review_response',
                                 [],
@@ -289,7 +289,7 @@ class JobApplicationsTable
                                 ->default(fn ($record): string => __(
                                     'job-applications.quick_actions.next_steps.complete_technical_test',
                                     [],
-                                    $record->getLocale(),
+                                    app()->getLocale(),
                                 ))
                                 ->required()
                                 ->rows(3),
@@ -311,7 +311,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -348,7 +348,7 @@ class JobApplicationsTable
                                 ->default(fn ($record): string => __(
                                     'job-applications.quick_actions.next_steps.wait_after_follow_up',
                                     [],
-                                    $record->getLocale(),
+                                    app()->getLocale(),
                                 ))
                                 ->required()
                                 ->rows(3),
@@ -371,7 +371,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -408,7 +408,7 @@ class JobApplicationsTable
                                 ->default(fn ($record): string => __(
                                     'job-applications.quick_actions.next_steps.review_paused_application',
                                     [],
-                                    $record->getLocale(),
+                                    app()->getLocale(),
                                 ))
                                 ->required()
                                 ->rows(3),
@@ -431,7 +431,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
 
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
@@ -478,7 +478,7 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
@@ -519,7 +519,7 @@ class JobApplicationsTable
                         ], true))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
                             $notes = trim((string) ($data['notes_to_append'] ?? ''));
 
                             $record->forceFill([
@@ -566,7 +566,7 @@ class JobApplicationsTable
                                 ->default(fn ($record): string => __(
                                     'job-applications.quick_actions.next_steps.reopened_application',
                                     [],
-                                    $record->getLocale(),
+                                    app()->getLocale(),
                                 ))
                                 ->required()
                                 ->rows(3),
@@ -586,7 +586,7 @@ class JobApplicationsTable
                         ->modalSubmitAction(fn (Action $action): Action => $action->color('primary'))
                         ->action(function ($record, array $data): void {
                             $previousStatus = $record->status;
-                            $locale = $record->getLocale();
+                            $locale = app()->getLocale();
 
                             $statusTo = $data['status_to'];
                             $nextStep = trim((string) ($data['next_step'] ?? ''));
@@ -633,21 +633,15 @@ class JobApplicationsTable
         ApplicationStatus|string|null $statusTo,
         $nextActionAt = null,
     ): void {
-        $locale = $record->getLocale();
-
         $event = $record->events()->make([
             'type' => $type->value,
             'occurred_at' => now(),
+            'title' => $title,
+            'body' => $body,
             'status_from' => self::statusValue($statusFrom),
             'status_to' => self::statusValue($statusTo),
             'next_action_at' => $nextActionAt,
         ]);
-
-        $event->setTranslation('title', $locale, $title);
-
-        if ($body !== null) {
-            $event->setTranslation('body', $locale, $body);
-        }
 
         $event->saveQuietly();
     }

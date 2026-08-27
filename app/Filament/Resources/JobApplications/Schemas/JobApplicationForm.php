@@ -26,7 +26,6 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class JobApplicationForm
@@ -223,19 +222,7 @@ class JobApplicationForm
                                     ->createOptionUsing(function (Select $component, array $data, Schema $schema) {
                                         $record = $component->getRelationship()->newModelInstance();
 
-                                        $locale = $schema->getLivewire()->getActiveActionsLocale()
-                                            ?? app()->getLocale();
-
-                                        $translatableAttributes = $record->getTranslatableAttributes();
-
-                                        $record->fill(
-                                            Arr::except($data, $translatableAttributes),
-                                        );
-
-                                        foreach (Arr::only($data, $translatableAttributes) as $attribute => $value) {
-                                            $record->setTranslation($attribute, $locale, $value);
-                                        }
-
+                                        $record->fill($data);
                                         $record->save();
 
                                         $schema->model($record)->saveRelationships();
@@ -245,19 +232,18 @@ class JobApplicationForm
                                     ->createOptionAction(fn (Action $action): Action => $action
                                         ->label(__('cv-versions.actions.create'))
                                         ->modalHeading(__('cv-versions.actions.create')))
-                                    ->required(fn (Get $get): bool => filled($get('sent_at'))
-                                                                            || in_array(
-                                                                                ApplicationStatus::tryFrom((string) $get('status')),
-                                                                                [
-                                                                                    ApplicationStatus::Sent,
-                                                                                    ApplicationStatus::Responded,
-                                                                                    ApplicationStatus::Interview,
-                                                                                    ApplicationStatus::TechnicalTest,
-                                                                                    ApplicationStatus::FollowUpSent,
-                                                                                    ApplicationStatus::Hired,
-                                                                                ],
-                                                                                true,
-                                                                            ))
+                                    ->required(fn (Get $get): bool => filled($get('sent_at')) || in_array(
+                                        ApplicationStatus::tryFrom((string) $get('status')),
+                                        [
+                                            ApplicationStatus::Sent,
+                                            ApplicationStatus::Responded,
+                                            ApplicationStatus::Interview,
+                                            ApplicationStatus::TechnicalTest,
+                                            ApplicationStatus::FollowUpSent,
+                                            ApplicationStatus::Hired,
+                                        ],
+                                        true,
+                                    ))
                                     ->live(),
 
                                 Grid::make(1)

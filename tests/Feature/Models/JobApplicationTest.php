@@ -199,12 +199,10 @@ test('it returns upcoming urgency when the next action date is in the future', f
         ->toBe(NextActionUrgency::Upcoming);
 });
 
-test('it stores the locale and exchange rate snapshot when created with a salary', function () use ($ecbXml) {
+test('it stores the exchange rate snapshot when created with a salary', function () use ($ecbXml) {
     Http::fake([
         'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
     ]);
-
-    app()->setLocale('en');
 
     $jobApplication = JobApplication::query()->create([
         'company_name' => 'Test Company',
@@ -217,9 +215,10 @@ test('it stores the locale and exchange rate snapshot when created with a salary
         ->where('currency', Currency::GBP->value)
         ->firstOrFail();
 
-    expect($jobApplication->language)->toBe('en')
-        ->and((float) $gbpRate->rate)->toBe(0.6666666667)
-        ->and($gbpRate->rate_date->toDateString())->toBe('2026-08-13');
+    expect((float) $gbpRate->rate)
+        ->toBe(0.6666666667)
+        ->and($gbpRate->rate_date->toDateString())
+        ->toBe('2026-08-13');
 
     assertDatabaseCount('job_application_exchange_rates', 3);
 });
@@ -352,73 +351,6 @@ test('it clears the snapshot when the salary is removed', function () use ($ecbX
     ])->save();
 
     assertDatabaseCount('job_application_exchange_rates', 0);
-});
-
-test('it stores translations for application content fields', function () {
-    $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
-        'job_title' => 'Full Stack Developer',
-    ]);
-
-    $jobApplication
-        ->setTranslations('adaptation_summary', [
-            'es' => 'Resumen de adaptación',
-            'en' => 'Adaptation summary',
-            'fr' => 'Résumé de l’adaptation',
-        ])
-        ->setTranslations('next_step', [
-            'es' => 'Preparar entrevista',
-            'en' => 'Prepare interview',
-            'fr' => 'Préparer l’entretien',
-        ])
-        ->save();
-
-    $jobApplication->refresh();
-
-    expect($jobApplication->getTranslation('adaptation_summary', 'es', false))
-        ->toBe('Resumen de adaptación')
-        ->and($jobApplication->getTranslation('adaptation_summary', 'en', false))
-        ->toBe('Adaptation summary')
-        ->and($jobApplication->getTranslation('adaptation_summary', 'fr', false))
-        ->toBe('Résumé de l’adaptation')
-        ->and($jobApplication->getTranslation('next_step', 'es', false))
-        ->toBe('Preparar entrevista')
-        ->and($jobApplication->getTranslation('next_step', 'en', false))
-        ->toBe('Prepare interview')
-        ->and($jobApplication->getTranslation('next_step', 'fr', false))
-        ->toBe('Préparer l’entretien');
-});
-
-test('it returns application content for the selected locale', function () {
-    $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
-        'job_title' => 'Full Stack Developer',
-    ]);
-
-    $jobApplication
-        ->setTranslations('adaptation_summary', [
-            'es' => 'Resumen de adaptación',
-            'en' => 'Adaptation summary',
-        ])
-        ->setTranslations('next_step', [
-            'es' => 'Preparar entrevista',
-            'en' => 'Prepare interview',
-        ])
-        ->save();
-
-    $jobApplication->setLocale('es');
-
-    expect($jobApplication->adaptation_summary)
-        ->toBe('Resumen de adaptación')
-        ->and($jobApplication->next_step)
-        ->toBe('Preparar entrevista');
-
-    $jobApplication->setLocale('en');
-
-    expect($jobApplication->adaptation_summary)
-        ->toBe('Adaptation summary')
-        ->and($jobApplication->next_step)
-        ->toBe('Prepare interview');
 });
 
 test('it preserves the technical dossier already sent when the application is updated', function () {
