@@ -273,19 +273,6 @@ class JobApplicationForm
 
                         Tabs\Tab::make(__('job-applications.sections.follow_up'))
                             ->schema([
-                                TextInput::make('recruiter_name')
-                                    ->label(__('job-applications.fields.recruiter_name'))
-                                    ->maxLength(255),
-
-                                TextInput::make('recruiter_url')
-                                    ->label(__('job-applications.fields.recruiter_url'))
-                                    ->url(),
-
-                                TextInput::make('recruiter_email')
-                                    ->label(__('job-applications.fields.recruiter_email'))
-                                    ->email()
-                                    ->maxLength(255),
-
                                 DatePicker::make('next_action_at')
                                     ->label(__('job-applications.fields.next_action_at')),
 

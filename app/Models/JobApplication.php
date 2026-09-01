@@ -11,6 +11,7 @@ use App\Enums\WorkMode;
 use App\Services\ExchangeRateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -28,9 +29,6 @@ class JobApplication extends Model
         'work_mode',
         'salary',
         'currency',
-        'recruiter_name',
-        'recruiter_url',
-        'recruiter_email',
         'main_stack',
         'dossier_sent',
         'technical_dossier_version_id',
@@ -198,5 +196,20 @@ class JobApplication extends Model
     public function exchangeRates(): HasMany
     {
         return $this->hasMany(JobApplicationExchangeRate::class);
+    }
+
+    public function contacts(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class)
+            ->using(JobApplicationContact::class)
+            ->withPivot([
+                'id',
+                'role',
+                'is_primary',
+                'previous_primary_contact_id',
+                'source',
+                'context',
+            ])
+            ->withTimestamps();
     }
 }

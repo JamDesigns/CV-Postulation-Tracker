@@ -3,8 +3,10 @@
 use App\Enums\ApplicationStatus;
 use App\Enums\InterviewType;
 use App\Enums\JobApplicationEventType;
+use App\Models\Contact;
 use App\Models\CvVersion;
 use App\Models\JobApplication;
+use Illuminate\Validation\ValidationException;
 
 test('it synchronizes the application when an event is created', function () {
     $jobApplication = JobApplication::query()->create([
@@ -345,4 +347,144 @@ test('it derives the previous status from an earlier interview when creating an 
         ->toBe(ApplicationStatus::TechnicalTest)
         ->and($jobApplication->next_action_at?->toDateString())
         ->toBe('2026-08-25');
+});
+
+test('it allows an event to reference a contact attached to its application', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Contact Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $contact = Contact::query()->create([
+        'name' => 'Attached Contact',
+    ]);
+
+    $jobApplication->contacts()->attach($contact->id);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => 'Contact event',
+        'contact_id' => $contact->id,
+    ]);
+
+    expect($event->contact_id)
+        ->toBe($contact->id)
+        ->and($event->contact?->is($contact))
+        ->toBeTrue();
+});
+
+test('it rejects a contact that is not attached to the event application', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Invalid Contact Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $contact = Contact::query()->create([
+        'name' => 'Unattached Contact',
+    ]);
+
+    expect(fn () => $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => 'Invalid contact event',
+        'contact_id' => $contact->id,
+    ]))->toThrow(ValidationException::class);
+});
+
+test('it rejects changing an event contact to one not attached to its application', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Changed Contact Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $attachedContact = Contact::query()->create([
+        'name' => 'Attached Contact',
+    ]);
+
+    $unattachedContact = Contact::query()->create([
+        'name' => 'Unattached Contact',
+    ]);
+
+    $jobApplication->contacts()->attach($attachedContact->id);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => 'Original contact event',
+        'contact_id' => $attachedContact->id,
+    ]);
+
+    $event->contact_id = $unattachedContact->id;
+
+    expect(fn () => $event->save())
+        ->toThrow(ValidationException::class);
+});
+
+test('it allows an historical event to be edited after its contact is detached', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Historical Contact Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $contact = Contact::query()->create([
+        'name' => 'Historical Contact',
+    ]);
+
+    $jobApplication->contacts()->attach($contact->id);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => 'Original historical event',
+        'contact_id' => $contact->id,
+    ]);
+
+    $jobApplication->contacts()->detach($contact->id);
+
+    $event->title = 'Updated historical event';
+    $event->save();
+
+    $event->refresh();
+
+    expect($event->title)
+        ->toBe('Updated historical event')
+        ->and($event->contact_id)
+        ->toBe($contact->id);
+});
+
+test('it preserves an event and clears its contact when the contact is deleted', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Deleted Contact Event Company',
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $contact = Contact::query()->create([
+        'name' => 'Deleted Contact',
+    ]);
+
+    $jobApplication->contacts()->attach($contact->id);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::ManualNote,
+        'occurred_at' => now(),
+        'title' => 'Event with deleted contact',
+        'contact_id' => $contact->id,
+    ]);
+
+    $eventId = $event->id;
+
+    $contact->delete();
+
+    $event = $jobApplication->events()->findOrFail($eventId);
+
+    expect($event->exists)
+        ->toBeTrue()
+        ->and($event->contact_id)
+        ->toBeNull();
 });

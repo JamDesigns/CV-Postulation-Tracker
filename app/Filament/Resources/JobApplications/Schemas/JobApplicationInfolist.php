@@ -218,22 +218,6 @@ class JobApplicationInfolist
 
                     Tabs\Tab::make(__('job-applications.sections.follow_up'))
                         ->schema([
-                            TextEntry::make('recruiter_name')
-                                ->label(__('job-applications.fields.recruiter_name'))
-                                ->placeholder('-'),
-
-                            TextEntry::make('recruiter_url')
-                                ->label(__('job-applications.fields.recruiter_url'))
-                                ->placeholder('-')
-                                ->url(fn (?string $state): ?string => $state)
-                                ->openUrlInNewTab()
-                                ->copyable(),
-
-                            TextEntry::make('recruiter_email')
-                                ->label(__('job-applications.fields.recruiter_email'))
-                                ->placeholder('-')
-                                ->copyable(),
-
                             TextEntry::make('next_action_at')
                                 ->label(__('job-applications.fields.next_action_at'))
                                 ->date('d/m/Y')

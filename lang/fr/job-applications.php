@@ -27,9 +27,6 @@ return [
         'salary' => 'Salaire',
         'currency' => 'Devise',
         'language' => 'Langue',
-        'recruiter_name' => 'Recruteur',
-        'recruiter_url' => 'URL du recruteur',
-        'recruiter_email' => 'E-mail du recruteur',
         'main_stack' => 'Stack principale',
         'cv_version_id' => 'CV envoyé',
         'dossier_sent' => 'Dossier',
@@ -65,6 +62,7 @@ return [
         'reject_application' => 'Rejeter la candidature',
         'mark_as_hired' => 'Marquer comme embauché',
         'reopen_application' => 'Rouvrir la candidature',
+        'view' => 'Voir',
     ],
 
     'quick_actions' => [

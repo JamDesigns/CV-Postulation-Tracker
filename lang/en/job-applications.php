@@ -27,9 +27,6 @@ return [
         'salary' => 'Salary',
         'currency' => 'Currency',
         'language' => 'Language',
-        'recruiter_name' => 'Recruiter',
-        'recruiter_url' => 'Recruiter URL',
-        'recruiter_email' => 'Recruiter email',
         'main_stack' => 'Main stack',
         'cv_version_id' => 'Submitted CV',
         'dossier_sent' => 'Dossier',
@@ -65,6 +62,7 @@ return [
         'reject_application' => 'Reject application',
         'mark_as_hired' => 'Mark as hired',
         'reopen_application' => 'Reopen application',
+        'view' => 'View',
     ],
 
     'quick_actions' => [

@@ -145,11 +145,6 @@ class JobApplicationsTable
                     ->url(fn ($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('recruiter_name')
-                    ->label(__('job-applications.fields.recruiter_name'))
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('created_at')
                     ->label(__('job-applications.fields.created_at'))
                     ->dateTime('d/m/Y H:i')
