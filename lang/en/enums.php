@@ -60,4 +60,21 @@ return [
         'waiting_feedback' => 'Awaiting feedback',
         'cancelled' => 'Cancelled',
     ],
+
+    'application_contact_role' => [
+        'recruiter' => 'Recruiter',
+        'hiring_manager' => 'Hiring manager',
+        'hr' => 'HR',
+        'technical_interviewer' => 'Technical interviewer',
+        'other' => 'Other',
+    ],
+
+    'application_contact_source' => [
+        'linkedin' => 'LinkedIn',
+        'email' => 'Email',
+        'job_offer' => 'Job offer',
+        'company_website' => 'Company website',
+        'referral' => 'Referral',
+        'other' => 'Other',
+    ],
 ];

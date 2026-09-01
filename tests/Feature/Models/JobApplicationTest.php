@@ -37,22 +37,6 @@ afterEach(function () {
     app()->setLocale(config('app.locale'));
 });
 
-test('it stores the recruiter email', function () {
-    $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
-        'job_title' => 'Full Stack Developer',
-        'recruiter_email' => 'recruiter@example.com',
-    ]);
-
-    expect($jobApplication->recruiter_email)
-        ->toBe('recruiter@example.com');
-
-    assertDatabaseHas('job_applications', [
-        'id' => $jobApplication->id,
-        'recruiter_email' => 'recruiter@example.com',
-    ]);
-});
-
 test('it removes the technical dossier when dossier sent is false', function () {
     $technicalDossierVersion = TechnicalDossierVersion::query()->create([
         'name' => 'Dosier técnico español',
@@ -387,7 +371,7 @@ test('it preserves the technical dossier already sent when the application is up
         ->and($originalDossier->fresh()->is_active)->toBeFalse();
 
     $jobApplication->forceFill([
-        'recruiter_email' => 'recruiter@example.com',
+        'location' => 'Barcelona',
     ])->save();
 
     $jobApplication->refresh();

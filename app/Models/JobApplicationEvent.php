@@ -7,11 +7,13 @@ use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Validation\ValidationException;
 
 class JobApplicationEvent extends Model
 {
     protected $fillable = [
         'job_application_id',
+        'contact_id',
         'type',
         'occurred_at',
         'title',
@@ -34,6 +36,37 @@ class JobApplicationEvent extends Model
 
     protected static function booted(): void
     {
+        static::saving(function (JobApplicationEvent $event): void {
+            if (blank($event->contact_id)) {
+                return;
+            }
+
+            $shouldValidateContact = ! $event->exists
+                || $event->isDirty('contact_id')
+                || $event->isDirty('job_application_id');
+
+            if (! $shouldValidateContact) {
+                return;
+            }
+
+            if (blank($event->job_application_id)) {
+                return;
+            }
+
+            $contactIsAttached = JobApplicationContact::query()
+                ->where('job_application_id', $event->job_application_id)
+                ->where('contact_id', $event->contact_id)
+                ->exists();
+
+            if ($contactIsAttached) {
+                return;
+            }
+
+            throw ValidationException::withMessages([
+                'contact_id' => __('contacts.validation.not_attached_to_application'),
+            ]);
+        });
+
         static::creating(function (JobApplicationEvent $event): void {
             $jobApplication = $event->jobApplication;
 
@@ -136,5 +169,10 @@ class JobApplicationEvent extends Model
     public function jobApplication(): BelongsTo
     {
         return $this->belongsTo(JobApplication::class);
+    }
+
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
     }
 }

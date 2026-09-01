@@ -60,4 +60,21 @@ return [
         'waiting_feedback' => 'Esperando feedback',
         'cancelled' => 'Cancelada',
     ],
+
+    'application_contact_role' => [
+        'recruiter' => 'Recruiter',
+        'hiring_manager' => 'Responsable de contratación',
+        'hr' => 'RRHH',
+        'technical_interviewer' => 'Entrevistador técnico',
+        'other' => 'Otro',
+    ],
+
+    'application_contact_source' => [
+        'linkedin' => 'LinkedIn',
+        'email' => 'Email',
+        'job_offer' => 'Oferta de empleo',
+        'company_website' => 'Web de empresa',
+        'referral' => 'Referencia',
+        'other' => 'Otro',
+    ],
 ];

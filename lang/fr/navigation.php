@@ -9,6 +9,7 @@ return [
 
     'items' => [
         'job_applications' => 'Candidatures',
+        'contacts' => 'Contacts',
         'cv_versions' => 'CV adaptés',
         'interviews' => 'Entretiens',
     ],

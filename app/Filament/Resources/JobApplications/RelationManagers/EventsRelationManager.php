@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use App\Filament\Resources\JobApplications\Pages\ViewJobApplication;
+use App\Models\Contact;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -23,6 +24,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -127,7 +129,32 @@ class EventsRelationManager extends RelationManager
                 TextInput::make('title')
                     ->label(__('job-application-events.fields.title'))
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+
+                Select::make('contact_id')
+                    ->label(__('contacts.model_label'))
+                    ->relationship(
+                        name: 'contact',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query): Builder => $query
+                            ->whereHas(
+                                'jobApplications',
+                                fn (Builder $query): Builder => $query
+                                    ->whereKey($this->getOwnerRecord()->getKey()),
+                            ),
+                    )
+                    ->getOptionLabelFromRecordUsing(
+                        fn (Contact $record): string => $record->display_name,
+                    )
+                    ->searchable([
+                        'name',
+                        'organization',
+                        'email',
+                        'url',
+                    ])
+                    ->preload()
+                    ->nullable(),
 
                 DatePicker::make('next_action_at')
                     ->label(__('job-application-events.fields.next_action_at')),
@@ -186,6 +213,12 @@ class EventsRelationManager extends RelationManager
                     ->searchable()
                     ->wrap()
                     ->lineClamp(2),
+
+                TextColumn::make('contact.display_name')
+                    ->label(__('contacts.model_label'))
+                    ->placeholder('-')
+                    ->wrap()
+                    ->toggleable(),
 
                 TextColumn::make('body')
                     ->label(__('job-application-events.fields.body'))

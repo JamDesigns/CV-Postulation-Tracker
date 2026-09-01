@@ -116,8 +116,7 @@ class InterviewForm
                                 ->rows(3)
                                 ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
                                 ->columnSpanFull(),
-                        ])
-                        ->columns(2),
+                        ]),
 
                     Tabs\Tab::make(__('interviews.sections.result'))
                         ->schema([

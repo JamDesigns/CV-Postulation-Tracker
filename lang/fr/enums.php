@@ -60,4 +60,21 @@ return [
         'waiting_feedback' => 'En attente de retour',
         'cancelled' => 'Annulé',
     ],
+
+    'application_contact_role' => [
+        'recruiter' => 'Recruteur',
+        'hiring_manager' => 'Responsable du recrutement',
+        'hr' => 'RH',
+        'technical_interviewer' => 'Interviewer technique',
+        'other' => 'Autre',
+    ],
+
+    'application_contact_source' => [
+        'linkedin' => 'LinkedIn',
+        'email' => 'E-mail',
+        'job_offer' => 'Offre d’emploi',
+        'company_website' => 'Site de l’entreprise',
+        'referral' => 'Recommandation',
+        'other' => 'Autre',
+    ],
 ];

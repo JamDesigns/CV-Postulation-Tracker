@@ -27,9 +27,6 @@ return [
         'salary' => 'Salario',
         'currency' => 'Moneda',
         'language' => 'Idioma',
-        'recruiter_name' => 'Recruiter',
-        'recruiter_url' => 'URL del recruiter',
-        'recruiter_email' => 'Email del recruiter',
         'main_stack' => 'Stack principal',
         'cv_version_id' => 'CV enviado',
         'dossier_sent' => 'Dosier',
@@ -65,6 +62,7 @@ return [
         'reject_application' => 'Descartar candidatura',
         'mark_as_hired' => 'Marcar como contratada',
         'reopen_application' => 'Reabrir candidatura',
+        'view' => 'Ver',
     ],
 
     'quick_actions' => [
