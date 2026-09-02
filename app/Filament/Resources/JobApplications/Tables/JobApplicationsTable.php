@@ -102,7 +102,7 @@ class JobApplicationsTable
                 TextColumn::make('salary')
                     ->label(__('job-applications.fields.salary'))
                     ->state(function (JobApplication $record): ?string {
-                        if ($record->salary === null) {
+                        if ($record->salary_min === null) {
                             return null;
                         }
 
@@ -110,13 +110,30 @@ class JobApplicationsTable
                             ? $record->currency
                             : Currency::tryFrom((string) $record->currency);
 
-                        return $currency === null
-                            ? (string) $record->salary
-                            : CurrencyFormatter::format($record->salary, $currency);
+                        if ($currency === null) {
+                            return $record->salary_max === null
+                                ? (string) $record->salary_min
+                                : "{$record->salary_min} - {$record->salary_max}";
+                        }
+
+                        $salaryMin = CurrencyFormatter::format(
+                            $record->salary_min,
+                            $currency,
+                        );
+
+                        if ($record->salary_max === null) {
+                            return $salaryMin;
+                        }
+
+                        $salaryMax = CurrencyFormatter::format(
+                            $record->salary_max,
+                            $currency,
+                        );
+
+                        return "{$salaryMin} - {$salaryMax}";
                     })
                     ->placeholder('-')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(query: fn ($query, string $direction) => $query->orderBy('salary_min', $direction)),
 
                 TextColumn::make('cvVersion.name')
                     ->label(__('job-applications.fields.cv_version_id'))

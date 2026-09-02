@@ -262,21 +262,32 @@ class JobApplicationInfolist
     {
         $currency = self::currencyFor($jobApplication);
 
-        if ($jobApplication->salary === null || $currency === null) {
+        if ($jobApplication->salary_min === null || $currency === null) {
             return null;
         }
 
-        return CurrencyFormatter::format(
-            $jobApplication->salary,
+        $salaryMin = CurrencyFormatter::format(
+            $jobApplication->salary_min,
             $currency,
         );
+
+        if ($jobApplication->salary_max === null) {
+            return $salaryMin;
+        }
+
+        $salaryMax = CurrencyFormatter::format(
+            $jobApplication->salary_max,
+            $currency,
+        );
+
+        return "{$salaryMin} – {$salaryMax}";
     }
 
     private static function shouldShowSalaryConversion(JobApplication $jobApplication): bool
     {
         $currency = self::currencyFor($jobApplication);
 
-        return $jobApplication->salary !== null
+        return $jobApplication->salary_min !== null
             && $currency !== null
             && $currency !== Currency::localForLocale();
     }
@@ -290,6 +301,7 @@ class JobApplicationInfolist
         }
 
         $targetCurrency = Currency::localForLocale();
+
         $rate = app(ExchangeRateService::class)->rateFor(
             $jobApplication,
             $sourceCurrency,
@@ -300,14 +312,25 @@ class JobApplicationInfolist
             return __('job-applications.salary_conversion.rate_unavailable');
         }
 
+        $salaryMin = CurrencyFormatter::format(
+            (float) $jobApplication->salary_min * $rate,
+            $targetCurrency,
+        );
+
+        $salaryMax = $jobApplication->salary_max !== null
+            ? CurrencyFormatter::format(
+                (float) $jobApplication->salary_max * $rate,
+                $targetCurrency,
+            )
+            : null;
+
+        $amount = $salaryMax === null
+            ? $salaryMin
+            : "{$salaryMin} – {$salaryMax}";
+
         return __(
             'job-applications.salary_conversion.equivalent',
-            [
-                'amount' => CurrencyFormatter::format(
-                    (float) $jobApplication->salary * $rate,
-                    $targetCurrency,
-                ),
-            ],
+            ['amount' => $amount],
         );
     }
 }
