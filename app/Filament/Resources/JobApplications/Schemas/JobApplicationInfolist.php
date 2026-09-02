@@ -12,7 +12,6 @@ use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
@@ -106,16 +105,18 @@ class JobApplicationInfolist
 
                     Tabs\Tab::make(__('job-applications.sections.candidate_materials'))
                         ->schema([
-                            Grid::make(3)
+                            Section::make(__('job-applications.fields.cv_version_id'))
                                 ->schema([
                                     TextEntry::make('cvVersion.name')
-                                        ->label(__('job-applications.fields.cv_version_id'))
+                                        ->label(__('cv-versions.fields.name'))
                                         ->placeholder('-'),
 
                                     TextEntry::make('cv_pdf_file')
                                         ->label(__('cv-versions.fields.pdf_path'))
                                         ->placeholder('-')
-                                        ->state(fn ($record): ?string => $record->cvVersion?->pdf_path ? $record->cvVersion->pdfFriendlyName() : null)
+                                        ->state(fn ($record): ?string => $record->cvVersion?->pdf_path
+                                                ? $record->cvVersion->pdfFriendlyName()
+                                                : null)
                                         ->prefixAction(
                                             Action::make('openCvPdf')
                                                 ->label(__('cv-versions.actions.open_pdf'))
@@ -123,7 +124,9 @@ class JobApplicationInfolist
                                                 ->iconButton()
                                                 ->tooltip(__('cv-versions.actions.open_pdf'))
                                                 ->color('primary')
-                                                ->url(fn ($record): ?string => $record->cvVersion?->pdf_path ? route('filament.admin.cv-versions.pdf', $record->cvVersion) : null)
+                                                ->url(fn ($record): ?string => $record->cvVersion?->pdf_path
+                                                        ? route('filament.admin.cv-versions.pdf', $record->cvVersion)
+                                                        : null)
                                                 ->openUrlInNewTab()
                                                 ->visible(fn ($record): bool => filled($record->cvVersion?->pdf_path)),
                                         )
@@ -132,7 +135,9 @@ class JobApplicationInfolist
                                     TextEntry::make('cv_docx_file')
                                         ->label(__('cv-versions.fields.docx_path'))
                                         ->placeholder('-')
-                                        ->state(fn ($record): ?string => $record->cvVersion?->docx_path ? $record->cvVersion->docxFriendlyName() : null)
+                                        ->state(fn ($record): ?string => $record->cvVersion?->docx_path
+                                                ? $record->cvVersion->docxFriendlyName()
+                                                : null)
                                         ->prefixAction(
                                             Action::make('downloadCvDocx')
                                                 ->label(__('cv-versions.actions.download_docx'))
@@ -140,27 +145,35 @@ class JobApplicationInfolist
                                                 ->iconButton()
                                                 ->tooltip(__('cv-versions.actions.download_docx'))
                                                 ->color('primary')
-                                                ->url(fn ($record): ?string => $record->cvVersion?->docx_path ? route('filament.admin.cv-versions.docx', $record->cvVersion) : null)
+                                                ->url(fn ($record): ?string => $record->cvVersion?->docx_path
+                                                        ? route('filament.admin.cv-versions.docx', $record->cvVersion)
+                                                        : null)
                                                 ->visible(fn ($record): bool => filled($record->cvVersion?->docx_path)),
                                         )
                                         ->limit(60),
-                                ]),
+                                ])
+                                ->columns(3)
+                                ->columnSpanFull(),
 
-                            Grid::make(4)
+                            Section::make(__('job-applications.fields.technical_dossier_version_id'))
                                 ->schema([
                                     IconEntry::make('dossier_sent')
                                         ->label(__('job-applications.fields.dossier_sent'))
                                         ->boolean()
                                         ->state(false)
-                                        ->visible(fn ($record): bool => ! ((bool) $record->dossier_sent && filled($record->technical_dossier_version_id))),
+                                        ->visible(fn ($record): bool => ! (
+                                            (bool) $record->dossier_sent
+                                            && filled($record->technical_dossier_version_id)
+                                        )),
 
                                     TextEntry::make('technicalDossierVersion.name')
-                                        ->label(__('job-applications.fields.technical_dossier_version_id'))
+                                        ->label(__('technical-dossier-versions.fields.name'))
                                         ->placeholder('-')
                                         ->formatStateUsing(fn ($record): ?string => $record->technicalDossierVersion
                                                 ? "{$record->technicalDossierVersion->name} {$record->technicalDossierVersion->version_label}"
                                                 : null)
-                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id)),
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent
+                                            && filled($record->technical_dossier_version_id)),
 
                                     TextEntry::make('technical_dossier_pdf_file')
                                         ->label(__('technical-dossier-versions.fields.pdf_path'))
@@ -183,7 +196,8 @@ class JobApplicationInfolist
                                                 ->openUrlInNewTab()
                                                 ->visible(fn ($record): bool => filled($record->technicalDossierVersion?->pdf_path)),
                                         )
-                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent
+                                            && filled($record->technical_dossier_version_id))
                                         ->limit(60),
 
                                     TextEntry::make('technical_dossier_docx_file')
@@ -206,9 +220,12 @@ class JobApplicationInfolist
                                                         : null)
                                                 ->visible(fn ($record): bool => filled($record->technicalDossierVersion?->docx_path)),
                                         )
-                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent && filled($record->technical_dossier_version_id))
+                                        ->visible(fn ($record): bool => (bool) $record->dossier_sent
+                                            && filled($record->technical_dossier_version_id))
                                         ->limit(60),
-                                ]),
+                                ])
+                                ->columns(3)
+                                ->columnSpanFull(),
 
                             TextEntry::make('adaptation_summary')
                                 ->label(__('job-applications.fields.adaptation_summary'))
