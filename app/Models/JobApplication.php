@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class JobApplication extends Model
 {
@@ -27,7 +28,8 @@ class JobApplication extends Model
         'sent_at',
         'location',
         'work_mode',
-        'salary',
+        'salary_min',
+        'salary_max',
         'currency',
         'main_stack',
         'dossier_sent',
@@ -47,7 +49,8 @@ class JobApplication extends Model
             'sent_at' => 'date',
             'next_action_at' => 'date',
             'work_mode' => WorkMode::class,
-            'salary' => 'decimal:2',
+            'salary_min' => 'decimal:2',
+            'salary_max' => 'decimal:2',
             'currency' => Currency::class,
             'dossier_sent' => 'boolean',
             'technical_dossier_version_id' => 'integer',
@@ -57,6 +60,24 @@ class JobApplication extends Model
     protected static function booted(): void
     {
         static::saving(function (JobApplication $jobApplication): void {
+            if (
+                $jobApplication->salary_max !== null
+                && $jobApplication->salary_min === null
+            ) {
+                throw ValidationException::withMessages([
+                    'salary_max' => __('job-applications.validation.salary_max_requires_min'),
+                ]);
+            }
+
+            if (
+                $jobApplication->salary_min !== null
+                && $jobApplication->salary_max !== null
+                && (float) $jobApplication->salary_max < (float) $jobApplication->salary_min
+            ) {
+                throw ValidationException::withMessages([
+                    'salary_max' => __('job-applications.validation.salary_max_gte_min'),
+                ]);
+            }
             if (in_array($jobApplication->status, [
                 ApplicationStatus::Rejected,
                 ApplicationStatus::Hired,
@@ -89,14 +110,14 @@ class JobApplication extends Model
         });
 
         static::updated(function (JobApplication $jobApplication): void {
-            $salaryWasAdded = $jobApplication->wasChanged('salary')
-                && $jobApplication->getOriginal('salary') === null;
+            $salaryWasAdded = $jobApplication->wasChanged('salary_min')
+    && $jobApplication->getOriginal('salary_min') === null;
 
             $salaryOrCurrencyWasCleared = (
-                $jobApplication->wasChanged('salary')
+                $jobApplication->wasChanged('salary_min')
                 || $jobApplication->wasChanged('currency')
             ) && (
-                $jobApplication->salary === null
+                $jobApplication->salary_min === null
                 || $jobApplication->currency === null
             );
 

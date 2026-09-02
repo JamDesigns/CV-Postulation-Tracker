@@ -8,14 +8,12 @@ use Illuminate\Support\Facades\Http;
 
 $ecbXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
-<gesmes:Envelope
-    xmlns:gesmes="http://www.gesmes.org/xml/2002-08-01"
-    xmlns="http://www.ecb.int/vocabulary/2002-08-01/eurofxref"
->
+<gesmes:Envelope xmlns:gesmes="http://www.gesmes.org/xml/2002-08-01"
+    xmlns="http://www.ecb.int/vocabulary/2002-08-01/eurofxref">
     <Cube>
         <Cube time="2026-08-13">
-            <Cube currency="USD" rate="1.2000"/>
-            <Cube currency="GBP" rate="0.8000"/>
+            <Cube currency="USD" rate="1.2000" />
+            <Cube currency="GBP" rate="0.8000" />
         </Cube>
     </Cube>
 </gesmes:Envelope>
@@ -67,7 +65,7 @@ test('it uses the stored historical rate for an existing application', function 
         fn (): JobApplication => JobApplication::query()->create([
             'company_name' => 'Test Company',
             'job_title' => 'Full Stack Developer',
-            'salary' => 42000,
+            'salary_min' => 42000,
             'currency' => Currency::USD,
         ]),
     );

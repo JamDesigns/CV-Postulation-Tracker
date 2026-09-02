@@ -18,7 +18,7 @@ class ExchangeRateService
     {
         $jobApplication->exchangeRates()->delete();
 
-        if ($jobApplication->salary === null || $jobApplication->currency === null) {
+        if ($jobApplication->salary_min === null || $jobApplication->currency === null) {
             return;
         }
 

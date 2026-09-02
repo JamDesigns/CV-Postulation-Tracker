@@ -25,6 +25,8 @@ return [
         'location' => 'Location',
         'work_mode' => 'Work mode',
         'salary' => 'Salary',
+        'salary_min' => 'Minimum salary',
+        'salary_max' => 'Maximum salary',
         'currency' => 'Currency',
         'language' => 'Language',
         'main_stack' => 'Main stack',
@@ -51,6 +53,8 @@ return [
 
     'validation' => [
         'duplicate' => 'A job application already exists for this company, job and URL.',
+        'salary_max_requires_min' => 'You cannot enter a maximum salary without a minimum salary.',
+        'salary_max_gte_min' => 'The maximum salary must be greater than or equal to the minimum salary.',
     ],
 
     'actions' => [

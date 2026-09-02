@@ -25,6 +25,8 @@ return [
         'location' => 'Ubicación',
         'work_mode' => 'Modalidad',
         'salary' => 'Salario',
+        'salary_min' => 'Salario mínimo',
+        'salary_max' => 'Salario máximo',
         'currency' => 'Moneda',
         'language' => 'Idioma',
         'main_stack' => 'Stack principal',
@@ -51,6 +53,8 @@ return [
 
     'validation' => [
         'duplicate' => 'Ya existe una postulación para esta empresa, oferta y URL.',
+        'salary_max_requires_min' => 'No puedes indicar un salario máximo sin indicar un salario mínimo.',
+        'salary_max_gte_min' => 'El salario máximo debe ser igual o superior al salario mínimo.',
     ],
 
     'actions' => [

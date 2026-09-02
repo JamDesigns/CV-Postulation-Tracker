@@ -24,6 +24,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
@@ -96,30 +97,53 @@ class JobApplicationForm
                                     ->label(__('job-applications.fields.location'))
                                     ->maxLength(255),
 
-                                TextInput::make('salary')
-                                    ->label(__('job-applications.fields.salary'))
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->step(0.01)
-                                    ->live(),
+                                Grid::make(5)
+                                    ->schema([
+                                        TextInput::make('salary_min')
+                                            ->label(__('job-applications.fields.salary_min'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->step(0.01)
+                                            ->live()
+                                            ->afterStateUpdated(function ($state, Set $set): void {
+                                                if (blank($state)) {
+                                                    $set('salary_max', null);
+                                                }
+                                            }),
 
-                                Select::make('currency')
-                                    ->label(__('job-applications.fields.currency'))
-                                    ->options(Currency::options())
-                                    ->default(fn (): string => Currency::localForLocale()->value)
-                                    ->live(),
+                                        TextInput::make('salary_max')
+                                            ->label(__('job-applications.fields.salary_max'))
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->step(0.01)
+                                            ->gte('salary_min')
+                                            ->validationMessages([
+                                                'gte' => __('job-applications.validation.salary_max_gte_min'),
+                                            ])
+                                            ->disabled(fn (Get $get): bool => blank($get('salary_min')))
+                                            ->dehydrated()
+                                            ->live(),
 
-                                Text::make(
-                                    fn (Get $get, ?JobApplication $record): string => self::salaryConversion(
-                                        $get,
-                                        $record,
-                                    ),
-                                )
-                                    ->visible(fn (Get $get): bool => self::shouldShowSalaryConversion($get))
-                                    ->color('gray')
-                                    ->extraAttributes([
-                                        'class' => 'block pt-0 lg:pt-8 text-sm',
-                                    ]),
+                                        Select::make('currency')
+                                            ->label(__('job-applications.fields.currency'))
+                                            ->options(Currency::options())
+                                            ->default(fn (): string => Currency::localForLocale()->value)
+                                            ->live(),
+
+                                        Text::make(
+                                            fn (Get $get, ?JobApplication $record): string => self::salaryConversion(
+                                                $get,
+                                                $record,
+                                            ),
+                                        )
+                                            ->visible(fn (Get $get): bool => self::shouldShowSalaryConversion($get))
+                                            ->color('gray')
+                                            ->extraAttributes([
+                                                'class' => 'block pt-0 lg:pt-8 text-sm',
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
+                                    ->columnSpanFull(),
 
                                 Textarea::make('main_stack')
                                     ->label(__('job-applications.fields.main_stack'))
@@ -341,7 +365,7 @@ class JobApplicationForm
     {
         $currency = Currency::tryFrom((string) $get('currency'));
 
-        return filled($get('salary'))
+        return filled($get('salary_min'))
             && $currency !== null
             && $currency !== Currency::localForLocale();
     }
@@ -367,14 +391,25 @@ class JobApplicationForm
             return __('job-applications.salary_conversion.rate_unavailable');
         }
 
+        $salaryMin = CurrencyFormatter::format(
+            (float) $get('salary_min') * $rate,
+            $targetCurrency,
+        );
+
+        $salaryMax = filled($get('salary_max'))
+            ? CurrencyFormatter::format(
+                (float) $get('salary_max') * $rate,
+                $targetCurrency,
+            )
+            : null;
+
+        $amount = $salaryMax === null
+            ? $salaryMin
+            : "{$salaryMin} – {$salaryMax}";
+
         return __(
             'job-applications.salary_conversion.equivalent',
-            [
-                'amount' => CurrencyFormatter::format(
-                    (float) $get('salary') * $rate,
-                    $targetCurrency,
-                ),
-            ],
+            ['amount' => $amount],
         );
     }
 }

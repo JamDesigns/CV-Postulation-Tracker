@@ -10,6 +10,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
@@ -191,7 +192,7 @@ test('it stores the exchange rate snapshot when created with a salary', function
     $jobApplication = JobApplication::query()->create([
         'company_name' => 'Test Company',
         'job_title' => 'Full Stack Developer',
-        'salary' => 42000,
+        'salary_min' => 42000,
         'currency' => Currency::USD,
     ]);
 
@@ -207,7 +208,7 @@ test('it stores the exchange rate snapshot when created with a salary', function
     assertDatabaseCount('job_application_exchange_rates', 3);
 });
 
-test('it preserves the historical rates when only the salary changes', function () use ($ecbXml) {
+test('it preserves the historical rates when only the salary minimum changes', function () use ($ecbXml) {
     Http::fake([
         'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
     ]);
@@ -215,7 +216,7 @@ test('it preserves the historical rates when only the salary changes', function 
     $jobApplication = JobApplication::query()->create([
         'company_name' => 'Test Company',
         'job_title' => 'Full Stack Developer',
-        'salary' => 42000,
+        'salary_min' => 42000,
         'currency' => Currency::USD,
     ]);
 
@@ -224,7 +225,7 @@ test('it preserves the historical rates when only the salary changes', function 
         ->update(['rate' => 0.5]);
 
     $jobApplication->forceFill([
-        'salary' => 43000,
+        'salary_min' => 43000,
     ])->save();
 
     $storedRate = $jobApplication->exchangeRates()
@@ -236,6 +237,72 @@ test('it preserves the historical rates when only the salary changes', function 
     assertDatabaseCount('job_application_exchange_rates', 3);
 });
 
+test('it preserves the historical rates when only the salary maximum changes', function () use ($ecbXml) {
+    Http::fake([
+        'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
+    ]);
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary_min' => 42000,
+        'salary_max' => 50000,
+        'currency' => Currency::USD,
+    ]);
+
+    $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->update(['rate' => 0.5]);
+
+    $jobApplication->forceFill([
+        'salary_max' => 55000,
+    ])->save();
+
+    $storedRate = $jobApplication->exchangeRates()
+        ->where('currency', Currency::GBP->value)
+        ->value('rate');
+
+    expect((float) $storedRate)->toBe(0.5);
+
+    assertDatabaseCount('job_application_exchange_rates', 3);
+});
+
+test('it allows a salary range when the maximum is greater than or equal to the minimum', function () {
+    $jobApplication = JobApplication::withoutEvents(
+        fn (): JobApplication => JobApplication::query()->create([
+            'company_name' => 'Test Company',
+            'job_title' => 'Full Stack Developer',
+            'salary_min' => 42000,
+            'salary_max' => 50000,
+            'currency' => Currency::EUR,
+        ]),
+    );
+
+    expect((float) $jobApplication->salary_min)
+        ->toBe(42000.0)
+        ->and((float) $jobApplication->salary_max)
+        ->toBe(50000.0);
+});
+
+test('it rejects a salary maximum without a salary minimum', function () {
+    expect(fn () => JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary_max' => 50000,
+        'currency' => Currency::EUR,
+    ]))->toThrow(ValidationException::class);
+});
+
+test('it rejects a salary maximum lower than the salary minimum', function () {
+    expect(fn () => JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'salary_min' => 50000,
+        'salary_max' => 42000,
+        'currency' => Currency::EUR,
+    ]))->toThrow(ValidationException::class);
+});
+
 test('it replaces the historical rates when the source currency changes', function () use ($ecbXml) {
     Http::fake([
         'https://www.ecb.europa.eu/*' => Http::response($ecbXml),
@@ -244,7 +311,7 @@ test('it replaces the historical rates when the source currency changes', functi
     $jobApplication = JobApplication::query()->create([
         'company_name' => 'Test Company',
         'job_title' => 'Full Stack Developer',
-        'salary' => 42000,
+        'salary_min' => 42000,
         'currency' => Currency::USD,
     ]);
 
@@ -276,7 +343,7 @@ test('it deletes the exchange rates when the application is deleted', function (
         fn (): JobApplication => JobApplication::query()->create([
             'company_name' => 'Test Company',
             'job_title' => 'Full Stack Developer',
-            'salary' => 42000,
+            'salary_min' => 42000,
             'currency' => Currency::USD,
         ]),
     );
@@ -310,7 +377,7 @@ test('it creates the snapshot when a salary is added later', function () use ($e
     assertDatabaseCount('job_application_exchange_rates', 0);
 
     $jobApplication->forceFill([
-        'salary' => 42000,
+        'salary_min' => 42000,
     ])->save();
 
     assertDatabaseCount('job_application_exchange_rates', 3);
@@ -324,14 +391,14 @@ test('it clears the snapshot when the salary is removed', function () use ($ecbX
     $jobApplication = JobApplication::query()->create([
         'company_name' => 'Test Company',
         'job_title' => 'Full Stack Developer',
-        'salary' => 42000,
+        'salary_min' => 42000,
         'currency' => Currency::USD,
     ]);
 
     assertDatabaseCount('job_application_exchange_rates', 3);
 
     $jobApplication->forceFill([
-        'salary' => null,
+        'salary_min' => null,
     ])->save();
 
     assertDatabaseCount('job_application_exchange_rates', 0);
