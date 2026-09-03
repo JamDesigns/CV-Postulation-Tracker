@@ -13,6 +13,9 @@ return [
         'form' => 'Formulaire de candidature',
         'details' => 'Détails de la candidature',
         'metadata' => 'Métadonnées',
+        'snapshot' => 'Snapshot de la candidature',
+        'offer_snapshot' => 'Offre archivée',
+        'application_form_snapshot' => 'Formulaire envoyé',
     ],
 
     'fields' => [
@@ -44,6 +47,12 @@ return [
         'created_at' => 'Créée le',
         'updated_at' => 'Mise à jour le',
         'salary_conversion' => 'Conversion',
+        'offer_snapshot' => 'Contenu complet de l’offre',
+        'offer_snapshot_at' => 'Offre archivée le',
+        'application_form_import' => 'Importer le formulaire depuis JSON',
+        'application_form_snapshot' => 'Questions et réponses',
+        'application_form_question' => 'Question',
+        'application_form_answer' => 'Réponse',
     ],
 
     'salary_conversion' => [
@@ -67,6 +76,8 @@ return [
         'mark_as_hired' => 'Marquer comme embauché',
         'reopen_application' => 'Rouvrir la candidature',
         'view' => 'Voir',
+        'import_application_form' => 'Importer le JSON',
+        'add_application_form_item' => 'Ajouter une question et une réponse',
     ],
 
     'quick_actions' => [
@@ -87,5 +98,12 @@ return [
             'review_paused_application' => 'Examiner la candidature en pause',
             'reopened_application' => 'Reprendre le suivi de la candidature',
         ],
+    ],
+
+    'application_form_import' => [
+        'helper' => 'Collez ici le JSON généré par l’agent pour le convertir en questions et réponses modifiables.',
+        'success' => 'Formulaire importé correctement.',
+        'invalid_json' => 'Le contenu collé n’est pas un JSON valide.',
+        'invalid_structure' => 'Le JSON doit être une liste d’objets contenant les champs "question" et "answer".',
     ],
 ];

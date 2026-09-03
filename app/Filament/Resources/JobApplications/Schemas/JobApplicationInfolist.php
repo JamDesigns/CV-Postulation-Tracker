@@ -11,6 +11,7 @@ use App\Services\ExchangeRateService;
 use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -102,6 +103,43 @@ class JobApplicationInfolist
                                 ->columnSpanFull(),
                         ])
                         ->columns(3),
+
+                    Tabs\Tab::make(__('job-applications.sections.snapshot'))
+                        ->schema([
+                            Section::make(__('job-applications.sections.offer_snapshot'))
+                                ->schema([
+                                    TextEntry::make('offer_snapshot')
+                                        ->label(__('job-applications.fields.offer_snapshot'))
+                                        ->placeholder('-')
+                                        ->extraAttributes([
+                                            'class' => 'whitespace-pre-wrap',
+                                        ])
+                                        ->columnSpanFull(),
+
+                                    TextEntry::make('offer_snapshot_at')
+                                        ->label(__('job-applications.fields.offer_snapshot_at'))
+                                        ->dateTime('d/m/Y H:i')
+                                        ->placeholder('-'),
+                                ])
+                                ->columns(2)
+                                ->columnSpanFull(),
+
+                            Section::make(__('job-applications.sections.application_form_snapshot'))
+                                ->schema([
+                                    RepeatableEntry::make('application_form_snapshot')
+                                        ->hiddenLabel()
+                                        ->schema([
+                                            TextEntry::make('question')
+                                                ->label(__('job-applications.fields.application_form_question')),
+
+                                            TextEntry::make('answer')
+                                                ->label(__('job-applications.fields.application_form_answer')),
+                                        ])
+                                        ->columns(2)
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpanFull(),
+                        ]),
 
                     Tabs\Tab::make(__('job-applications.sections.candidate_materials'))
                         ->schema([

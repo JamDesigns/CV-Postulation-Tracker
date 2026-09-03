@@ -39,6 +39,8 @@ class JobApplication extends Model
         'notes',
         'next_step',
         'next_action_at',
+        'offer_snapshot',
+        'application_form_snapshot',
     ];
 
     protected function casts(): array
@@ -54,12 +56,21 @@ class JobApplication extends Model
             'currency' => Currency::class,
             'dossier_sent' => 'boolean',
             'technical_dossier_version_id' => 'integer',
+            'offer_snapshot_at' => 'datetime',
+            'application_form_snapshot' => 'array',
         ];
     }
 
     protected static function booted(): void
     {
         static::saving(function (JobApplication $jobApplication): void {
+            if (
+                filled($jobApplication->offer_snapshot)
+                && $jobApplication->offer_snapshot_at === null
+            ) {
+                $jobApplication->offer_snapshot_at = now();
+            }
+
             if (
                 $jobApplication->salary_max !== null
                 && $jobApplication->salary_min === null
