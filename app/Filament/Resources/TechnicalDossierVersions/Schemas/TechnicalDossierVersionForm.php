@@ -126,13 +126,13 @@ class TechnicalDossierVersionForm
                                 Textarea::make('content_snapshot')
                                     ->label(__('technical-dossier-versions.fields.content_snapshot'))
                                     ->rows(5)
-                                    ->extraInputAttributes(['style' => 'min-height: 8rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
 
                                 Textarea::make('notes')
                                     ->label(__('technical-dossier-versions.fields.notes'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ]),
                     ])

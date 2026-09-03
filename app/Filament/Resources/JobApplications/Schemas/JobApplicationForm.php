@@ -151,7 +151,7 @@ class JobApplicationForm
                                 Textarea::make('main_stack')
                                     ->label(__('job-applications.fields.main_stack'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
@@ -345,17 +345,17 @@ class JobApplicationForm
                                                         Textarea::make('highlighted_stack')
                                                             ->label(__('cv-versions.fields.highlighted_stack'))
                                                             ->rows(3)
-                                                            ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                                            ->autosize(),
 
                                                         Textarea::make('highlighted_experience')
                                                             ->label(__('cv-versions.fields.highlighted_experience'))
                                                             ->rows(3)
-                                                            ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                                            ->autosize(),
 
                                                         Textarea::make('adaptation_notes')
                                                             ->label(__('cv-versions.fields.adaptation_notes'))
                                                             ->rows(3)
-                                                            ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                                            ->autosize()
                                                             ->columnSpanFull(),
                                                     ])
                                                     ->columns(2),
@@ -409,7 +409,7 @@ class JobApplicationForm
                                 Textarea::make('adaptation_summary')
                                     ->label(__('job-applications.fields.adaptation_summary'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),
@@ -422,7 +422,7 @@ class JobApplicationForm
                                 Textarea::make('next_step')
                                     ->label(__('job-applications.fields.next_step'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),

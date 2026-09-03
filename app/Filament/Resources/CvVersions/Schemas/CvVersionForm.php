@@ -112,17 +112,17 @@ class CvVersionForm
                                 Textarea::make('highlighted_stack')
                                     ->label(__('cv-versions.fields.highlighted_stack'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                    ->autosize(),
 
                                 Textarea::make('highlighted_experience')
                                     ->label(__('cv-versions.fields.highlighted_experience'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                    ->autosize(),
 
                                 Textarea::make('adaptation_notes')
                                     ->label(__('cv-versions.fields.adaptation_notes'))
                                     ->rows(3)
-                                    ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),

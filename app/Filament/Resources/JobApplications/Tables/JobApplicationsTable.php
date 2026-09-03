@@ -304,7 +304,8 @@ class JobApplicationsTable
                                     app()->getLocale(),
                                 ))
                                 ->required()
-                                ->rows(3),
+                                ->rows(3)
+                                ->autosize(),
 
                             DatePicker::make('next_action_at')
                                 ->label(__('job-applications.quick_actions.fields.next_action_at'))
@@ -312,7 +313,8 @@ class JobApplicationsTable
 
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Sent,
@@ -363,7 +365,8 @@ class JobApplicationsTable
                                     app()->getLocale(),
                                 ))
                                 ->required()
-                                ->rows(3),
+                                ->rows(3)
+                                ->autosize(),
 
                             DatePicker::make('next_action_at')
                                 ->label(__('job-applications.quick_actions.fields.next_action_at'))
@@ -371,7 +374,8 @@ class JobApplicationsTable
 
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Sent,
@@ -423,14 +427,16 @@ class JobApplicationsTable
                                     app()->getLocale(),
                                 ))
                                 ->required()
-                                ->rows(3),
+                                ->rows(3)
+                                ->autosize(),
 
                             DatePicker::make('next_action_at')
                                 ->label(__('job-applications.quick_actions.fields.next_action_at')),
 
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Pending,
@@ -477,7 +483,8 @@ class JobApplicationsTable
                         ->schema([
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Pending,
@@ -521,7 +528,8 @@ class JobApplicationsTable
                         ->schema([
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Responded,
@@ -581,7 +589,8 @@ class JobApplicationsTable
                                     app()->getLocale(),
                                 ))
                                 ->required()
-                                ->rows(3),
+                                ->rows(3)
+                                ->autosize(),
 
                             DatePicker::make('next_action_at')
                                 ->label(__('job-applications.quick_actions.fields.next_action_at'))
@@ -589,7 +598,8 @@ class JobApplicationsTable
 
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
-                                ->rows(5),
+                                ->rows(5)
+                                ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
                             ApplicationStatus::Paused,

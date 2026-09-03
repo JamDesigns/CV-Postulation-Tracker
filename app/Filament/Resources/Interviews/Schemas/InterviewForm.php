@@ -98,23 +98,23 @@ class InterviewForm
                             Textarea::make('people')
                                 ->label(__('interviews.fields.people'))
                                 ->rows(3)
-                                ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                ->autosize()
                                 ->columnSpanFull(),
 
                             Textarea::make('expected_questions')
                                 ->label(__('interviews.fields.expected_questions'))
                                 ->rows(3)
-                                ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                ->autosize(),
 
                             Textarea::make('strengths_to_defend')
                                 ->label(__('interviews.fields.strengths_to_defend'))
                                 ->rows(3)
-                                ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;']),
+                                ->autosize(),
 
                             Textarea::make('risks_to_clarify')
                                 ->label(__('interviews.fields.risks_to_clarify'))
                                 ->rows(3)
-                                ->extraInputAttributes(['style' => 'min-height: 5.5rem; resize: vertical;'])
+                                ->autosize()
                                 ->columnSpanFull(),
                         ]),
 
@@ -123,7 +123,7 @@ class InterviewForm
                             Textarea::make('notes')
                                 ->label(__('interviews.fields.notes'))
                                 ->rows(4)
-                                ->extraInputAttributes(['style' => 'min-height: 7rem; resize: vertical;'])
+                                ->autosize()
                                 ->columnSpanFull(),
                         ]),
                 ])
