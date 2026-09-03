@@ -180,6 +180,7 @@ class EventsRelationManager extends RelationManager
                 Textarea::make('body')
                     ->label(__('job-application-events.fields.body'))
                     ->rows(6)
+                    ->autosize()
                     ->columnSpanFull(),
             ])
             ->columns(2);

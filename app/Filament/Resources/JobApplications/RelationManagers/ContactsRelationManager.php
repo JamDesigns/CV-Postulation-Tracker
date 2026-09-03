@@ -162,6 +162,7 @@ class ContactsRelationManager extends RelationManager
                                 Textarea::make('context')
                                     ->label(__('contacts.fields.context'))
                                     ->rows(3)
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columns(3)
@@ -214,6 +215,7 @@ class ContactsRelationManager extends RelationManager
                                 Textarea::make('context')
                                     ->label(__('contacts.fields.context'))
                                     ->rows(3)
+                                    ->autosize()
                                     ->columnSpanFull(),
                             ])
                             ->columnSpanFull(),
@@ -252,6 +254,7 @@ class ContactsRelationManager extends RelationManager
                                     Textarea::make('context')
                                         ->label(__('contacts.fields.context'))
                                         ->rows(3)
+                                        ->autosize()
                                         ->columnSpanFull(),
                                 ]),
                         ])
