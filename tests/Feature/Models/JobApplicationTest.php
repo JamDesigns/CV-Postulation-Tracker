@@ -303,6 +303,68 @@ test('it rejects a salary maximum lower than the salary minimum', function () {
     ]))->toThrow(ValidationException::class);
 });
 
+test('it leaves the offer snapshot date null when no snapshot exists', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    expect($jobApplication->offer_snapshot)
+        ->toBeNull()
+        ->and($jobApplication->offer_snapshot_at)
+        ->toBeNull();
+});
+
+test('it stores the offer snapshot date only when the snapshot is first added', function () {
+    Carbon::setTestNow('2026-09-03 10:14:13');
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'offer_snapshot' => 'Original job offer.',
+    ]);
+
+    expect($jobApplication->offer_snapshot_at?->toDateTimeString())
+        ->toBe('2026-09-03 10:14:13');
+
+    Carbon::setTestNow('2026-09-04 12:00:00');
+
+    $jobApplication->forceFill([
+        'offer_snapshot' => 'Updated job offer.',
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->offer_snapshot)
+        ->toBe('Updated job offer.')
+        ->and($jobApplication->offer_snapshot_at?->toDateTimeString())
+        ->toBe('2026-09-03 10:14:13');
+});
+
+test('it stores the application form snapshot as structured question and answer data', function () {
+    $formSnapshot = [
+        [
+            'question' => 'Do you have authorization to work in Spain?',
+            'answer' => 'Yes',
+        ],
+        [
+            'question' => 'How many years of Angular experience do you have?',
+            'answer' => '6+ years',
+        ],
+    ];
+
+    $jobApplication = JobApplication::query()->create([
+        'company_name' => 'Test Company',
+        'job_title' => 'Full Stack Developer',
+        'application_form_snapshot' => $formSnapshot,
+    ]);
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->application_form_snapshot)
+        ->toBe($formSnapshot);
+});
+
 test('it replaces the historical rates when the source currency changes', function () use ($ecbXml) {
     Http::fake([
         'https://www.ecb.europa.eu/*' => Http::response($ecbXml),

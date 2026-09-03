@@ -13,6 +13,9 @@ return [
         'form' => 'Formulario de postulación',
         'details' => 'Detalles de la postulación',
         'metadata' => 'Metadatos',
+        'snapshot' => 'Snapshot de la candidatura',
+        'offer_snapshot' => 'Oferta archivada',
+        'application_form_snapshot' => 'Formulario enviado',
     ],
 
     'fields' => [
@@ -44,6 +47,12 @@ return [
         'created_at' => 'Creado',
         'updated_at' => 'Actualizado',
         'salary_conversion' => 'Conversión',
+        'offer_snapshot' => 'Contenido completo de la oferta',
+        'offer_snapshot_at' => 'Oferta archivada el',
+        'application_form_import' => 'Importar formulario desde JSON',
+        'application_form_snapshot' => 'Preguntas y respuestas',
+        'application_form_question' => 'Pregunta',
+        'application_form_answer' => 'Respuesta',
     ],
 
     'salary_conversion' => [
@@ -67,6 +76,8 @@ return [
         'mark_as_hired' => 'Marcar como contratada',
         'reopen_application' => 'Reabrir candidatura',
         'view' => 'Ver',
+        'import_application_form' => 'Importar JSON',
+        'add_application_form_item' => 'Añadir pregunta y respuesta',
     ],
 
     'quick_actions' => [
@@ -87,5 +98,12 @@ return [
             'review_paused_application' => 'Revisar candidatura pausada',
             'reopened_application' => 'Retomar seguimiento de la candidatura',
         ],
+    ],
+
+    'application_form_import' => [
+        'helper' => 'Pega aquí el JSON generado por el agente para convertirlo en preguntas y respuestas editables.',
+        'success' => 'Formulario importado correctamente.',
+        'invalid_json' => 'El contenido pegado no es un JSON válido.',
+        'invalid_structure' => 'El JSON debe ser una lista de objetos con los campos "question" y "answer".',
     ],
 ];

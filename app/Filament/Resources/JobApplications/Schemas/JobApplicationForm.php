@@ -16,11 +16,14 @@ use App\Support\CurrencyFormatter;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
@@ -152,6 +155,122 @@ class JobApplicationForm
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
+
+                        Tabs\Tab::make(__('job-applications.sections.snapshot'))
+                            ->schema([
+                                Section::make(__('job-applications.sections.offer_snapshot'))
+                                    ->schema([
+                                        Textarea::make('offer_snapshot')
+                                            ->label(__('job-applications.fields.offer_snapshot'))
+                                            ->rows(3)
+                                            ->autosize()
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columnSpanFull(),
+
+                                Section::make(__('job-applications.sections.application_form_snapshot'))
+                                    ->schema([
+                                        Textarea::make('application_form_import')
+                                            ->label(__('job-applications.fields.application_form_import'))
+                                            ->helperText(__('job-applications.application_form_import.helper'))
+                                            ->rows(3)
+                                            ->autosize()
+                                            ->dehydrated(false)
+                                            ->afterContent(
+                                                Action::make('importApplicationForm')
+                                                    ->label(__('job-applications.actions.import_application_form'))
+                                                    ->action(function (Get $schemaGet, Set $schemaSet): void {
+                                                        $rawJson = trim((string) $schemaGet('application_form_import'));
+
+                                                        try {
+                                                            $items = json_decode(
+                                                                $rawJson,
+                                                                true,
+                                                                512,
+                                                                JSON_THROW_ON_ERROR,
+                                                            );
+                                                        } catch (\JsonException) {
+                                                            Notification::make()
+                                                                ->title(__('job-applications.application_form_import.invalid_json'))
+                                                                ->danger()
+                                                                ->send();
+
+                                                            return;
+                                                        }
+
+                                                        if (! is_array($items) || ! array_is_list($items)) {
+                                                            Notification::make()
+                                                                ->title(__('job-applications.application_form_import.invalid_structure'))
+                                                                ->danger()
+                                                                ->send();
+
+                                                            return;
+                                                        }
+
+                                                        $normalizedItems = [];
+
+                                                        foreach ($items as $item) {
+                                                            if (
+                                                                ! is_array($item)
+                                                                || ! array_key_exists('question', $item)
+                                                                || ! array_key_exists('answer', $item)
+                                                                || ! is_string($item['question'])
+                                                                || ! is_string($item['answer'])
+                                                            ) {
+                                                                Notification::make()
+                                                                    ->title(__('job-applications.application_form_import.invalid_structure'))
+                                                                    ->danger()
+                                                                    ->send();
+
+                                                                return;
+                                                            }
+
+                                                            $normalizedItems[] = [
+                                                                'question' => trim($item['question']),
+                                                                'answer' => trim($item['answer']),
+                                                            ];
+                                                        }
+
+                                                        $schemaSet('application_form_snapshot', $normalizedItems);
+                                                        $schemaSet('application_form_import', null);
+
+                                                        Notification::make()
+                                                            ->title(__('job-applications.application_form_import.success'))
+                                                            ->success()
+                                                            ->send();
+                                                    }),
+                                            )
+                                            ->columnSpanFull(),
+
+                                        Repeater::make('application_form_snapshot')
+                                            ->label(__('job-applications.fields.application_form_snapshot'))
+                                            ->schema([
+                                                Textarea::make('question')
+                                                    ->label(__('job-applications.fields.application_form_question'))
+                                                    ->rows(1)
+                                                    ->autosize()
+                                                    ->required()
+                                                    ->live(onBlur: true),
+
+                                                Textarea::make('answer')
+                                                    ->label(__('job-applications.fields.application_form_answer'))
+                                                    ->rows(1)
+                                                    ->autosize()
+                                                    ->required(),
+                                            ])
+                                            ->columns(2)
+                                            ->defaultItems(0)
+                                            ->collapsible()
+                                            ->itemLabel(
+                                                fn (array $state): ?string => filled($state['question'] ?? null)
+                                                    ? $state['question']
+                                                    : null,
+                                            )
+                                            ->addActionLabel(__('job-applications.actions.add_application_form_item'))
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columnSpanFull(),
+                            ]),
 
                         Tabs\Tab::make(__('job-applications.sections.candidate_materials'))
                             ->schema([
