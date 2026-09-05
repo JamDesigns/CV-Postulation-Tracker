@@ -106,4 +106,11 @@ return [
         'invalid_json' => 'Le contenu collé n’est pas un JSON valide.',
         'invalid_structure' => 'Le JSON doit être une liste d’objets contenant les champs "question" et "answer".',
     ],
+
+    'reminders' => [
+        'next_action' => [
+            'title' => ':company · :job',
+            'view' => 'Voir la candidature',
+        ],
+    ],
 ];

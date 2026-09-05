@@ -106,4 +106,11 @@ return [
         'invalid_json' => 'The pasted content is not valid JSON.',
         'invalid_structure' => 'The JSON must be a list of objects containing "question" and "answer" fields.',
     ],
+
+    'reminders' => [
+        'next_action' => [
+            'title' => ':company · :job',
+            'view' => 'View application',
+        ],
+    ],
 ];

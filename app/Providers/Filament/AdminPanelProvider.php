@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
+            ->databaseNotifications()
             ->authenticatedRoutes(function (): void {
                 Route::get('/cv-versions/{cvVersion}/pdf', [CvVersionFileController::class, 'showPdf'])
                     ->name('cv-versions.pdf');
