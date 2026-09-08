@@ -112,7 +112,10 @@ class CvVersionsTable
                         ->slideOver()
                         ->modalWidth('7xl')
                         ->modalSubmitAction(false)
-                        ->schema(fn ($record): array => $record->jobApplication
+                        ->schema(function ($record): array {
+                            $jobApplication = $record->jobApplications()->first();
+
+                            return $jobApplication
                                 ? [
                                     ...JobApplicationInfolist::components(),
 
@@ -132,8 +135,8 @@ class CvVersionsTable
                                                             TextEntry::make('interview_type')
                                                                 ->label(__('cv-application-detail-modal.interviews.interview_type'))
                                                                 ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
-                                                                        ? $state->label()
-                                                                        : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
+                                                                    ? $state->label()
+                                                                    : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                                                                 ->badge()
                                                                 ->placeholder('-'),
 
@@ -144,12 +147,12 @@ class CvVersionsTable
                                                             TextEntry::make('result')
                                                                 ->label(__('cv-application-detail-modal.interviews.result'))
                                                                 ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
-                                                                        ? $state->label()
-                                                                        : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
+                                                                    ? $state->label()
+                                                                    : InterviewResult::tryFrom($state ?? '')?->label() ?? $state)
                                                                 ->badge()
                                                                 ->color(fn (InterviewResult|string|null $state): string => $state instanceof InterviewResult
-                                                                        ? $state->color()
-                                                                        : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
+                                                                    ? $state->color()
+                                                                    : InterviewResult::tryFrom($state ?? '')?->color() ?? 'info')
                                                                 ->placeholder('-'),
 
                                                             TextEntry::make('notes')
@@ -175,8 +178,8 @@ class CvVersionsTable
                                                             TextEntry::make('type')
                                                                 ->label(__('cv-application-detail-modal.events.type'))
                                                                 ->formatStateUsing(fn (JobApplicationEventType|string|null $state): ?string => $state instanceof JobApplicationEventType
-                                                                        ? $state->label()
-                                                                        : JobApplicationEventType::tryFrom((string) $state)?->label() ?? $state)
+                                                                    ? $state->label()
+                                                                    : JobApplicationEventType::tryFrom((string) $state)?->label() ?? $state)
                                                                 ->badge()
                                                                 ->placeholder('-'),
 
@@ -200,12 +203,15 @@ class CvVersionsTable
                                         ])
                                         ->columnSpanFull(),
                                 ]
-                                : [])
+                                : [];
+                        })
                         ->mountUsing(function (Schema $schema, $record): void {
-                            $schema->record($record->jobApplication);
+                            $schema->record($record->jobApplications()->first());
                             $schema->fill();
                         })
-                        ->visible(fn ($record): bool => $record->jobApplication()->exists()),
+                        ->visible(
+                            fn ($record): bool => $record->jobApplications()->count() === 1,
+                        ),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

@@ -8,7 +8,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 function createApplication(string $company): JobApplication
 {
     return JobApplication::query()->create([
-        'company_name' => $company,
+        'company_id' => companyId($company),
         'job_title' => 'Full Stack Developer',
     ]);
 }

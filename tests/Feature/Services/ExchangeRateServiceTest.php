@@ -63,7 +63,7 @@ test('it returns null when the ECB request fails', function () {
 test('it uses the stored historical rate for an existing application', function () {
     $jobApplication = JobApplication::withoutEvents(
         fn (): JobApplication => JobApplication::query()->create([
-            'company_name' => 'Test Company',
+            'company_id' => companyId('Test Company'),
             'job_title' => 'Full Stack Developer',
             'salary_min' => 42000,
             'currency' => Currency::USD,

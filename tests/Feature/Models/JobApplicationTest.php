@@ -46,7 +46,7 @@ test('it removes the technical dossier when dossier sent is false', function () 
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'dossier_sent' => false,
         'technical_dossier_version_id' => $technicalDossierVersion->id,
@@ -90,7 +90,7 @@ test('it assigns the active technical dossier matching the CV language', functio
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'dossier_sent' => true,
     ]);
@@ -127,7 +127,7 @@ test('it leaves the technical dossier null when no active dossier matches the CV
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'dossier_sent' => true,
     ]);
@@ -143,7 +143,6 @@ test('it leaves the technical dossier null when no active dossier matches the CV
 
 test('it returns no date urgency when the next action has no date', function () {
     $jobApplication = new JobApplication([
-        'company_name' => 'Test Company',
         'job_title' => 'Full Stack Developer',
     ]);
 
@@ -190,7 +189,7 @@ test('it stores the exchange rate snapshot when created with a salary', function
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 42000,
         'currency' => Currency::USD,
@@ -214,7 +213,7 @@ test('it preserves the historical rates when only the salary minimum changes', f
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 42000,
         'currency' => Currency::USD,
@@ -243,7 +242,7 @@ test('it preserves the historical rates when only the salary maximum changes', f
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 42000,
         'salary_max' => 50000,
@@ -270,7 +269,7 @@ test('it preserves the historical rates when only the salary maximum changes', f
 test('it allows a salary range when the maximum is greater than or equal to the minimum', function () {
     $jobApplication = JobApplication::withoutEvents(
         fn (): JobApplication => JobApplication::query()->create([
-            'company_name' => 'Test Company',
+            'company_id' => companyId('Test Company'),
             'job_title' => 'Full Stack Developer',
             'salary_min' => 42000,
             'salary_max' => 50000,
@@ -286,7 +285,7 @@ test('it allows a salary range when the maximum is greater than or equal to the 
 
 test('it rejects a salary maximum without a salary minimum', function () {
     expect(fn () => JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_max' => 50000,
         'currency' => Currency::EUR,
@@ -295,7 +294,7 @@ test('it rejects a salary maximum without a salary minimum', function () {
 
 test('it rejects a salary maximum lower than the salary minimum', function () {
     expect(fn () => JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 50000,
         'salary_max' => 42000,
@@ -305,7 +304,7 @@ test('it rejects a salary maximum lower than the salary minimum', function () {
 
 test('it leaves the offer snapshot date null when no snapshot exists', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
     ]);
 
@@ -319,7 +318,7 @@ test('it stores the offer snapshot date only when the snapshot is first added', 
     Carbon::setTestNow('2026-09-03 10:14:13');
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'offer_snapshot' => 'Original job offer.',
     ]);
@@ -354,7 +353,7 @@ test('it stores the application form snapshot as structured question and answer 
     ];
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'application_form_snapshot' => $formSnapshot,
     ]);
@@ -371,7 +370,7 @@ test('it replaces the historical rates when the source currency changes', functi
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 42000,
         'currency' => Currency::USD,
@@ -403,7 +402,7 @@ test('it replaces the historical rates when the source currency changes', functi
 test('it deletes the exchange rates when the application is deleted', function () {
     $jobApplication = JobApplication::withoutEvents(
         fn (): JobApplication => JobApplication::query()->create([
-            'company_name' => 'Test Company',
+            'company_id' => companyId('Test Company'),
             'job_title' => 'Full Stack Developer',
             'salary_min' => 42000,
             'currency' => Currency::USD,
@@ -431,7 +430,7 @@ test('it creates the snapshot when a salary is added later', function () use ($e
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'currency' => Currency::USD,
     ]);
@@ -451,7 +450,7 @@ test('it clears the snapshot when the salary is removed', function () use ($ecbX
     ]);
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'salary_min' => 42000,
         'currency' => Currency::USD,
@@ -481,7 +480,7 @@ test('it preserves the technical dossier already sent when the application is up
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'dossier_sent' => true,
     ]);
@@ -524,7 +523,7 @@ test('it assigns the active technical dossier when dossier sent is enabled later
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Another Test Company',
+        'company_id' => companyId('Another Test Company'),
         'job_title' => 'Backend Developer',
         'dossier_sent' => false,
     ]);
@@ -569,7 +568,7 @@ test('it reassigns the technical dossier when the CV changes', function () {
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $spanishCv->id,
-        'company_name' => 'CV Change Company',
+        'company_id' => companyId('CV Change Company'),
         'job_title' => 'Full Stack Developer',
         'dossier_sent' => true,
     ]);
@@ -595,25 +594,50 @@ test('it prevents the same CV version from being assigned to multiple applicatio
 
     JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'First Company',
+        'company_id' => companyId('First Company'),
         'job_title' => 'Full Stack Developer',
     ]);
 
     expect(fn () => JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Second Company',
+        'company_id' => companyId('Second Company'),
         'job_title' => 'Backend Developer',
-    ]))->toThrow(UniqueConstraintViolationException::class);
+    ]))->toThrow(ValidationException::class);
+});
+
+test('it allows a reusable CV version to be assigned to multiple applications', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'CV Reusable Application',
+        'language' => 'spanish',
+        'is_reusable' => true,
+    ]);
+
+    $firstApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_id' => companyId('First Reusable Company'),
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    $secondApplication = JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_id' => companyId('Second Reusable Company'),
+        'job_title' => 'Backend Developer',
+    ]);
+
+    expect($firstApplication->cv_version_id)
+        ->toBe($cvVersion->id)
+        ->and($secondApplication->cv_version_id)
+        ->toBe($cvVersion->id);
 });
 
 test('it allows multiple applications without a CV version', function () {
     $firstApplication = JobApplication::query()->create([
-        'company_name' => 'First Pending Company',
+        'company_id' => companyId('First Pending Company'),
         'job_title' => 'Frontend Developer',
     ]);
 
     $secondApplication = JobApplication::query()->create([
-        'company_name' => 'Second Pending Company',
+        'company_id' => companyId('Second Pending Company'),
         'job_title' => 'Backend Developer',
     ]);
 
@@ -625,7 +649,7 @@ test('it allows multiple applications without a CV version', function () {
 
 test('it clears the next step and action date when the application reaches a final status', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Final Status Company',
+        'company_id' => companyId('Final Status Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Interview,
         'next_step' => 'Prepare next interview',
@@ -644,4 +668,70 @@ test('it clears the next step and action date when the application reaches a fin
         ->toBeNull()
         ->and($jobApplication->next_action_at)
         ->toBeNull();
+});
+
+test('it prevents duplicate applications without a URL for the same company and title', function () {
+    $companyId = companyId('Duplicate Company');
+
+    JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Full Stack Developer',
+    ]);
+
+    expect(fn () => JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Full Stack Developer',
+    ]))->toThrow(UniqueConstraintViolationException::class);
+});
+
+test('it prevents duplicate applications with the same URL for the same company and title', function () {
+    $companyId = companyId('Duplicate URL Company');
+
+    JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Backend Developer',
+        'job_url' => 'https://example.com/jobs/backend-developer',
+    ]);
+
+    expect(fn () => JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Backend Developer',
+        'job_url' => 'https://example.com/jobs/backend-developer',
+    ]))->toThrow(UniqueConstraintViolationException::class);
+});
+
+test('it allows the same job title for different companies', function () {
+    $firstApplication = JobApplication::query()->create([
+        'company_id' => companyId('First Same Title Company'),
+        'job_title' => 'Frontend Developer',
+    ]);
+
+    $secondApplication = JobApplication::query()->create([
+        'company_id' => companyId('Second Same Title Company'),
+        'job_title' => 'Frontend Developer',
+    ]);
+
+    expect($firstApplication->job_title)
+        ->toBe('Frontend Developer')
+        ->and($secondApplication->job_title)
+        ->toBe('Frontend Developer');
+});
+
+test('it allows the same company and job title when the URLs are different', function () {
+    $companyId = companyId('Different URLs Company');
+
+    $firstApplication = JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Backend Developer',
+        'job_url' => 'https://example.com/jobs/backend-developer-1',
+    ]);
+
+    $secondApplication = JobApplication::query()->create([
+        'company_id' => $companyId,
+        'job_title' => 'Backend Developer',
+        'job_url' => 'https://example.com/jobs/backend-developer-2',
+    ]);
+
+    expect($firstApplication->id)
+        ->not->toBe($secondApplication->id);
 });

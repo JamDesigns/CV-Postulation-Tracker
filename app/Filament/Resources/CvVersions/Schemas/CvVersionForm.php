@@ -8,6 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
 
@@ -42,8 +43,19 @@ class CvVersionForm
                                     ->options(BaseProfile::options())
                                     ->required()
                                     ->default(BaseProfile::FullStack->value),
+
+                                Toggle::make('is_reusable')
+                                    ->label(__('cv-versions.fields.is_reusable'))
+                                    ->inline(false)
+                                    ->helperText(fn ($record): string => $record?->jobApplications()->count() > 1
+                                        ? __('cv-versions.helpers.is_reusable_locked')
+                                        : __('cv-versions.helpers.is_reusable'))
+                                    ->default(false)
+                                    ->disabled(
+                                        fn ($record): bool => $record?->jobApplications()->count() > 1,
+                                    ),
                             ])
-                            ->columns(2),
+                            ->columns(3),
 
                         Tabs\Tab::make(__('cv-versions.sections.files'))
                             ->schema([

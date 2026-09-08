@@ -19,7 +19,6 @@ return [
     ],
 
     'fields' => [
-        'company_name' => 'Entreprise',
         'job_title' => 'Poste',
         'job_url' => 'URL de l’offre',
         'source' => 'Source',
@@ -62,6 +61,7 @@ return [
 
     'validation' => [
         'duplicate' => 'Une candidature existe déjà pour cette entreprise, ce poste et cette URL.',
+        'cv_version_unique' => 'Ce CV est déjà associé à une autre candidature.',
         'salary_max_requires_min' => 'Vous ne pouvez pas indiquer un salaire maximum sans indiquer un salaire minimum.',
         'salary_max_gte_min' => 'Le salaire maximum doit être supérieur ou égal au salaire minimum.',
     ],

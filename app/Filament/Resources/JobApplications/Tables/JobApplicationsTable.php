@@ -33,8 +33,8 @@ class JobApplicationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('company_name')
-                    ->label(__('job-applications.fields.company_name'))
+                TextColumn::make('company.name')
+                    ->label(__('companies.model_label'))
                     ->searchable()
                     ->sortable()
                     ->wrap()
@@ -132,6 +132,7 @@ class JobApplicationsTable
 
                         return "{$salaryMin} - {$salaryMax}";
                     })
+                    ->wrap()
                     ->placeholder('-')
                     ->sortable(query: fn ($query, string $direction) => $query->orderBy('salary_min', $direction)),
 

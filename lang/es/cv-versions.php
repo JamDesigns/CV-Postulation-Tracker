@@ -30,9 +30,16 @@ return [
         'adaptation_notes' => 'Notas de adaptación',
         'created_at' => 'Creado',
         'updated_at' => 'Actualizado',
+        'is_reusable' => 'CV reutilizable',
+    ],
+
+    'helpers' => [
+        'is_reusable' => 'Permite asociar este CV a varias postulaciones.',
+        'is_reusable_locked' => 'Este CV está asociado a varias postulaciones y ya no se puede desactivar su reutilización.',
     ],
 
     'validation' => [
         'name_unique' => 'Ya existe un CV con este nombre interno.',
+        'reusable_required_for_multiple_applications' => 'No puedes desactivar la reutilización porque este CV está asociado a varias postulaciones.',
     ],
 ];

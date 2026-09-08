@@ -22,7 +22,7 @@ class UpcomingInterviewsTable extends TableWidget
             ->emptyStateHeading(__('dashboard.widgets.upcoming_interviews.empty'))
             ->query(
                 Interview::query()
-                    ->with('jobApplication')
+                    ->with('jobApplication.company')
                     ->where('interview_at', '>=', now())
                     ->whereIn('result', [
                         InterviewResult::Pending->value,
@@ -36,7 +36,7 @@ class UpcomingInterviewsTable extends TableWidget
                     ->searchable()
                     ->limit(35),
 
-                TextColumn::make('jobApplication.company_name')
+                TextColumn::make('jobApplication.company.name')
                     ->label(__('dashboard.widgets.upcoming_interviews.company'))
                     ->searchable()
                     ->sortable(),

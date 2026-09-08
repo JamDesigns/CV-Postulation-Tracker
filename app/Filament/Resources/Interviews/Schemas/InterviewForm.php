@@ -13,6 +13,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 
 class InterviewForm
@@ -33,11 +34,26 @@ class InterviewForm
                             ...($includeJobApplicationSelect ? [
                                 Select::make('job_application_id')
                                     ->label(__('interviews.fields.job_application_id'))
-                                    ->relationship('jobApplication', 'job_title')
-                                    ->getOptionLabelFromRecordUsing(
-                                        fn ($record): string => "{$record->company_name} - {$record->job_title}"
+                                    ->relationship(
+                                        'jobApplication',
+                                        'job_title',
+                                        modifyQueryUsing: fn (Builder $query): Builder => $query
+                                            ->leftJoin(
+                                                'companies',
+                                                'companies.id',
+                                                '=',
+                                                'job_applications.company_id',
+                                            )
+                                            ->select('job_applications.*')
+                                            ->with('company'),
                                     )
-                                    ->searchable(['company_name', 'job_title'])
+                                    ->getOptionLabelFromRecordUsing(
+                                        fn ($record): string => "{$record->company?->name} - {$record->job_title}",
+                                    )
+                                    ->searchable([
+                                        'companies.name',
+                                        'job_applications.job_title',
+                                    ])
                                     ->preload()
                                     ->required(),
                             ] : []),

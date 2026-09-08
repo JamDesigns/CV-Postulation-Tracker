@@ -22,7 +22,7 @@ class ViewInterview extends ViewRecord
         $jobApplication = $this->getRecord()->jobApplication;
 
         $recordTitle = collect([
-            $jobApplication?->company_name,
+            $jobApplication?->company?->name,
             $jobApplication?->job_title,
         ])
             ->filter()

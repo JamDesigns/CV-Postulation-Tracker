@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\CvVersion;
+use App\Models\JobApplication;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 test('it deletes replaced cv files after update', function () {
     Storage::fake('local');
@@ -62,4 +64,29 @@ test('it deletes cv files when the cv version is deleted', function () {
         ->toBeFalse()
         ->and($disk->exists($docxPath))
         ->toBeFalse();
+});
+
+test('it prevents disabling reuse when the CV is assigned to multiple applications', function () {
+    $cvVersion = CvVersion::query()->create([
+        'name' => 'Reusable CV',
+        'is_reusable' => true,
+    ]);
+
+    JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_id' => companyId('First Reusable CV Company'),
+        'job_title' => 'Frontend Developer',
+    ]);
+
+    JobApplication::query()->create([
+        'cv_version_id' => $cvVersion->id,
+        'company_id' => companyId('Second Reusable CV Company'),
+        'job_title' => 'Backend Developer',
+    ]);
+
+    expect(fn () => $cvVersion->forceFill([
+        'is_reusable' => false,
+    ])->save())->toThrow(ValidationException::class);
+
+    expect($cvVersion->fresh()->is_reusable)->toBeTrue();
 });

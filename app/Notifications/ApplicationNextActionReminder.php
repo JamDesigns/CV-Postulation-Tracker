@@ -33,7 +33,7 @@ class ApplicationNextActionReminder extends Notification
     {
         $message = FilamentNotification::make()
             ->title(__('job-applications.reminders.next_action.title', [
-                'company' => $this->jobApplication->company_name,
+                'company' => $this->jobApplication->company?->name,
                 'job' => $this->jobApplication->job_title,
             ]))
             ->body($this->jobApplication->next_step)

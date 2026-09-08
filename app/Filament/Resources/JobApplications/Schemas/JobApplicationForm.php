@@ -8,6 +8,7 @@ use App\Enums\Currency;
 use App\Enums\CvLanguage;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
+use App\Filament\Resources\Companies\Schemas\CompanyForm;
 use App\Models\CvVersion;
 use App\Models\JobApplication;
 use App\Models\TechnicalDossierVersion;
@@ -42,10 +43,13 @@ class JobApplicationForm
                     ->tabs([
                         Tabs\Tab::make(__('job-applications.sections.main'))
                             ->schema([
-                                TextInput::make('company_name')
-                                    ->label(__('job-applications.fields.company_name'))
-                                    ->required()
-                                    ->maxLength(255),
+                                Select::make('company_id')
+                                    ->label(__('companies.model_label'))
+                                    ->relationship('company', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm(CompanyForm::components())
+                                    ->required(),
 
                                 TextInput::make('job_title')
                                     ->label(__('job-applications.fields.job_title'))
@@ -53,7 +57,7 @@ class JobApplicationForm
                                     ->maxLength(255)
                                     ->rule(fn (Get $get, $record) => Rule::unique('job_applications', 'job_title')
                                         ->where(fn (Builder $query): Builder => $query
-                                            ->where('company_name', $get('company_name'))
+                                            ->where('company_id', $get('company_id'))
                                             ->when(
                                                 filled($get('job_url')),
                                                 fn (Builder $query): Builder => $query->where('job_url', $get('job_url')),

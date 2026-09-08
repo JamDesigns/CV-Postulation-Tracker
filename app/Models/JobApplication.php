@@ -20,7 +20,7 @@ class JobApplication extends Model
 {
     protected $fillable = [
         'cv_version_id',
-        'company_name',
+        'company_id',
         'job_title',
         'job_url',
         'source',
@@ -69,6 +69,40 @@ class JobApplication extends Model
                 && $jobApplication->offer_snapshot_at === null
             ) {
                 $jobApplication->offer_snapshot_at = now();
+            }
+
+            $shouldValidateCvVersion = $jobApplication->cv_version_id !== null
+    && (
+        ! $jobApplication->exists
+        || $jobApplication->isDirty('cv_version_id')
+    );
+
+            if ($shouldValidateCvVersion) {
+                $cvVersion = CvVersion::query()
+                    ->whereKey($jobApplication->cv_version_id)
+                    ->first();
+
+                if ($cvVersion && ! $cvVersion->is_reusable) {
+                    $alreadyAssigned = JobApplication::query()
+                        ->where('cv_version_id', $jobApplication->cv_version_id)
+                        ->when(
+                            $jobApplication->exists,
+                            fn ($query) => $query->where(
+                                $jobApplication->getKeyName(),
+                                '<>',
+                                $jobApplication->getKey(),
+                            ),
+                        )
+                        ->exists();
+
+                    if ($alreadyAssigned) {
+                        throw ValidationException::withMessages([
+                            'cv_version_id' => __(
+                                'job-applications.validation.cv_version_unique',
+                            ),
+                        ]);
+                    }
+                }
             }
 
             if (
@@ -121,8 +155,7 @@ class JobApplication extends Model
         });
 
         static::updated(function (JobApplication $jobApplication): void {
-            $salaryWasAdded = $jobApplication->wasChanged('salary_min')
-    && $jobApplication->getOriginal('salary_min') === null;
+            $salaryWasAdded = $jobApplication->wasChanged('salary_min') && $jobApplication->getOriginal('salary_min') === null;
 
             $salaryOrCurrencyWasCleared = (
                 $jobApplication->wasChanged('salary_min')
@@ -243,5 +276,10 @@ class JobApplication extends Model
                 'context',
             ])
             ->withTimestamps();
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }

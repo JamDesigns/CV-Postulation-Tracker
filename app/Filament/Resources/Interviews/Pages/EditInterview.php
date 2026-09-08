@@ -24,7 +24,7 @@ class EditInterview extends EditRecord
         $jobApplication = $this->getRecord()->jobApplication;
 
         $recordTitle = collect([
-            $jobApplication?->company_name,
+            $jobApplication?->company?->name,
             $jobApplication?->job_title,
         ])
             ->filter()
