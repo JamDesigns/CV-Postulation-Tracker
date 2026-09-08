@@ -25,6 +25,7 @@ class PendingNextStepsTable extends TableWidget
             ->emptyStateHeading(__('dashboard.widgets.pending_next_steps.empty'))
             ->query(
                 JobApplication::query()
+                    ->with('company')
                     ->whereNotNull('next_step', 'and')
                     ->where('next_step', '<>', '', 'and')
                     ->whereNotIn('status', [
@@ -53,7 +54,7 @@ class PendingNextStepsTable extends TableWidget
                     }),
             ])
             ->columns([
-                TextColumn::make('company_name')
+                TextColumn::make('company.name')
                     ->label(__('dashboard.widgets.pending_next_steps.company'))
                     ->searchable()
                     ->sortable()

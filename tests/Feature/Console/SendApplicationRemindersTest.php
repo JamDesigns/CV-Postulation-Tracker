@@ -23,7 +23,7 @@ test('it sends a reminder for an application with a next action due today', func
     $user = User::factory()->create();
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Backend Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Follow up with recruiter',
@@ -54,7 +54,7 @@ test('it does not send the same reminder twice for the same application and date
     $user = User::factory()->create();
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Backend Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Follow up with recruiter',
@@ -86,7 +86,7 @@ test('it sends overdue reminders and ignores future next actions', function () {
     $user = User::factory()->create();
 
     $overdueApplication = JobApplication::query()->create([
-        'company_name' => 'Past Company',
+        'company_id' => companyId('Past Company'),
         'job_title' => 'Past Application',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Past action',
@@ -94,7 +94,7 @@ test('it sends overdue reminders and ignores future next actions', function () {
     ]);
 
     JobApplication::query()->create([
-        'company_name' => 'Future Company',
+        'company_id' => companyId('Future Company'),
         'job_title' => 'Future Application',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Future action',
@@ -127,7 +127,7 @@ test('it ignores applications without a meaningful next step', function () {
     User::factory()->create();
 
     JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Backend Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => '',
@@ -151,7 +151,7 @@ test('it can send a new reminder when the next action date changes', function ()
     $user = User::factory()->create();
 
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Backend Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Follow up with recruiter',
@@ -196,7 +196,7 @@ test('it does not record a reminder when there are no users to notify', function
     Notification::fake();
 
     JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Backend Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Follow up with recruiter',

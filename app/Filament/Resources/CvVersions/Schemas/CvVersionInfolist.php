@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CvVersions\Schemas;
 use App\Enums\BaseProfile;
 use App\Enums\CvLanguage;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Schema;
@@ -32,8 +33,12 @@ class CvVersionInfolist
                                     ->label(__('cv-versions.fields.base_profile'))
                                     ->formatStateUsing(fn (?string $state): ?string => BaseProfile::tryFrom($state)?->label() ?? $state)
                                     ->badge(),
+
+                                IconEntry::make('is_reusable')
+                                    ->label(__('cv-versions.fields.is_reusable'))
+                                    ->boolean(),
                             ])
-                            ->columns(3),
+                            ->columns(4),
 
                         Tabs\Tab::make(__('cv-versions.sections.files'))
                             ->schema([

@@ -8,7 +8,7 @@ use App\Models\JobApplication;
 
 test('it synchronizes the application when an interview is created', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
         'next_step' => 'Review response',
@@ -32,7 +32,7 @@ test('it synchronizes the application when an interview is created', function ()
 
 test('it rejects the application when an interview is created as rejected', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Rejected Interview Company',
+        'company_id' => companyId('Rejected Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
         'next_step' => 'Review response',
@@ -57,7 +57,7 @@ test('it rejects the application when an interview is created as rejected', func
 
 test('it preserves the application state when an interview is created as cancelled', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Cancelled Interview Company',
+        'company_id' => companyId('Cancelled Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
         'next_step' => 'Review response',
@@ -82,7 +82,7 @@ test('it preserves the application state when an interview is created as cancell
 
 test('it does not synchronize the application when an historical interview is edited', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
     ]);
@@ -114,7 +114,7 @@ test('it does not synchronize the application when an historical interview is ed
 
 test('it does not synchronize the application when an older historical interview is created', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Interview Company',
+        'company_id' => companyId('Historical Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
     ]);
@@ -144,7 +144,7 @@ test('it does not synchronize the application when an older historical interview
 
 test('it does not synchronize the application when a newer interview already exists', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Multiple Interviews Company',
+        'company_id' => companyId('Multiple Interviews Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
     ]);
@@ -171,7 +171,7 @@ test('it does not synchronize the application when a newer interview already exi
 
 test('it keeps the application in interview for non-final interview results', function (InterviewResult $result) {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Non Final Interview Company',
+        'company_id' => companyId('Non Final Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
     ]);

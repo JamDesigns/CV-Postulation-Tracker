@@ -19,7 +19,6 @@ return [
     ],
 
     'fields' => [
-        'company_name' => 'Company',
         'job_title' => 'Job',
         'job_url' => 'Job URL',
         'source' => 'Source',
@@ -62,6 +61,7 @@ return [
 
     'validation' => [
         'duplicate' => 'A job application already exists for this company, job and URL.',
+        'cv_version_unique' => 'This CV is already associated with another application.',
         'salary_max_requires_min' => 'You cannot enter a maximum salary without a minimum salary.',
         'salary_max_gte_min' => 'The maximum salary must be greater than or equal to the minimum salary.',
     ],

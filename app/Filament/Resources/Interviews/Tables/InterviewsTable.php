@@ -23,8 +23,8 @@ class InterviewsTable
     {
         return $table
             ->columns([
-                TextColumn::make('jobApplication.company_name')
-                    ->label(__('job-applications.fields.company_name'))
+                TextColumn::make('jobApplication.company.name')
+                    ->label(__('companies.model_label'))
                     ->searchable()
                     ->sortable(),
 

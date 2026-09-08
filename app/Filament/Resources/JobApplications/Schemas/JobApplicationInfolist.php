@@ -33,8 +33,8 @@ class JobApplicationInfolist
                 ->tabs([
                     Tabs\Tab::make(__('job-applications.sections.main'))
                         ->schema([
-                            TextEntry::make('company_name')
-                                ->label(__('job-applications.fields.company_name')),
+                            TextEntry::make('company.name')
+                                ->label(__('companies.model_label')),
 
                             TextEntry::make('job_title')
                                 ->label(__('job-applications.fields.job_title')),

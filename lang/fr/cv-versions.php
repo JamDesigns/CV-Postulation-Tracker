@@ -30,9 +30,16 @@ return [
         'adaptation_notes' => 'Notes d’adaptation',
         'created_at' => 'Créé le',
         'updated_at' => 'Mis à jour le',
+        'is_reusable' => 'CV réutilisable',
+    ],
+
+    'helpers' => [
+        'is_reusable' => 'Permet d’associer ce CV à plusieurs candidatures.',
+        'is_reusable_locked' => 'This CV is associated with multiple applications, so reuse can no longer be disabled.',
     ],
 
     'validation' => [
         'name_unique' => 'Un CV portant ce nom interne existe déjà.',
+        'reusable_required_for_multiple_applications' => 'Vous ne pouvez pas désactiver la réutilisation car ce CV est associé à plusieurs candidatures.',
     ],
 ];

@@ -30,9 +30,16 @@ return [
         'adaptation_notes' => 'Adaptation notes',
         'created_at' => 'Created',
         'updated_at' => 'Updated',
+        'is_reusable' => 'Reusable CV',
+    ],
+
+    'helpers' => [
+        'is_reusable' => 'Allows this CV to be associated with multiple applications.',
+        'is_reusable_locked' => 'This CV is associated with multiple applications, so reuse can no longer be disabled.',
     ],
 
     'validation' => [
         'name_unique' => 'A CV with this internal name already exists.',
+        'reusable_required_for_multiple_applications' => 'You cannot disable reuse because this CV is associated with multiple applications.',
     ],
 ];

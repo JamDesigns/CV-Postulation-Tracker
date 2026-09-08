@@ -18,8 +18,8 @@ class InterviewInfolist
                     ->tabs([
                         Tabs\Tab::make(__('interviews.sections.main'))
                             ->schema([
-                                TextEntry::make('jobApplication.company_name')
-                                    ->label(__('job-applications.fields.company_name'))
+                                TextEntry::make('jobApplication.company.name')
+                                    ->label(__('companies.model_label'))
                                     ->placeholder('-'),
 
                                 TextEntry::make('jobApplication.job_title')

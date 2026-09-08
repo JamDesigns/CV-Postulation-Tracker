@@ -26,6 +26,7 @@ class SendApplicationReminders extends Command
         }
 
         $jobApplications = JobApplication::query()
+            ->with('company')
             ->whereDate('next_action_at', '<=', today(), 'and')
             ->whereNotNull('next_step', 'and')
             ->whereNotIn('status', [

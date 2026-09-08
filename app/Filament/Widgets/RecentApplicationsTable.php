@@ -23,11 +23,12 @@ class RecentApplicationsTable extends TableWidget
             ->emptyStateHeading(__('dashboard.widgets.recent_applications.empty'))
             ->query(
                 JobApplication::query()
+                    ->with('company')
                     ->latest('created_at')
                     ->limit(10)
             )
             ->columns([
-                TextColumn::make('company_name')
+                TextColumn::make('company.name')
                     ->label(__('dashboard.widgets.recent_applications.company'))
                     ->searchable()
                     ->sortable(),

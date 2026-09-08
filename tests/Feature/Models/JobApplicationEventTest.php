@@ -10,7 +10,7 @@ use Illuminate\Validation\ValidationException;
 
 test('it synchronizes the application when an event is created', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -37,7 +37,7 @@ test('it synchronizes the application when an event is created', function () {
 
 test('it preserves the status and next step when the event has no destination status', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Sent,
         'next_step' => 'Custom next step',
@@ -63,7 +63,7 @@ test('it preserves the status and next step when the event has no destination st
 
 test('it clears the next step and date for a final status', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Interview,
         'next_step' => 'Prepare interview',
@@ -90,7 +90,7 @@ test('it clears the next step and date for a final status', function () {
 
 test('it does not synchronize the application when an historical event is edited', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -132,7 +132,7 @@ test('it sets the application sent date when an event changes the status to sent
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -160,7 +160,7 @@ test('it preserves the existing application sent date when another event changes
 
     $jobApplication = JobApplication::query()->create([
         'cv_version_id' => $cvVersion->id,
-        'company_name' => 'Test Company',
+        'company_id' => companyId('Test Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Responded,
         'sent_at' => '2026-08-10',
@@ -181,7 +181,7 @@ test('it preserves the existing application sent date when another event changes
 
 test('it does not synchronize the application when an older historical event is created', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Event Company',
+        'company_id' => companyId('Historical Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -214,7 +214,7 @@ test('it does not synchronize the application when an older historical event is 
 
 test('it derives the previous status chronologically for an historical event', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Status Company',
+        'company_id' => companyId('Historical Status Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -246,7 +246,7 @@ test('it derives the previous status chronologically for an historical event', f
 
 test('it preserves an explicit previous status for an historical event', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Explicit Status Company',
+        'company_id' => companyId('Historical Explicit Status Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -271,7 +271,7 @@ test('it preserves an explicit previous status for an historical event', functio
 
 test('it does not synchronize the application when a newer interview exists', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Event With Interview Company',
+        'company_id' => companyId('Historical Event With Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -308,7 +308,7 @@ test('it does not synchronize the application when a newer interview exists', fu
 
 test('it derives the previous status from an earlier interview when creating an historical event', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Event After Interview Company',
+        'company_id' => companyId('Historical Event After Interview Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -351,7 +351,7 @@ test('it derives the previous status from an earlier interview when creating an 
 
 test('it allows an event to reference a contact attached to its application', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Contact Event Company',
+        'company_id' => companyId('Contact Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -377,7 +377,7 @@ test('it allows an event to reference a contact attached to its application', fu
 
 test('it rejects a contact that is not attached to the event application', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Invalid Contact Event Company',
+        'company_id' => companyId('Invalid Contact Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -396,7 +396,7 @@ test('it rejects a contact that is not attached to the event application', funct
 
 test('it rejects changing an event contact to one not attached to its application', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Changed Contact Event Company',
+        'company_id' => companyId('Changed Contact Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -426,7 +426,7 @@ test('it rejects changing an event contact to one not attached to its applicatio
 
 test('it allows an historical event to be edited after its contact is detached', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Historical Contact Event Company',
+        'company_id' => companyId('Historical Contact Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
@@ -459,7 +459,7 @@ test('it allows an historical event to be edited after its contact is detached',
 
 test('it preserves an event and clears its contact when the contact is deleted', function () {
     $jobApplication = JobApplication::query()->create([
-        'company_name' => 'Deleted Contact Event Company',
+        'company_id' => companyId('Deleted Contact Event Company'),
         'job_title' => 'Full Stack Developer',
         'status' => ApplicationStatus::Pending,
     ]);
