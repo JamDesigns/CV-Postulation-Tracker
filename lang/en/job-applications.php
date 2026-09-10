@@ -23,6 +23,7 @@ return [
         'job_url' => 'Job URL',
         'source' => 'Source',
         'status' => 'Status',
+        'rejection_reason' => 'Rejection reason',
         'sent_at' => 'Sent date',
         'location' => 'Location',
         'work_mode' => 'Work mode',

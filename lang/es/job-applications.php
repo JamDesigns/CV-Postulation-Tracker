@@ -23,6 +23,7 @@ return [
         'job_url' => 'URL de la oferta',
         'source' => 'Fuente',
         'status' => 'Estado',
+        'rejection_reason' => 'Motivo de descarte',
         'sent_at' => 'Fecha de envío',
         'location' => 'Ubicación',
         'work_mode' => 'Modalidad',

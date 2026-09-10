@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ApplicationRejectionReason;
 use App\Enums\ApplicationStatus;
 use App\Enums\Currency;
 use App\Enums\CvLanguage;
@@ -25,6 +26,7 @@ class JobApplication extends Model
         'job_url',
         'source',
         'status',
+        'rejection_reason',
         'sent_at',
         'location',
         'work_mode',
@@ -48,6 +50,7 @@ class JobApplication extends Model
         return [
             'source' => SourceType::class,
             'status' => ApplicationStatus::class,
+            'rejection_reason' => ApplicationRejectionReason::class,
             'sent_at' => 'date',
             'next_action_at' => 'date',
             'work_mode' => WorkMode::class,
@@ -71,11 +74,10 @@ class JobApplication extends Model
                 $jobApplication->offer_snapshot_at = now();
             }
 
-            $shouldValidateCvVersion = $jobApplication->cv_version_id !== null
-    && (
-        ! $jobApplication->exists
-        || $jobApplication->isDirty('cv_version_id')
-    );
+            $shouldValidateCvVersion = $jobApplication->cv_version_id !== null && (
+                ! $jobApplication->exists
+                || $jobApplication->isDirty('cv_version_id')
+            );
 
             if ($shouldValidateCvVersion) {
                 $cvVersion = CvVersion::query()
@@ -103,6 +105,10 @@ class JobApplication extends Model
                         ]);
                     }
                 }
+            }
+
+            if ($jobApplication->status !== ApplicationStatus::Rejected) {
+                $jobApplication->rejection_reason = null;
             }
 
             if (

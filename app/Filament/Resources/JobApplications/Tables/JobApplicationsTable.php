@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JobApplications\Tables;
 
+use App\Enums\ApplicationRejectionReason;
 use App\Enums\ApplicationStatus;
 use App\Enums\Currency;
 use App\Enums\JobApplicationEventType;
@@ -179,6 +180,10 @@ class JobApplicationsTable
                 SelectFilter::make('status')
                     ->label(__('job-applications.fields.status'))
                     ->options(ApplicationStatus::options()),
+
+                SelectFilter::make('rejection_reason')
+                    ->label(__('job-applications.fields.rejection_reason'))
+                    ->options(ApplicationRejectionReason::options()),
 
                 SelectFilter::make('next_action_urgency')
                     ->label(__('job-applications.fields.next_action_urgency'))
@@ -482,6 +487,11 @@ class JobApplicationsTable
                         ->icon(Heroicon::XCircle)
                         ->color('danger')
                         ->schema([
+                            Select::make('rejection_reason')
+                                ->label(__('job-applications.fields.rejection_reason'))
+                                ->options(ApplicationRejectionReason::options())
+                                ->required(),
+
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
@@ -503,6 +513,7 @@ class JobApplicationsTable
 
                             $record->forceFill([
                                 'status' => ApplicationStatus::Rejected->value,
+                                'rejection_reason' => $data['rejection_reason'],
                                 'next_step' => null,
                                 'next_action_at' => null,
                             ])->save();

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JobApplications\Schemas;
 
+use App\Enums\ApplicationRejectionReason;
 use App\Enums\ApplicationStatus;
 use App\Enums\Currency;
 use App\Enums\SourceType;
@@ -53,6 +54,20 @@ class JobApplicationInfolist
                                 ->label(__('job-applications.fields.sent_at'))
                                 ->date('d/m/Y')
                                 ->placeholder('-'),
+
+                            TextEntry::make('rejection_reason')
+                                ->label(__('job-applications.fields.rejection_reason'))
+                                ->formatStateUsing(
+                                    fn (ApplicationRejectionReason|string|null $state): ?string => $state instanceof ApplicationRejectionReason
+                                        ? $state->label()
+                                        : ApplicationRejectionReason::tryFrom($state ?? '')?->label() ?? $state,
+                                )
+                                ->badge()
+                                ->placeholder('-')
+                                ->visible(
+                                    fn (JobApplication $record): bool => $record->status === ApplicationStatus::Rejected,
+                                )
+                                ->columnSpanFull(),
                         ])
                         ->columns(2),
 
