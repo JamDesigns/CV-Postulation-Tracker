@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ApplicationRejectionReason;
 use App\Enums\ApplicationStatus;
 use App\Enums\Currency;
 use App\Enums\NextActionUrgency;
@@ -668,6 +669,52 @@ test('it clears the next step and action date when the application reaches a fin
         ->toBeNull()
         ->and($jobApplication->next_action_at)
         ->toBeNull();
+});
+
+test('it stores and casts the rejection reason for a rejected application', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_id' => companyId('Rejected Application Company'),
+        'job_title' => 'Backend Developer',
+        'status' => ApplicationStatus::Rejected,
+        'rejection_reason' => ApplicationRejectionReason::TechnicalFit,
+    ]);
+
+    expect($jobApplication->status)
+        ->toBe(ApplicationStatus::Rejected)
+        ->and($jobApplication->rejection_reason)
+        ->toBe(ApplicationRejectionReason::TechnicalFit);
+
+    assertDatabaseHas('job_applications', [
+        'id' => $jobApplication->id,
+        'status' => ApplicationStatus::Rejected->value,
+        'rejection_reason' => ApplicationRejectionReason::TechnicalFit->value,
+    ]);
+});
+
+test('it clears the rejection reason when the application is reopened', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_id' => companyId('Reopened Application Company'),
+        'job_title' => 'Frontend Developer',
+        'status' => ApplicationStatus::Rejected,
+        'rejection_reason' => ApplicationRejectionReason::CompanyRejection,
+    ]);
+
+    $jobApplication->forceFill([
+        'status' => ApplicationStatus::FollowUpSent,
+    ])->save();
+
+    $jobApplication->refresh();
+
+    expect($jobApplication->status)
+        ->toBe(ApplicationStatus::FollowUpSent)
+        ->and($jobApplication->rejection_reason)
+        ->toBeNull();
+
+    assertDatabaseHas('job_applications', [
+        'id' => $jobApplication->id,
+        'status' => ApplicationStatus::FollowUpSent->value,
+        'rejection_reason' => null,
+    ]);
 });
 
 test('it prevents duplicate applications without a URL for the same company and title', function () {

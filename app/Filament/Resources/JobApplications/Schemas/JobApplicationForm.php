@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JobApplications\Schemas;
 
+use App\Enums\ApplicationRejectionReason;
 use App\Enums\ApplicationStatus;
 use App\Enums\BaseProfile;
 use App\Enums\Currency;
@@ -78,6 +79,19 @@ class JobApplicationForm
                                 DatePicker::make('sent_at')
                                     ->label(__('job-applications.fields.sent_at'))
                                     ->live(),
+
+                                Select::make('rejection_reason')
+                                    ->label(__('job-applications.fields.rejection_reason'))
+                                    ->options(ApplicationRejectionReason::options())
+                                    ->required(
+                                        fn (Get $get): bool => $get('status')
+                                            === ApplicationStatus::Rejected->value,
+                                    )
+                                    ->visible(
+                                        fn (Get $get): bool => $get('status')
+                                            === ApplicationStatus::Rejected->value,
+                                    )
+                                    ->columnSpanFull(),
                             ])
                             ->columns(2),
 

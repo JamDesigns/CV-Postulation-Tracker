@@ -13,6 +13,18 @@ return [
         'hired' => 'Embauché',
     ],
 
+    'application_rejection_reason' => [
+        'salary' => 'Salaire',
+        'work_mode' => 'Mode de travail',
+        'language' => 'Langue',
+        'experience' => 'Expérience',
+        'technical_fit' => 'Adéquation technique',
+        'position_closed' => 'Poste clôturé',
+        'company_rejection' => 'Rejet par l’entreprise',
+        'no_response' => 'Aucune réponse',
+        'other' => 'Autre',
+    ],
+
     'work_mode' => [
         'remote' => 'À distance',
         'hybrid' => 'Hybride',
