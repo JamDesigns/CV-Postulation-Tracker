@@ -12,6 +12,7 @@ return [
         'contacts' => 'Contacts',
         'cv_versions' => 'Adapted CVs',
         'interviews' => 'Interviews',
+        'job_search_statistics' => 'Statistics',
     ],
     'user_menu' => [
         'themes' => [
