@@ -79,6 +79,7 @@ return [
         'view' => 'View',
         'import_application_form' => 'Import JSON',
         'add_application_form_item' => 'Add question and answer',
+        'inquiry_sent' => 'Inquiry sent',
     ],
 
     'quick_actions' => [
@@ -87,6 +88,7 @@ return [
             'next_action_at' => 'Next action date',
             'notes_to_append' => 'Notes to append',
             'status_to' => 'New status',
+            'inquiry_message' => 'Inquiry content',
         ],
 
         'next_steps' => [
@@ -98,6 +100,7 @@ return [
             'wait_after_follow_up' => 'Wait for response after follow-up',
             'review_paused_application' => 'Review paused application',
             'reopened_application' => 'Resume application follow-up',
+            'wait_for_inquiry_response' => 'Wait for a response to the inquiry',
         ],
     ],
 

@@ -26,6 +26,7 @@ return [
         'status_changed' => 'Cambio de estado',
         'note_added' => 'Nota añadida',
         'application_sent' => 'Candidatura enviada',
+        'inquiry_sent' => 'Consulta enviada',
         'response_received' => 'Respuesta recibida',
         'technical_test' => 'Prueba técnica',
         'follow_up_sent' => 'Seguimiento enviado',

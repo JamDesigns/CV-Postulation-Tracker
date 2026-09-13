@@ -218,6 +218,78 @@ class JobApplicationsTable
 
                     EditAction::make(),
 
+                    Action::make('inquirySent')
+                        ->label(__('job-applications.actions.inquiry_sent'))
+                        ->icon(Heroicon::ChatBubbleLeftRight)
+                        ->color('info')
+                        ->schema([
+                            Select::make('contact_id')
+                                ->label(__('contacts.model_label'))
+                                ->options(
+                                    fn (JobApplication $record): array => $record
+                                        ->contacts()
+                                        ->get()
+                                        ->mapWithKeys(
+                                            fn ($contact): array => [
+                                                $contact->getKey() => $contact->display_name,
+                                            ],
+                                        )
+                                        ->all(),
+                                )
+                                ->default(
+                                    fn (JobApplication $record): ?int => self::primaryContactId($record),
+                                )
+                                ->searchable()
+                                ->required(),
+
+                            Textarea::make('inquiry_message')
+                                ->label(__('job-applications.quick_actions.fields.inquiry_message'))
+                                ->required()
+                                ->rows(5)
+                                ->autosize(),
+
+                            DatePicker::make('next_action_at')
+                                ->label(__('job-applications.quick_actions.fields.next_action_at'))
+                                ->default(today()->addDays(3)),
+                        ])
+                        ->visible(
+                            fn (JobApplication $record): bool => $record->status === ApplicationStatus::Pending
+                                && $record->contacts()->exists(),
+                        )
+                        ->modalSubmitAction(
+                            fn (Action $action): Action => $action->color('primary'),
+                        )
+                        ->action(function (JobApplication $record, array $data): void {
+                            $locale = app()->getLocale();
+                            $nextStep = __(
+                                'job-applications.quick_actions.next_steps.wait_for_inquiry_response',
+                                [],
+                                $locale,
+                            );
+                            $nextActionAt = $data['next_action_at'] ?? null;
+                            $message = trim((string) $data['inquiry_message']);
+
+                            $record->forceFill([
+                                'next_step' => $nextStep,
+                                'next_action_at' => $nextActionAt,
+                            ])->save();
+
+                            self::createApplicationEvent(
+                                $record,
+                                JobApplicationEventType::InquirySent,
+                                __(
+                                    'job-application-events.types.inquiry_sent',
+                                    [],
+                                    $locale,
+                                ),
+                                $message,
+                                ApplicationStatus::Pending,
+                                null,
+                                $nextActionAt,
+                                $data['contact_id'],
+                            );
+                        }),
+
                     Action::make('markAsSent')
                         ->label(__('job-applications.actions.mark_as_sent'))
                         ->icon(Heroicon::PaperAirplane)
@@ -666,18 +738,31 @@ class JobApplicationsTable
         ApplicationStatus|string|null $statusFrom,
         ApplicationStatus|string|null $statusTo,
         $nextActionAt = null,
+        int|string|null $contactId = null,
     ): void {
         $event = $record->events()->make([
             'type' => $type->value,
             'occurred_at' => now(),
             'title' => $title,
             'body' => $body,
+            'contact_id' => $contactId ?? self::primaryContactId($record),
             'status_from' => self::statusValue($statusFrom),
             'status_to' => self::statusValue($statusTo),
             'next_action_at' => $nextActionAt,
         ]);
 
         $event->saveQuietly();
+    }
+
+    private static function primaryContactId(JobApplication $record): ?int
+    {
+        $contactId = $record->contacts()
+            ->wherePivot('is_primary', true)
+            ->value('contacts.id');
+
+        return $contactId !== null
+            ? (int) $contactId
+            : null;
     }
 
     private static function eventBody(?string $mainText, ?string $notes = null): ?string

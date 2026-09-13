@@ -79,6 +79,7 @@ return [
         'view' => 'Ver',
         'import_application_form' => 'Importar JSON',
         'add_application_form_item' => 'Añadir pregunta y respuesta',
+        'inquiry_sent' => 'Consulta enviada',
     ],
 
     'quick_actions' => [
@@ -87,6 +88,7 @@ return [
             'next_action_at' => 'Fecha próxima acción',
             'notes_to_append' => 'Notas a añadir',
             'status_to' => 'Nuevo estado',
+            'inquiry_message' => 'Contenido de la consulta',
         ],
 
         'next_steps' => [
@@ -98,6 +100,7 @@ return [
             'wait_after_follow_up' => 'Esperar respuesta tras seguimiento',
             'review_paused_application' => 'Revisar candidatura pausada',
             'reopened_application' => 'Retomar seguimiento de la candidatura',
+            'wait_for_inquiry_response' => 'Esperar respuesta a la consulta',
         ],
     ],
 
