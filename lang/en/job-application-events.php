@@ -26,6 +26,7 @@ return [
         'status_changed' => 'Status changed',
         'note_added' => 'Note added',
         'application_sent' => 'Application sent',
+        'inquiry_sent' => 'Inquiry sent',
         'response_received' => 'Response received',
         'technical_test' => 'Technical test',
         'follow_up_sent' => 'Follow-up sent',
