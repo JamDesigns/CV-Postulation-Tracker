@@ -89,4 +89,23 @@ return [
         'referral' => 'Recommandation',
         'other' => 'Autre',
     ],
+
+    'attachment_category' => [
+        'job_posting' => 'Offre d’emploi',
+        'application' => 'Documents de candidature',
+        'technical_test' => 'Test technique',
+        'interview' => 'Documents d’entretien',
+        'company_documentation' => 'Documents de l’entreprise',
+        'employment_offer' => 'Proposition d’embauche',
+        'contract' => 'Contrat ou précontrat',
+        'communication' => 'Communication',
+        'other' => 'Autre',
+    ],
+
+    'attachment_direction' => [
+        'received' => 'Reçu',
+        'sent' => 'Envoyé',
+        'internal' => 'Interne',
+        'not_specified' => 'Non précisé',
+    ],
 ];

@@ -36,9 +36,7 @@ class JobApplication extends Model
         'main_stack',
         'dossier_sent',
         'technical_dossier_version_id',
-        'message_sent',
         'adaptation_summary',
-        'notes',
         'next_step',
         'next_action_at',
         'offer_snapshot',
@@ -181,6 +179,13 @@ class JobApplication extends Model
 
             app(ExchangeRateService::class)->replaceSnapshot($jobApplication);
         });
+
+        static::deleting(function (JobApplication $jobApplication): void {
+            $jobApplication->attachments()
+                ->get()
+                ->each
+                ->delete();
+        });
     }
 
     private static function activeTechnicalDossierVersionIdForCv(int|string|null $cvVersionId): ?int
@@ -287,5 +292,10 @@ class JobApplication extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 }
