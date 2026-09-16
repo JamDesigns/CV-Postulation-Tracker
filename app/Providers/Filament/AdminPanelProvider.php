@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Controllers\AttachmentFileController;
 use App\Http\Controllers\CvVersionFileController;
 use App\Http\Controllers\TechnicalDossierVersionFileController;
 use App\Http\Middleware\RegisterFilamentThemePalette;
@@ -50,6 +51,12 @@ class AdminPanelProvider extends PanelProvider
 
                 Route::get('/technical-dossier-versions/{technicalDossierVersion}/docx', [TechnicalDossierVersionFileController::class, 'downloadDocx'])
                     ->name('technical-dossier-versions.docx');
+
+                Route::get('/attachments/{attachment}/file', [AttachmentFileController::class, 'show'])
+                    ->name('attachments.file');
+
+                Route::get('/attachments/{attachment}/download', [AttachmentFileController::class, 'download'])
+                    ->name('attachments.download');
 
                 Route::get('/theme-palette/{palette}', function (string $palette) {
                     abort_unless(

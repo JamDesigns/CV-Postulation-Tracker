@@ -6,6 +6,7 @@ use App\Filament\Resources\JobApplications\Pages\CreateJobApplication;
 use App\Filament\Resources\JobApplications\Pages\EditJobApplication;
 use App\Filament\Resources\JobApplications\Pages\ListJobApplications;
 use App\Filament\Resources\JobApplications\Pages\ViewJobApplication;
+use App\Filament\Resources\JobApplications\RelationManagers\AttachmentsRelationManager;
 use App\Filament\Resources\JobApplications\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\JobApplications\RelationManagers\EventsRelationManager;
 use App\Filament\Resources\JobApplications\RelationManagers\InterviewsRelationManager;
@@ -70,6 +71,7 @@ class JobApplicationResource extends Resource
             EventsRelationManager::class,
             InterviewsRelationManager::class,
             ContactsRelationManager::class,
+            AttachmentsRelationManager::class,
         ];
     }
 

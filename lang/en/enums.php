@@ -89,4 +89,23 @@ return [
         'referral' => 'Referral',
         'other' => 'Other',
     ],
+
+    'attachment_category' => [
+        'job_posting' => 'Job posting',
+        'application' => 'Application documentation',
+        'technical_test' => 'Technical test',
+        'interview' => 'Interview documentation',
+        'company_documentation' => 'Company documentation',
+        'employment_offer' => 'Employment offer',
+        'contract' => 'Contract or pre-contract',
+        'communication' => 'Communication',
+        'other' => 'Other',
+    ],
+
+    'attachment_direction' => [
+        'received' => 'Received',
+        'sent' => 'Sent',
+        'internal' => 'Internal',
+        'not_specified' => 'Not specified',
+    ],
 ];
