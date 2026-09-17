@@ -24,7 +24,6 @@ return [
 
     'types' => [
         'status_changed' => 'Status changed',
-        'note_added' => 'Note added',
         'application_sent' => 'Application sent',
         'inquiry_sent' => 'Inquiry sent',
         'response_received' => 'Response received',

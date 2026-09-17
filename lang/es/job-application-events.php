@@ -24,7 +24,6 @@ return [
 
     'types' => [
         'status_changed' => 'Cambio de estado',
-        'note_added' => 'Nota añadida',
         'application_sent' => 'Candidatura enviada',
         'inquiry_sent' => 'Consulta enviada',
         'response_received' => 'Respuesta recibida',
