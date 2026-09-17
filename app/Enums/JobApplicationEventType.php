@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum JobApplicationEventType: string
 {
+    case ManualNote = 'manual_note';
     case StatusChanged = 'status_changed';
-    case NoteAdded = 'note_added';
     case ApplicationSent = 'application_sent';
     case InquirySent = 'inquiry_sent';
     case ResponseReceived = 'response_received';
@@ -15,13 +15,12 @@ enum JobApplicationEventType: string
     case Rejected = 'rejected';
     case Reopened = 'reopened';
     case Hired = 'hired';
-    case ManualNote = 'manual_note';
 
     public function label(): string
     {
         return match ($this) {
+            self::ManualNote => __('job-application-events.types.manual_note'),
             self::StatusChanged => __('job-application-events.types.status_changed'),
-            self::NoteAdded => __('job-application-events.types.note_added'),
             self::ApplicationSent => __('job-application-events.types.application_sent'),
             self::InquirySent => __('job-application-events.types.inquiry_sent'),
             self::ResponseReceived => __('job-application-events.types.response_received'),
@@ -31,7 +30,6 @@ enum JobApplicationEventType: string
             self::Rejected => __('job-application-events.types.rejected'),
             self::Reopened => __('job-application-events.types.reopened'),
             self::Hired => __('job-application-events.types.hired'),
-            self::ManualNote => __('job-application-events.types.manual_note'),
         };
     }
 
