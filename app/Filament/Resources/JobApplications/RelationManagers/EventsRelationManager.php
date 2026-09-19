@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\JobApplications\RelationManagers;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\CommunicationChannel;
 use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use App\Filament\Resources\JobApplications\Pages\ViewJobApplication;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -50,7 +52,13 @@ class EventsRelationManager extends RelationManager
                     ->label(__('job-application-events.fields.type'))
                     ->options(JobApplicationEventType::options())
                     ->default(JobApplicationEventType::ManualNote->value)
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, $state): void {
+                        if (! self::supportsCommunicationChannel($state)) {
+                            $set('communication_channel', null);
+                        }
+                    }),
 
                 DateTimePicker::make('occurred_at')
                     ->label(__('job-application-events.fields.occurred_at'))
@@ -130,7 +138,28 @@ class EventsRelationManager extends RelationManager
                     ->label(__('job-application-events.fields.title'))
                     ->required()
                     ->maxLength(255)
-                    ->columnSpanFull(),
+                    ->columnSpan(
+                        fn (Get $get): int => self::supportsCommunicationChannel($get('type'))
+                            ? 1
+                            : 2,
+                    ),
+
+                Select::make('communication_channel')
+                    ->label(__('job-application-events.fields.communication_channel'))
+                    ->options(CommunicationChannel::options())
+                    ->visible(
+                        fn (Get $get): bool => self::supportsCommunicationChannel($get('type')),
+                    )
+                    ->required(
+                        fn (Get $get): bool => in_array(
+                            self::eventTypeValue($get('type')),
+                            [
+                                JobApplicationEventType::CommunicationSent->value,
+                                JobApplicationEventType::CommunicationReceived->value,
+                            ],
+                            true,
+                        ),
+                    ),
 
                 Select::make('contact_id')
                     ->label(__('contacts.model_label'))
@@ -209,6 +238,17 @@ class EventsRelationManager extends RelationManager
                     ->badge()
                     ->sortable(),
 
+                TextColumn::make('communication_channel')
+                    ->label(__('job-application-events.fields.communication_channel'))
+                    ->formatStateUsing(
+                        fn (CommunicationChannel|string|null $state): ?string => $state instanceof CommunicationChannel
+                            ? $state->label()
+                            : CommunicationChannel::tryFrom((string) $state)?->label(),
+                    )
+                    ->badge()
+                    ->placeholder('-')
+                    ->toggleable(),
+
                 TextColumn::make('title')
                     ->label(__('job-application-events.fields.title'))
                     ->searchable()
@@ -270,5 +310,32 @@ class EventsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function supportsCommunicationChannel(
+        JobApplicationEventType|string|null $type,
+    ): bool {
+        return in_array(
+            self::eventTypeValue($type),
+            [
+                JobApplicationEventType::CommunicationSent->value,
+                JobApplicationEventType::CommunicationReceived->value,
+                JobApplicationEventType::InquirySent->value,
+                JobApplicationEventType::ResponseReceived->value,
+                JobApplicationEventType::TechnicalTest->value,
+                JobApplicationEventType::FollowUpSent->value,
+            ],
+            true,
+        );
+    }
+
+    private static function eventTypeValue(
+        JobApplicationEventType|string|null $type,
+    ): ?string {
+        if ($type instanceof JobApplicationEventType) {
+            return $type->value;
+        }
+
+        return filled($type) ? $type : null;
     }
 }

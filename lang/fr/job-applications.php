@@ -77,6 +77,7 @@ return [
         'import_application_form' => 'Importer le JSON',
         'add_application_form_item' => 'Ajouter une question et une réponse',
         'inquiry_sent' => 'Demande d’information envoyée',
+        'register_communication' => 'Enregistrer une communication',
     ],
 
     'quick_actions' => [
@@ -86,6 +87,9 @@ return [
             'notes_to_append' => 'Notes à ajouter',
             'status_to' => 'Nouveau statut',
             'inquiry_message' => 'Contenu de la demande',
+            'communication_direction' => 'Direction',
+            'communication_channel' => 'Canal',
+            'communication_detail' => 'Contenu de la communication',
         ],
 
         'next_steps' => [
