@@ -90,6 +90,14 @@ return [
         'other' => 'Other',
     ],
 
+    'communication_channel' => [
+        'email' => 'Email',
+        'linkedin' => 'LinkedIn',
+        'phone' => 'Phone',
+        'whatsapp' => 'WhatsApp',
+        'other' => 'Other',
+    ],
+
     'attachment_category' => [
         'job_posting' => 'Job posting',
         'application' => 'Application documentation',

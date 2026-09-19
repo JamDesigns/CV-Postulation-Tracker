@@ -77,6 +77,7 @@ return [
         'import_application_form' => 'Import JSON',
         'add_application_form_item' => 'Add question and answer',
         'inquiry_sent' => 'Inquiry sent',
+        'register_communication' => 'Register communication',
     ],
 
     'quick_actions' => [
@@ -86,6 +87,9 @@ return [
             'notes_to_append' => 'Notes to append',
             'status_to' => 'New status',
             'inquiry_message' => 'Inquiry content',
+            'communication_direction' => 'Direction',
+            'communication_channel' => 'Channel',
+            'communication_detail' => 'Communication content',
         ],
 
         'next_steps' => [

@@ -12,6 +12,7 @@ return [
 
     'fields' => [
         'type' => 'Tipo',
+        'communication_channel' => 'Canal de comunicación',
         'occurred_at' => 'Fecha del evento',
         'title' => 'Título',
         'body' => 'Detalle',
@@ -25,6 +26,8 @@ return [
     'types' => [
         'status_changed' => 'Cambio de estado',
         'application_sent' => 'Candidatura enviada',
+        'communication_sent' => 'Comunicación enviada',
+        'communication_received' => 'Comunicación recibida',
         'inquiry_sent' => 'Consulta enviada',
         'response_received' => 'Respuesta recibida',
         'technical_test' => 'Prueba técnica',

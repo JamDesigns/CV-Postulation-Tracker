@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ApplicationStatus;
+use App\Enums\CommunicationChannel;
 use App\Enums\InterviewType;
 use App\Enums\JobApplicationEventType;
 use App\Models\Contact;
@@ -487,4 +488,27 @@ test('it preserves an event and clears its contact when the contact is deleted',
         ->toBeTrue()
         ->and($event->contact_id)
         ->toBeNull();
+});
+
+test('it casts the communication channel to its enum', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_id' => companyId('Communication Channel Company'),
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Pending,
+    ]);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::CommunicationReceived,
+        'communication_channel' => CommunicationChannel::Linkedin,
+        'occurred_at' => now(),
+        'title' => 'Communication received',
+        'body' => 'Message received through LinkedIn.',
+    ]);
+
+    $event->refresh();
+
+    expect($event->communication_channel)
+        ->toBe(CommunicationChannel::Linkedin)
+        ->and($event->getRawOriginal('communication_channel'))
+        ->toBe(CommunicationChannel::Linkedin->value);
 });

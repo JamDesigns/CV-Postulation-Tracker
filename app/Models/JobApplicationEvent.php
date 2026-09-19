@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\CommunicationChannel;
 use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ class JobApplicationEvent extends Model
         'status_from',
         'status_to',
         'next_action_at',
+        'communication_channel',
     ];
 
     protected function casts(): array
@@ -31,6 +33,7 @@ class JobApplicationEvent extends Model
             'status_from' => ApplicationStatus::class,
             'status_to' => ApplicationStatus::class,
             'next_action_at' => 'date',
+            'communication_channel' => CommunicationChannel::class,
         ];
     }
 

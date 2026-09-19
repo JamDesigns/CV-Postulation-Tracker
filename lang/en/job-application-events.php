@@ -12,6 +12,7 @@ return [
 
     'fields' => [
         'type' => 'Type',
+        'communication_channel' => 'Communication channel',
         'occurred_at' => 'Event date',
         'title' => 'Title',
         'body' => 'Details',
@@ -25,6 +26,8 @@ return [
     'types' => [
         'status_changed' => 'Status changed',
         'application_sent' => 'Application sent',
+        'communication_sent' => 'Communication sent',
+        'communication_received' => 'Communication received',
         'inquiry_sent' => 'Inquiry sent',
         'response_received' => 'Response received',
         'technical_test' => 'Technical test',
