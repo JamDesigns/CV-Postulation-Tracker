@@ -24,10 +24,7 @@ class UpcomingInterviewsTable extends TableWidget
                 Interview::query()
                     ->with('jobApplication.company')
                     ->where('interview_at', '>=', now())
-                    ->whereIn('result', [
-                        InterviewResult::Pending->value,
-                        InterviewResult::WaitingFeedback->value,
-                    ])
+                    ->where('result', '=', InterviewResult::Pending->value, 'and')
                     ->orderBy('interview_at')
             )
             ->columns([
