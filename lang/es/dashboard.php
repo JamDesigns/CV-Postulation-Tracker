@@ -2,19 +2,19 @@
 
 return [
     'stats' => [
-        'active_applications' => 'Postulaciones activas',
+        'active_applications' => 'Procesos activos',
         'active_applications_description' => 'Procesos abiertos o en movimiento',
 
         'sent_without_response' => 'Enviadas sin respuesta',
         'sent_without_response_description' => 'Candidaturas enviadas o con seguimiento',
 
-        'in_process' => 'En proceso',
+        'in_process' => 'Entrevistas y pruebas técnicas',
         'in_process_description' => 'Entrevista o prueba técnica',
 
         'upcoming_interviews' => 'Entrevistas próximas',
         'upcoming_interviews_description' => 'Entrevistas pendientes con fecha futura',
 
-        'adapted_cvs' => 'CVs adaptados',
+        'adapted_cvs' => 'Versiones de CV',
         'adapted_cvs_description' => 'Versiones de CV disponibles',
 
         'rejected_applications' => 'Descartes',
