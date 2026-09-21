@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\ApplicationStatus;
 use App\Enums\SourceType;
 use App\Enums\WorkMode;
+use App\Filament\Resources\JobApplications\JobApplicationResource;
 use App\Models\JobApplication;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,6 +27,12 @@ class RecentApplicationsTable extends TableWidget
                     ->with('company')
                     ->latest('created_at')
                     ->limit(10)
+            )
+            ->recordUrl(
+                fn (JobApplication $record): string => JobApplicationResource::getUrl(
+                    'view',
+                    ['record' => $record],
+                ),
             )
             ->columns([
                 TextColumn::make('company.name')

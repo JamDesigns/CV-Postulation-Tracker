@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\NextActionUrgency;
+use App\Filament\Resources\JobApplications\JobApplicationResource;
 use App\Models\JobApplication;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -36,6 +37,12 @@ class PendingNextStepsTable extends TableWidget
                     ->orderByRaw('next_action_at IS NULL', [])
                     ->orderBy('next_action_at', 'asc')
                     ->latest('sent_at')
+            )
+            ->recordUrl(
+                fn (JobApplication $record): string => JobApplicationResource::getUrl(
+                    'view',
+                    ['record' => $record],
+                ),
             )
             ->filters([
                 SelectFilter::make('next_action_urgency')
