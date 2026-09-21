@@ -38,7 +38,8 @@ class JobApplicationInfolist
                                 ->label(__('companies.model_label')),
 
                             TextEntry::make('job_title')
-                                ->label(__('job-applications.fields.job_title')),
+                                ->label(__('job-applications.fields.job_title'))
+                                ->columnSpan(2),
 
                             TextEntry::make('status')
                                 ->label(__('job-applications.fields.status'))
@@ -55,6 +56,16 @@ class JobApplicationInfolist
                                 ->date('d/m/Y')
                                 ->placeholder('-'),
 
+                            TextEntry::make('next_action_at')
+                                ->label(__('job-applications.fields.next_action_at'))
+                                ->date('d/m/Y')
+                                ->placeholder('-'),
+
+                            TextEntry::make('next_step')
+                                ->label(__('job-applications.fields.next_step'))
+                                ->placeholder('-')
+                                ->columnSpanFull(),
+
                             TextEntry::make('rejection_reason')
                                 ->label(__('job-applications.fields.rejection_reason'))
                                 ->formatStateUsing(
@@ -69,7 +80,7 @@ class JobApplicationInfolist
                                 )
                                 ->columnSpanFull(),
                         ])
-                        ->columns(2),
+                        ->columns(3),
 
                     Tabs\Tab::make(__('job-applications.sections.offer'))
                         ->schema([
@@ -285,20 +296,6 @@ class JobApplicationInfolist
                                 ->placeholder('-')
                                 ->columnSpanFull(),
                         ]),
-
-                    Tabs\Tab::make(__('job-applications.sections.follow_up'))
-                        ->schema([
-                            TextEntry::make('next_action_at')
-                                ->label(__('job-applications.fields.next_action_at'))
-                                ->date('d/m/Y')
-                                ->placeholder('-'),
-
-                            TextEntry::make('next_step')
-                                ->label(__('job-applications.fields.next_step'))
-                                ->placeholder('-')
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(2),
 
                     Tabs\Tab::make(__('job-applications.sections.metadata'))
                         ->schema([

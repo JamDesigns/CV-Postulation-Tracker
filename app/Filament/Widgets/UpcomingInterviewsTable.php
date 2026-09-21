@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
+use App\Filament\Resources\JobApplications\JobApplicationResource;
 use App\Models\Interview;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,6 +27,14 @@ class UpcomingInterviewsTable extends TableWidget
                     ->where('interview_at', '>=', now())
                     ->where('result', '=', InterviewResult::Pending->value, 'and')
                     ->orderBy('interview_at')
+            )
+            ->recordUrl(
+                fn (Interview $record): ?string => $record->jobApplication
+                    ? JobApplicationResource::getUrl(
+                        'view',
+                        ['record' => $record->jobApplication],
+                    )
+                    : null,
             )
             ->columns([
                 TextColumn::make('jobApplication.job_title')
