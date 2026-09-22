@@ -36,6 +36,7 @@ class UpcomingInterviewsTable extends TableWidget
                     )
                     : null,
             )
+            ->defaultPaginationPageOption(5)
             ->columns([
                 TextColumn::make('jobApplication.job_title')
                     ->label(__('dashboard.widgets.upcoming_interviews.application'))

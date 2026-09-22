@@ -55,13 +55,8 @@ return [
     ],
     'charts' => [
         'applications_by_status' => [
-            'heading' => 'Postulaciones por estado',
-        ],
-        'applications_by_source' => [
-            'heading' => 'Postulaciones por fuente',
-        ],
-        'applications_by_work_mode' => [
-            'heading' => 'Postulaciones por modalidad',
+            'heading' => 'Procesos por estado | últimos 5 años',
+            'current_year' => ':year (hasta hoy)',
         ],
     ],
 ];

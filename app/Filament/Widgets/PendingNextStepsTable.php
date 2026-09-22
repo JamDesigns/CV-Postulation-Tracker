@@ -44,6 +44,7 @@ class PendingNextStepsTable extends TableWidget
                     ['record' => $record],
                 ),
             )
+            ->defaultPaginationPageOption(5)
             ->filters([
                 SelectFilter::make('next_action_urgency')
                     ->label(__('dashboard.widgets.pending_next_steps.urgency'))

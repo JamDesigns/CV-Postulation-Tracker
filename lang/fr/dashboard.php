@@ -55,13 +55,8 @@ return [
     ],
     'charts' => [
         'applications_by_status' => [
-            'heading' => 'Candidatures par statut',
-        ],
-        'applications_by_source' => [
-            'heading' => 'Candidatures par source',
-        ],
-        'applications_by_work_mode' => [
-            'heading' => 'Candidatures par mode de travail',
+            'heading' => 'Processus par statut | 5 dernières années',
+            'current_year' => ':year (à ce jour)',
         ],
     ],
 ];

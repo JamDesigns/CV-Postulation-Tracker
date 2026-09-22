@@ -55,13 +55,8 @@ return [
     ],
     'charts' => [
         'applications_by_status' => [
-            'heading' => 'Applications by status',
-        ],
-        'applications_by_source' => [
-            'heading' => 'Applications by source',
-        ],
-        'applications_by_work_mode' => [
-            'heading' => 'Applications by work mode',
+            'heading' => 'Processes by status | last 5 years',
+            'current_year' => ':year (to date)',
         ],
     ],
 ];
