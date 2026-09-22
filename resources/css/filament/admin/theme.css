@@ -40,3 +40,33 @@
 .compact-file-upload .filepond--download-icon:hover {
     background-color: var(--primary-500) !important;
 }
+
+.fi-topbar-collapse-sidebar-btn-ctn {
+    position: fixed;
+    top: calc(4rem + 0.5rem);
+    inset-inline-start: calc(var(--sidebar-width) - 3rem);
+    z-index: 40;
+    width: auto;
+    transform: none;
+    transition: inset-inline-start 200ms ease;
+}
+
+.fi-body:has(.fi-main-sidebar:not(.fi-sidebar-open))
+    .fi-topbar-collapse-sidebar-btn-ctn {
+    inset-inline-start: var(--collapsed-sidebar-width);
+    transform: translateX(-25%);
+}
+
+.fi-topbar-open-collapse-sidebar-btn,
+.fi-topbar-close-collapse-sidebar-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--primary-500) 35%, transparent);
+    border-radius: 0.5rem;
+    background-color: color-mix(
+        in srgb,
+        var(--primary-500) 12%,
+        var(--gray-950)
+    );
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+}
