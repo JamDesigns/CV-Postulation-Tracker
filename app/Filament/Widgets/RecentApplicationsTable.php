@@ -26,7 +26,6 @@ class RecentApplicationsTable extends TableWidget
                 JobApplication::query()
                     ->with('company')
                     ->latest('created_at')
-                    ->limit(10)
             )
             ->recordUrl(
                 fn (JobApplication $record): string => JobApplicationResource::getUrl(
@@ -34,6 +33,7 @@ class RecentApplicationsTable extends TableWidget
                     ['record' => $record],
                 ),
             )
+            ->defaultPaginationPageOption(5)
             ->columns([
                 TextColumn::make('company.name')
                     ->label(__('dashboard.widgets.recent_applications.company'))
