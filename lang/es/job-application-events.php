@@ -31,6 +31,7 @@ return [
         'inquiry_sent' => 'Consulta enviada',
         'response_received' => 'Respuesta recibida',
         'technical_test' => 'Prueba técnica',
+        'interview_completed' => 'Entrevista realizada',
         'follow_up_sent' => 'Seguimiento enviado',
         'paused' => 'Candidatura pausada',
         'rejected' => 'Candidatura descartada',

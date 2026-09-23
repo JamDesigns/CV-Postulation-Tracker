@@ -31,6 +31,7 @@ return [
         'inquiry_sent' => 'Inquiry sent',
         'response_received' => 'Response received',
         'technical_test' => 'Technical test',
+        'interview_completed' => 'Interview completed',
         'follow_up_sent' => 'Follow-up sent',
         'paused' => 'Application paused',
         'rejected' => 'Application rejected',

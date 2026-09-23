@@ -12,6 +12,7 @@ enum JobApplicationEventType: string
     case InquirySent = 'inquiry_sent';
     case ResponseReceived = 'response_received';
     case TechnicalTest = 'technical_test';
+    case InterviewCompleted = 'interview_completed';
     case FollowUpSent = 'follow_up_sent';
     case Paused = 'paused';
     case Rejected = 'rejected';
@@ -29,6 +30,7 @@ enum JobApplicationEventType: string
             self::InquirySent => __('job-application-events.types.inquiry_sent'),
             self::ResponseReceived => __('job-application-events.types.response_received'),
             self::TechnicalTest => __('job-application-events.types.technical_test'),
+            self::InterviewCompleted => __('job-application-events.types.interview_completed'),
             self::FollowUpSent => __('job-application-events.types.follow_up_sent'),
             self::Paused => __('job-application-events.types.paused'),
             self::Rejected => __('job-application-events.types.rejected'),
