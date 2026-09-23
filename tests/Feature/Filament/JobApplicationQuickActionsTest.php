@@ -214,6 +214,7 @@ test('register communication creates a received communication without changing a
                 'communication_direction' => JobApplicationEventType::CommunicationReceived->value,
                 'communication_channel' => CommunicationChannel::Email->value,
                 'communication_detail' => 'We have received your message and will review it shortly.',
+                'next_step' => 'Wait for the recruiter response',
                 'next_action_at' => '2026-09-17',
             ],
         )
@@ -227,6 +228,8 @@ test('register communication creates a received communication without changing a
 
     expect($application->status)
         ->toBe(ApplicationStatus::Pending)
+        ->and($application->next_step)
+        ->toBe('Wait for the recruiter response')
         ->and($application->next_action_at?->toDateString())
         ->toBe('2026-09-17')
         ->and($event->type)
