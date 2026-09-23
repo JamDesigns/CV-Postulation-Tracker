@@ -303,8 +303,15 @@ class JobApplicationsTable
                                 ->rows(6)
                                 ->autosize(),
 
+                            Textarea::make('next_step')
+                                ->label(__('job-applications.quick_actions.fields.next_step'))
+                                ->default(fn (): ?string => $record->next_step)
+                                ->rows(3)
+                                ->autosize(),
+
                             DatePicker::make('next_action_at')
-                                ->label(__('job-applications.quick_actions.fields.next_action_at')),
+                                ->label(__('job-applications.quick_actions.fields.next_action_at'))
+                                ->default(fn (): ?string => $record->next_action_at?->toDateString()),
                         ])
                         ->modalSubmitAction(
                             fn (Action $action): Action => $action->color('primary'),
@@ -313,13 +320,13 @@ class JobApplicationsTable
                             $type = JobApplicationEventType::from($data['communication_direction']);
                             $channel = CommunicationChannel::from($data['communication_channel']);
                             $contactId = $data['contact_id'] ?? null;
+                            $nextStep = trim((string) ($data['next_step'] ?? ''));
                             $nextActionAt = $data['next_action_at'] ?? null;
 
-                            if ($nextActionAt !== null) {
-                                $record->forceFill([
-                                    'next_action_at' => $nextActionAt,
-                                ])->save();
-                            }
+                            $record->forceFill([
+                                'next_step' => $nextStep !== '' ? $nextStep : null,
+                                'next_action_at' => $nextActionAt,
+                            ])->save();
 
                             self::createApplicationEvent(
                                 $record,
