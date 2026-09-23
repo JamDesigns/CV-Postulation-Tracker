@@ -512,3 +512,24 @@ test('it casts the communication channel to its enum', function () {
         ->and($event->getRawOriginal('communication_channel'))
         ->toBe(CommunicationChannel::Linkedin->value);
 });
+
+test('it casts the interview completed event type to its enum', function () {
+    $jobApplication = JobApplication::query()->create([
+        'company_id' => companyId('Interview Completed Event Company'),
+        'job_title' => 'Full Stack Developer',
+        'status' => ApplicationStatus::Interview,
+    ]);
+
+    $event = $jobApplication->events()->create([
+        'type' => JobApplicationEventType::InterviewCompleted,
+        'occurred_at' => now(),
+        'title' => 'Interview completed',
+    ]);
+
+    $event->refresh();
+
+    expect($event->type)
+        ->toBe(JobApplicationEventType::InterviewCompleted)
+        ->and($event->getRawOriginal('type'))
+        ->toBe(JobApplicationEventType::InterviewCompleted->value);
+});
