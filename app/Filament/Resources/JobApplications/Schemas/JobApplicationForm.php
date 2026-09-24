@@ -118,51 +118,93 @@ class JobApplicationForm
                                     ->label(__('job-applications.fields.location'))
                                     ->maxLength(255),
 
-                                Grid::make(5)
+                                Section::make(__('job-applications.fields.salary'))
                                     ->schema([
-                                        TextInput::make('salary_min')
-                                            ->label(__('job-applications.fields.salary_min'))
-                                            ->numeric()
-                                            ->minValue(0)
-                                            ->step(0.01)
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, Set $set): void {
-                                                if (blank($state)) {
-                                                    $set('salary_max', null);
-                                                }
-                                            }),
+                                        Grid::make(5)
+                                            ->schema([
+                                                TextInput::make('salary_min')
+                                                    ->label(__('job-applications.fields.minimum'))
+                                                    ->numeric()
+                                                    ->minValue(0)
+                                                    ->step(0.01)
+                                                    ->live()
+                                                    ->afterStateUpdated(function ($state, Set $set): void {
+                                                        if (blank($state)) {
+                                                            $set('salary_max', null);
+                                                        }
+                                                    }),
 
-                                        TextInput::make('salary_max')
-                                            ->label(__('job-applications.fields.salary_max'))
-                                            ->numeric()
-                                            ->minValue(0)
-                                            ->step(0.01)
-                                            ->gte('salary_min')
-                                            ->validationMessages([
-                                                'gte' => __('job-applications.validation.salary_max_gte_min'),
-                                            ])
-                                            ->disabled(fn (Get $get): bool => blank($get('salary_min')))
-                                            ->dehydrated()
-                                            ->live(),
+                                                TextInput::make('salary_max')
+                                                    ->label(__('job-applications.fields.maximum'))
+                                                    ->numeric()
+                                                    ->minValue(0)
+                                                    ->step(0.01)
+                                                    ->gte('salary_min')
+                                                    ->validationMessages([
+                                                        'gte' => __('job-applications.validation.salary_max_gte_min'),
+                                                    ])
+                                                    ->disabled(fn (Get $get): bool => blank($get('salary_min')))
+                                                    ->dehydrated()
+                                                    ->live(),
 
-                                        Select::make('currency')
-                                            ->label(__('job-applications.fields.currency'))
-                                            ->options(Currency::options())
-                                            ->default(fn (): string => Currency::localForLocale()->value)
-                                            ->live(),
+                                                Select::make('currency')
+                                                    ->label(__('job-applications.fields.currency'))
+                                                    ->options(Currency::options())
+                                                    ->default(fn (): string => Currency::localForLocale()->value)
+                                                    ->live(),
 
-                                        Text::make(
-                                            fn (Get $get, ?JobApplication $record): string => self::salaryConversion(
-                                                $get,
-                                                $record,
-                                            ),
-                                        )
-                                            ->visible(fn (Get $get): bool => self::shouldShowSalaryConversion($get))
-                                            ->color('gray')
-                                            ->extraAttributes([
-                                                'class' => 'block pt-0 lg:pt-8 text-sm',
-                                            ])
-                                            ->columnSpan(2),
+                                                Text::make(
+                                                    fn (Get $get, ?JobApplication $record): string => self::salaryConversion(
+                                                        $get,
+                                                        $record,
+                                                    ),
+                                                )
+                                                    ->visible(fn (Get $get): bool => self::shouldShowSalaryConversion($get))
+                                                    ->color('gray')
+                                                    ->extraAttributes([
+                                                        'class' => 'block pt-0 lg:pt-8 text-sm',
+                                                    ])
+                                                    ->columnSpan(2),
+                                            ]),
+                                    ])
+                                    ->columnSpanFull(),
+
+                                Section::make(__('job-applications.fields.salary_expectation'))
+                                    ->schema([
+                                        Grid::make(5)
+                                            ->schema([
+                                                TextInput::make('salary_expectation_min')
+                                                    ->label(__('job-applications.fields.minimum'))
+                                                    ->numeric()
+                                                    ->minValue(0)
+                                                    ->step(0.01)
+                                                    ->live()
+                                                    ->afterStateUpdated(function ($state, Set $set): void {
+                                                        if (blank($state)) {
+                                                            $set('salary_expectation_max', null);
+                                                        }
+                                                    }),
+
+                                                TextInput::make('salary_expectation_max')
+                                                    ->label(__('job-applications.fields.maximum'))
+                                                    ->numeric()
+                                                    ->minValue(0)
+                                                    ->step(0.01)
+                                                    ->gte('salary_expectation_min')
+                                                    ->validationMessages([
+                                                        'gte' => __('job-applications.validation.salary_expectation_max_gte_min'),
+                                                    ])
+                                                    ->disabled(fn (Get $get): bool => blank($get('salary_expectation_min')))
+                                                    ->dehydrated(),
+
+                                                Select::make('salary_expectation_currency')
+                                                    ->label(__('job-applications.fields.currency'))
+                                                    ->options(Currency::options())
+                                                    ->default(
+                                                        fn (Get $get): string => $get('currency')
+                                                            ?: Currency::localForLocale()->value,
+                                                    ),
+                                            ]),
                                     ])
                                     ->columnSpanFull(),
 

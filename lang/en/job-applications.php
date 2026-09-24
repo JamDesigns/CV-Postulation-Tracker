@@ -29,6 +29,9 @@ return [
         'salary' => 'Salary',
         'salary_min' => 'Minimum salary',
         'salary_max' => 'Maximum salary',
+        'salary_expectation' => 'Salary expectation',
+        'minimum' => 'Minimum',
+        'maximum' => 'Maximum',
         'currency' => 'Currency',
         'language' => 'Language',
         'main_stack' => 'Main stack',
@@ -62,6 +65,8 @@ return [
         'cv_version_unique' => 'This CV is already associated with another application.',
         'salary_max_requires_min' => 'You cannot enter a maximum salary without a minimum salary.',
         'salary_max_gte_min' => 'The maximum salary must be greater than or equal to the minimum salary.',
+        'salary_expectation_max_requires_min' => 'You cannot enter a maximum salary expectation without a minimum salary expectation.',
+        'salary_expectation_max_gte_min' => 'The maximum salary expectation must be greater than or equal to the minimum salary expectation.',
     ],
 
     'actions' => [

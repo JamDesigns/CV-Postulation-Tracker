@@ -123,6 +123,11 @@ class JobApplicationInfolist
                                 )
                                 ->color('gray'),
 
+                            TextEntry::make('salary_expectation')
+                                ->label(__('job-applications.fields.salary_expectation'))
+                                ->state(fn (JobApplication $record): ?string => self::formattedSalaryExpectation($record))
+                                ->placeholder('-'),
+
                             TextEntry::make('main_stack')
                                 ->label(__('job-applications.fields.main_stack'))
                                 ->placeholder('-')
@@ -344,6 +349,38 @@ class JobApplicationInfolist
 
         $salaryMax = CurrencyFormatter::format(
             $jobApplication->salary_max,
+            $currency,
+        );
+
+        return "{$salaryMin} – {$salaryMax}";
+    }
+
+    private static function salaryExpectationCurrencyFor(JobApplication $jobApplication): ?Currency
+    {
+        return $jobApplication->salary_expectation_currency instanceof Currency
+            ? $jobApplication->salary_expectation_currency
+            : Currency::tryFrom((string) $jobApplication->salary_expectation_currency);
+    }
+
+    private static function formattedSalaryExpectation(JobApplication $jobApplication): ?string
+    {
+        $currency = self::salaryExpectationCurrencyFor($jobApplication);
+
+        if ($jobApplication->salary_expectation_min === null || $currency === null) {
+            return null;
+        }
+
+        $salaryMin = CurrencyFormatter::format(
+            $jobApplication->salary_expectation_min,
+            $currency,
+        );
+
+        if ($jobApplication->salary_expectation_max === null) {
+            return $salaryMin;
+        }
+
+        $salaryMax = CurrencyFormatter::format(
+            $jobApplication->salary_expectation_max,
             $currency,
         );
 
