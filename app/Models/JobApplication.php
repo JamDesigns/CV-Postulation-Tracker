@@ -33,6 +33,9 @@ class JobApplication extends Model
         'salary_min',
         'salary_max',
         'currency',
+        'salary_expectation_min',
+        'salary_expectation_max',
+        'salary_expectation_currency',
         'main_stack',
         'dossier_sent',
         'technical_dossier_version_id',
@@ -55,6 +58,9 @@ class JobApplication extends Model
             'salary_min' => 'decimal:2',
             'salary_max' => 'decimal:2',
             'currency' => Currency::class,
+            'salary_expectation_min' => 'decimal:2',
+            'salary_expectation_max' => 'decimal:2',
+            'salary_expectation_currency' => Currency::class,
             'dossier_sent' => 'boolean',
             'technical_dossier_version_id' => 'integer',
             'offer_snapshot_at' => 'datetime',
@@ -127,6 +133,31 @@ class JobApplication extends Model
                     'salary_max' => __('job-applications.validation.salary_max_gte_min'),
                 ]);
             }
+
+            if (
+                $jobApplication->salary_expectation_max !== null
+                && $jobApplication->salary_expectation_min === null
+            ) {
+                throw ValidationException::withMessages([
+                    'salary_expectation_max' => __(
+                        'job-applications.validation.salary_expectation_max_requires_min',
+                    ),
+                ]);
+            }
+
+            if (
+                $jobApplication->salary_expectation_min !== null
+                && $jobApplication->salary_expectation_max !== null
+                && (float) $jobApplication->salary_expectation_max
+                    < (float) $jobApplication->salary_expectation_min
+            ) {
+                throw ValidationException::withMessages([
+                    'salary_expectation_max' => __(
+                        'job-applications.validation.salary_expectation_max_gte_min',
+                    ),
+                ]);
+            }
+
             if (in_array($jobApplication->status, [
                 ApplicationStatus::Rejected,
                 ApplicationStatus::Hired,

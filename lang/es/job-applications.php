@@ -29,6 +29,9 @@ return [
         'salary' => 'Salario',
         'salary_min' => 'Salario mínimo',
         'salary_max' => 'Salario máximo',
+        'salary_expectation' => 'Expectativa salarial',
+        'minimum' => 'Mínimo',
+        'maximum' => 'Máximo',
         'currency' => 'Moneda',
         'language' => 'Idioma',
         'main_stack' => 'Stack principal',
@@ -62,6 +65,8 @@ return [
         'cv_version_unique' => 'Este CV ya está asociado a otra postulación.',
         'salary_max_requires_min' => 'No puedes indicar un salario máximo sin indicar un salario mínimo.',
         'salary_max_gte_min' => 'El salario máximo debe ser igual o superior al salario mínimo.',
+        'salary_expectation_max_requires_min' => 'No puedes indicar una expectativa salarial máxima sin indicar una mínima.',
+        'salary_expectation_max_gte_min' => 'La expectativa salarial máxima debe ser igual o superior a la mínima.',
     ],
 
     'actions' => [

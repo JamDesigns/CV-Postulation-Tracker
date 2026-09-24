@@ -466,6 +466,62 @@ test('it clears the snapshot when the salary is removed', function () use ($ecbX
     assertDatabaseCount('job_application_exchange_rates', 0);
 });
 
+test('it allows a salary expectation range when the maximum is greater than or equal to the minimum', function () {
+    $jobApplication = JobApplication::withoutEvents(
+        fn (): JobApplication => JobApplication::query()->create([
+            'company_id' => companyId('Salary Expectation Company'),
+            'job_title' => 'Full Stack Developer',
+            'salary_expectation_min' => 40000,
+            'salary_expectation_max' => 45000,
+            'salary_expectation_currency' => Currency::EUR,
+        ]),
+    );
+
+    expect((float) $jobApplication->salary_expectation_min)
+        ->toBe(40000.0)
+        ->and((float) $jobApplication->salary_expectation_max)
+        ->toBe(45000.0)
+        ->and($jobApplication->salary_expectation_currency)
+        ->toBe(Currency::EUR);
+});
+
+test('it allows a single salary expectation without a maximum', function () {
+    $jobApplication = JobApplication::withoutEvents(
+        fn (): JobApplication => JobApplication::query()->create([
+            'company_id' => companyId('Single Salary Expectation Company'),
+            'job_title' => 'Backend Developer',
+            'salary_expectation_min' => 42000,
+            'salary_expectation_currency' => Currency::EUR,
+        ]),
+    );
+
+    expect((float) $jobApplication->salary_expectation_min)
+        ->toBe(42000.0)
+        ->and($jobApplication->salary_expectation_max)
+        ->toBeNull()
+        ->and($jobApplication->salary_expectation_currency)
+        ->toBe(Currency::EUR);
+});
+
+test('it rejects a salary expectation maximum without a minimum', function () {
+    expect(fn () => JobApplication::query()->create([
+        'company_id' => companyId('Invalid Salary Expectation Company'),
+        'job_title' => 'Frontend Developer',
+        'salary_expectation_max' => 45000,
+        'salary_expectation_currency' => Currency::EUR,
+    ]))->toThrow(ValidationException::class);
+});
+
+test('it rejects a salary expectation maximum lower than the minimum', function () {
+    expect(fn () => JobApplication::query()->create([
+        'company_id' => companyId('Invalid Salary Expectation Range Company'),
+        'job_title' => 'Angular Developer',
+        'salary_expectation_min' => 45000,
+        'salary_expectation_max' => 40000,
+        'salary_expectation_currency' => Currency::EUR,
+    ]))->toThrow(ValidationException::class);
+});
+
 test('it preserves the technical dossier already sent when the application is updated', function () {
     $cvVersion = CvVersion::query()->create([
         'name' => 'CV Full Stack ES',
