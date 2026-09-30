@@ -41,22 +41,6 @@
     background-color: var(--primary-500) !important;
 }
 
-.fi-topbar-collapse-sidebar-btn-ctn {
-    position: fixed;
-    top: calc(4rem + 0.5rem);
-    inset-inline-start: calc(var(--sidebar-width) - 3rem);
-    z-index: 40;
-    width: auto;
-    transform: none;
-    transition: inset-inline-start 200ms ease;
-}
-
-.fi-body:has(.fi-main-sidebar:not(.fi-sidebar-open))
-    .fi-topbar-collapse-sidebar-btn-ctn {
-    inset-inline-start: var(--collapsed-sidebar-width);
-    transform: translateX(-25%);
-}
-
 .fi-topbar-open-collapse-sidebar-btn,
 .fi-topbar-close-collapse-sidebar-btn {
     width: 1.75rem;
