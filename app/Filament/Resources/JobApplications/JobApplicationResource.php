@@ -10,6 +10,7 @@ use App\Filament\Resources\JobApplications\RelationManagers\AttachmentsRelationM
 use App\Filament\Resources\JobApplications\RelationManagers\ContactsRelationManager;
 use App\Filament\Resources\JobApplications\RelationManagers\EventsRelationManager;
 use App\Filament\Resources\JobApplications\RelationManagers\InterviewsRelationManager;
+use App\Filament\Resources\JobApplications\RelationManagers\TechnicalAssessmentsRelationManager;
 use App\Filament\Resources\JobApplications\Schemas\JobApplicationForm;
 use App\Filament\Resources\JobApplications\Schemas\JobApplicationInfolist;
 use App\Filament\Resources\JobApplications\Tables\JobApplicationsTable;
@@ -70,6 +71,7 @@ class JobApplicationResource extends Resource
         return [
             EventsRelationManager::class,
             InterviewsRelationManager::class,
+            TechnicalAssessmentsRelationManager::class,
             ContactsRelationManager::class,
             AttachmentsRelationManager::class,
         ];

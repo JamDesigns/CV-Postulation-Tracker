@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Interviews\Schemas;
 
+use App\Enums\InterviewModality;
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use App\Models\Interview;
@@ -100,6 +101,11 @@ class InterviewForm
                                 ->options(InterviewType::options())
                                 ->default(InterviewType::Hr->value)
                                 ->required(),
+
+                            Select::make('interview_modality')
+                                ->label(__('interviews.fields.interview_modality'))
+                                ->options(InterviewModality::options())
+                                ->required(fn (?Interview $record): bool => $record === null || filled($record->interview_modality)),
 
                             Select::make('result')
                                 ->label(__('interviews.fields.result'))

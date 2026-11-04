@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\CommunicationChannel;
 use App\Enums\InterviewResult;
 use App\Enums\JobApplicationEventType;
+use App\Enums\TechnicalAssessmentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\ValidationException;
@@ -40,6 +41,21 @@ class JobApplicationEvent extends Model
     protected static function booted(): void
     {
         static::saving(function (JobApplicationEvent $event): void {
+            $jobApplication = $event->jobApplication;
+
+            if (
+                $jobApplication !== null
+                && $jobApplication->created_at !== null
+                && $event->occurred_at !== null
+                && $event->occurred_at->startOfDay()->lt(
+                    $jobApplication->created_at->startOfDay()
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    'occurred_at' => __('job-application-events.validation.occurred_at_min_date'),
+                ]);
+            }
+
             if (blank($event->contact_id)) {
                 return;
             }
@@ -85,39 +101,107 @@ class JobApplicationEvent extends Model
                 ->where('interview_at', '>', $event->occurred_at)
                 ->exists();
 
-            if ($hasNewerEvent || $hasNewerInterview) {
-                if ($event->status_from === null) {
-                    $previousEvent = $jobApplication->events()
-                        ->where('occurred_at', '<', $event->occurred_at)
-                        ->whereNotNull('status_to')
-                        ->latest('occurred_at')
-                        ->first();
-
-                    $previousInterview = $jobApplication->interviews()
-                        ->where('interview_at', '<', $event->occurred_at)
-                        ->where('result', '<>', InterviewResult::Cancelled->value)
-                        ->latest('interview_at')
-                        ->first();
-
-                    if (
-                        $previousInterview !== null
-                        && (
-                            $previousEvent === null
-                            || $previousInterview->interview_at->gt($previousEvent->occurred_at)
-                        )
-                    ) {
-                        $event->status_from = $previousInterview->result === InterviewResult::Rejected
-                            ? ApplicationStatus::Rejected
-                            : ApplicationStatus::Interview;
-                    } else {
-                        $event->status_from = $previousEvent?->status_to;
-                    }
-                }
-
-                return;
-            }
+            $hasNewerAssessment = $jobApplication->technicalAssessments()
+                ->where(function ($query) use ($event): void {
+                    $query->where('received_at', '>', $event->occurred_at)
+                        ->orWhere(function ($query) use ($event): void {
+                            $query->whereNull('received_at')
+                                ->where('created_at', '>', $event->occurred_at);
+                        })
+                        ->orWhere(function ($query) use ($event): void {
+                            $query->where('status', TechnicalAssessmentStatus::Finished->value)
+                                ->whereNotNull('finished_at')
+                                ->where('finished_at', '>', $event->occurred_at);
+                        });
+                })
+                ->exists();
 
             if ($event->status_from === null) {
+                $previousEvent = $jobApplication->events()
+                    ->where('occurred_at', '<', $event->occurred_at)
+                    ->whereNotNull('status_to')
+                    ->latest('occurred_at')
+                    ->first();
+
+                $previousInterview = $jobApplication->interviews()
+                    ->where('interview_at', '<', $event->occurred_at)
+                    ->where('result', '<>', InterviewResult::Cancelled->value)
+                    ->latest('interview_at')
+                    ->first();
+
+                $previousAssessment = $jobApplication->technicalAssessments()
+                    ->where('status', '<>', TechnicalAssessmentStatus::Cancelled->value)
+                    ->where(function ($query) use ($event): void {
+                        $query->where('received_at', '<', $event->occurred_at)
+                            ->orWhere(function ($query) use ($event): void {
+                                $query->whereNull('received_at')
+                                    ->where('created_at', '<', $event->occurred_at);
+                            });
+                    })
+                    ->get()
+                    ->flatMap(function (TechnicalAssessment $assessment): array {
+                        $startedAt = $assessment->received_at ?? $assessment->created_at;
+
+                        $transitions = [
+                            [
+                                'date' => $startedAt,
+                                'status' => ApplicationStatus::TechnicalTest,
+                            ],
+                        ];
+
+                        if (
+                            $assessment->status === TechnicalAssessmentStatus::Finished
+                            && $assessment->finished_at !== null
+                        ) {
+                            $transitions[] = [
+                                'date' => $assessment->finished_at,
+                                'status' => ApplicationStatus::WaitingFeedback,
+                            ];
+                        }
+
+                        return $transitions;
+                    })
+                    ->filter(
+                        fn (array $transition): bool => $transition['date']->lt($event->occurred_at)
+                    )
+                    ->sortByDesc('date')
+                    ->first();
+
+                $transitions = collect();
+
+                if ($previousEvent !== null) {
+                    $transitions->push([
+                        'date' => $previousEvent->occurred_at,
+                        'status' => $previousEvent->status_to,
+                    ]);
+                }
+
+                if ($previousInterview !== null) {
+                    $transitions->push([
+                        'date' => $previousInterview->interview_at,
+                        'status' => match ($previousInterview->result) {
+                            InterviewResult::Rejected => ApplicationStatus::Rejected,
+                            InterviewResult::WaitingFeedback => ApplicationStatus::WaitingFeedback,
+                            default => ApplicationStatus::Interview,
+                        },
+                    ]);
+                }
+
+                if ($previousAssessment !== null) {
+                    $transitions->push($previousAssessment);
+                }
+
+                $event->status_from = $transitions
+                    ->sortByDesc('date')
+                    ->first()['status'] ?? null;
+            }
+
+            if (
+                ! $hasNewerEvent
+                && ! $hasNewerInterview
+                && ! $hasNewerAssessment
+                && $event->status_from === null
+            ) {
                 $event->status_from = $jobApplication->status;
             }
         });
@@ -138,13 +222,30 @@ class JobApplicationEvent extends Model
                 ->where('interview_at', '>', $event->occurred_at)
                 ->exists();
 
-            if ($hasNewerEvent || $hasNewerInterview) {
+            $hasNewerAssessment = $jobApplication->technicalAssessments()
+                ->where(function ($query) use ($event): void {
+                    $query->where('received_at', '>', $event->occurred_at)
+                        ->orWhere(function ($query) use ($event): void {
+                            $query->whereNull('received_at')
+                                ->where('created_at', '>', $event->occurred_at);
+                        })
+                        ->orWhere(function ($query) use ($event): void {
+                            $query->where('status', TechnicalAssessmentStatus::Finished->value)
+                                ->whereNotNull('finished_at')
+                                ->where('finished_at', '>', $event->occurred_at);
+                        });
+                })
+                ->exists();
+
+            if ($hasNewerEvent || $hasNewerInterview || $hasNewerAssessment) {
                 return;
             }
 
-            $attributes = [
-                'next_action_at' => $event->next_action_at,
-            ];
+            $attributes = [];
+
+            if ($event->next_action_at !== null) {
+                $attributes['next_action_at'] = $event->next_action_at;
+            }
 
             if ($event->status_to instanceof ApplicationStatus) {
                 $attributes['status'] = $event->status_to;

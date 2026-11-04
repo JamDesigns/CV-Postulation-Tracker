@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Interviews\Schemas;
 
+use App\Enums\InterviewModality;
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use Filament\Infolists\Components\TextEntry;
@@ -37,6 +38,14 @@ class InterviewInfolist
                                             ? $state->label()
                                             : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
                                     ->badge(),
+
+                                TextEntry::make('interview_modality')
+                                    ->label(__('interviews.fields.interview_modality'))
+                                    ->formatStateUsing(fn (InterviewModality|string|null $state): ?string => $state instanceof InterviewModality
+                                            ? $state->label()
+                                            : InterviewModality::tryFrom($state ?? '')?->label() ?? $state)
+                                    ->badge()
+                                    ->placeholder('-'),
 
                                 TextEntry::make('result')
                                     ->label(__('interviews.fields.result'))

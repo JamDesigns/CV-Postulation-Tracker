@@ -7,6 +7,7 @@ return [
         'responded' => 'Responded',
         'interview' => 'Interview',
         'technical_test' => 'Technical test',
+        'waiting_feedback' => 'Awaiting feedback',
         'follow_up_sent' => 'Follow-up sent',
         'rejected' => 'Rejected',
         'paused' => 'Paused',
@@ -65,12 +66,47 @@ return [
         'other' => 'Other',
     ],
 
+    'interview_modality' => [
+        'phone' => 'Phone',
+        'video_call' => 'Video call',
+        'in_person' => 'In person',
+    ],
+
     'interview_result' => [
         'pending' => 'Pending',
         'passed' => 'Passed',
         'rejected' => 'Rejected',
         'waiting_feedback' => 'Awaiting feedback',
         'cancelled' => 'Cancelled',
+    ],
+
+    'technical_assessment_type' => [
+        'at_home' => 'Take-home',
+        'live' => 'Live',
+    ],
+
+    'technical_assessment_modality' => [
+        'phone' => 'Phone',
+        'video_call' => 'Video call',
+        'in_person' => 'In person',
+    ],
+
+    'technical_assessment_direction' => [
+        'received' => 'Received',
+        'sent' => 'Sent',
+    ],
+
+    'technical_assessment_status' => [
+        'pending' => 'Pending',
+        'in_progress' => 'In progress',
+        'finished' => 'Finished',
+        'cancelled' => 'Cancelled',
+    ],
+
+    'technical_assessment_result' => [
+        'pending' => 'Pending evaluation',
+        'passed' => 'Passed',
+        'not_passed' => 'Not passed',
     ],
 
     'application_contact_role' => [

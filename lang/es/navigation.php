@@ -12,6 +12,7 @@ return [
         'contacts' => 'Contactos',
         'cv_versions' => 'CVs adaptados',
         'interviews' => 'Entrevistas',
+        'technical_assessments' => 'Pruebas técnicas',
         'job_search_statistics' => 'Estadísticas',
     ],
     'user_menu' => [

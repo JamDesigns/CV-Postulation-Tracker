@@ -103,6 +103,7 @@ return [
             'review_response' => 'Revisar respuesta / preparar siguiente paso',
             'prepare_interview' => 'Preparar entrevista',
             'complete_technical_test' => 'Realizar prueba técnica',
+            'wait_for_feedback' => 'Esperar feedback',
             'wait_after_follow_up' => 'Esperar respuesta tras seguimiento',
             'review_paused_application' => 'Revisar candidatura pausada',
             'reopened_application' => 'Retomar seguimiento de la candidatura',

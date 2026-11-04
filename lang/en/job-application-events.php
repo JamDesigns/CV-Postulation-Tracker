@@ -32,6 +32,7 @@ return [
         'response_received' => 'Response received',
         'technical_test' => 'Technical test',
         'interview_completed' => 'Interview completed',
+        'interview_scheduled' => 'Interview scheduled',
         'follow_up_sent' => 'Follow-up sent',
         'paused' => 'Application paused',
         'rejected' => 'Application rejected',
@@ -43,6 +44,10 @@ return [
     'actions' => [
         'create' => 'Create event',
         'view' => 'View event',
+    ],
+
+    'validation' => [
+        'occurred_at_min_date' => 'The event date cannot be earlier than the application creation date.',
     ],
 
     'empty' => 'There are no events registered yet.',

@@ -7,6 +7,7 @@ return [
         'responded' => 'Respondido',
         'interview' => 'Entrevista',
         'technical_test' => 'Prueba técnica',
+        'waiting_feedback' => 'Esperando feedback',
         'follow_up_sent' => 'Seguimiento enviado',
         'rejected' => 'Descartado',
         'paused' => 'En pausa',
@@ -65,12 +66,47 @@ return [
         'other' => 'Otra',
     ],
 
+    'interview_modality' => [
+        'phone' => 'Telefónica',
+        'video_call' => 'Videollamada',
+        'in_person' => 'Presencial',
+    ],
+
     'interview_result' => [
         'pending' => 'Pendiente',
         'passed' => 'Superada',
         'rejected' => 'Descartada',
         'waiting_feedback' => 'Esperando feedback',
         'cancelled' => 'Cancelada',
+    ],
+
+    'technical_assessment_type' => [
+        'at_home' => 'Para realizar en casa',
+        'live' => 'En directo',
+    ],
+
+    'technical_assessment_modality' => [
+        'phone' => 'Telefónica',
+        'video_call' => 'Videollamada',
+        'in_person' => 'Presencial',
+    ],
+
+    'technical_assessment_direction' => [
+        'received' => 'Recibida',
+        'sent' => 'Enviada',
+    ],
+
+    'technical_assessment_status' => [
+        'pending' => 'Pendiente',
+        'in_progress' => 'En curso',
+        'finished' => 'Finalizada',
+        'cancelled' => 'Cancelada',
+    ],
+
+    'technical_assessment_result' => [
+        'pending' => 'Pendiente de evaluación',
+        'passed' => 'Superada',
+        'not_passed' => 'No superada',
     ],
 
     'application_contact_role' => [
