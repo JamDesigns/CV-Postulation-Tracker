@@ -32,6 +32,7 @@ return [
         'response_received' => 'Réponse reçue',
         'technical_test' => 'Test technique',
         'interview_completed' => 'Entretien réalisé',
+        'interview_scheduled' => 'Entretien programmé',
         'follow_up_sent' => 'Relance envoyée',
         'paused' => 'Candidature mise en pause',
         'rejected' => 'Candidature rejetée',
@@ -43,6 +44,10 @@ return [
     'actions' => [
         'create' => 'Créer un événement',
         'view' => 'Voir l’événement',
+    ],
+
+    'validation' => [
+        'occurred_at_min_date' => 'La date de l’événement ne peut pas être antérieure à la date de création de la candidature.',
     ],
 
     'empty' => 'Aucun événement n’est encore enregistré.',

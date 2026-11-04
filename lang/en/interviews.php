@@ -25,8 +25,9 @@ return [
 
     'fields' => [
         'job_application_id' => 'Job application',
-        'interview_at' => 'Interview date',
-        'interview_type' => 'Interview type',
+        'interview_at' => 'Date',
+        'interview_type' => 'Type',
+        'interview_modality' => 'Modality',
         'people' => 'People',
         'expected_questions' => 'Expected questions',
         'strengths_to_defend' => 'Strengths to defend',

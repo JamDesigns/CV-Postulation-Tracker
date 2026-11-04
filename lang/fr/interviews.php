@@ -25,8 +25,9 @@ return [
 
     'fields' => [
         'job_application_id' => 'Candidature',
-        'interview_at' => 'Date de l’entretien',
-        'interview_type' => 'Type d’entretien',
+        'interview_at' => 'Date',
+        'interview_type' => 'Type',
+        'interview_modality' => 'Modalité',
         'people' => 'Participants',
         'expected_questions' => 'Questions attendues',
         'strengths_to_defend' => 'Points forts à défendre',

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\JobApplications\RelationManagers;
 
+use App\Enums\InterviewModality;
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use App\Filament\Resources\Interviews\Schemas\InterviewForm;
@@ -57,6 +58,14 @@ class InterviewsRelationManager extends RelationManager
                     ->formatStateUsing(fn (InterviewType|string|null $state): ?string => $state instanceof InterviewType
                             ? $state->label()
                             : InterviewType::tryFrom($state ?? '')?->label() ?? $state)
+                    ->badge()
+                    ->sortable(),
+
+                TextColumn::make('interview_modality')
+                    ->label(__('interviews.fields.interview_modality'))
+                    ->formatStateUsing(fn (InterviewModality|string|null $state): ?string => $state instanceof InterviewModality
+                        ? $state->label()
+                        : InterviewModality::tryFrom($state ?? '')?->label() ?? $state)
                     ->badge()
                     ->sortable(),
 

@@ -221,7 +221,7 @@ class JobApplicationsTable
                 TernaryFilter::make('dossier_sent')
                     ->label(__('job-applications.fields.dossier_sent')),
             ])
-            ->defaultSort('sent_at', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
@@ -240,6 +240,7 @@ class JobApplicationsTable
                                     JobApplicationEventType::CommunicationSent->value => JobApplicationEventType::CommunicationSent->label(),
                                 ])
                                 ->default(JobApplicationEventType::CommunicationReceived->value)
+                                ->autofocus()
                                 ->required(),
 
                             Select::make('communication_channel')
@@ -497,134 +498,6 @@ class JobApplicationsTable
                                 $previousStatus,
                                 ApplicationStatus::Sent,
                                 $nextActionAt,
-                            );
-                        }),
-
-                    Action::make('markAsResponded')
-                        ->label(__('job-applications.actions.mark_as_responded'))
-                        ->icon(Heroicon::ChatBubbleLeftRight)
-                        ->color('info')
-                        ->schema(fn (JobApplication $record): array => [
-                            Grid::make(2)
-                                ->schema([
-                                    Select::make('contact_id')
-                                        ->label(__('contacts.model_label'))
-                                        ->options(
-                                            fn (): array => $record
-                                                ->contacts()
-                                                ->get()
-                                                ->mapWithKeys(
-                                                    fn (Contact $contact): array => [
-                                                        $contact->getKey() => $contact->display_name,
-                                                    ],
-                                                )
-                                                ->all(),
-                                        )
-                                        ->searchable()
-                                        ->nullable()
-                                        ->createOptionForm([
-                                            ...ContactForm::components(),
-
-                                            Section::make(__('contacts.sections.relationship'))
-                                                ->schema([
-                                                    Select::make('role')
-                                                        ->label(__('contacts.fields.role'))
-                                                        ->options(ApplicationContactRole::options()),
-
-                                                    Select::make('source')
-                                                        ->label(__('contacts.fields.source'))
-                                                        ->options(ApplicationContactSource::options()),
-
-                                                    Toggle::make('is_primary')
-                                                        ->label(__('contacts.fields.is_primary'))
-                                                        ->inline(false)
-                                                        ->default(false),
-
-                                                    Textarea::make('context')
-                                                        ->label(__('contacts.fields.context'))
-                                                        ->rows(3)
-                                                        ->autosize()
-                                                        ->columnSpanFull(),
-                                                ])
-                                                ->columns(3)
-                                                ->columnSpanFull(),
-                                        ])
-                                        ->createOptionUsing(
-                                            fn (array $data): int => self::createAndAttachContact(
-                                                $record,
-                                                $data,
-                                            ),
-                                        ),
-
-                                    Select::make('communication_channel')
-                                        ->label(__('job-applications.quick_actions.fields.communication_channel'))
-                                        ->options(CommunicationChannel::options())
-                                        ->required(),
-                                ])
-                                ->columnSpanFull(),
-
-                            Textarea::make('communication_detail')
-                                ->label(__('job-applications.quick_actions.fields.communication_detail'))
-                                ->required()
-                                ->rows(5)
-                                ->autosize()
-                                ->columnSpanFull(),
-
-                            Textarea::make('next_step')
-                                ->label(__('job-applications.quick_actions.fields.next_step'))
-                                ->default(fn (): string => __(
-                                    'job-applications.quick_actions.next_steps.review_response',
-                                    [],
-                                    app()->getLocale(),
-                                ))
-                                ->required()
-                                ->rows(3)
-                                ->autosize(),
-
-                            DatePicker::make('next_action_at')
-                                ->label(__('job-applications.quick_actions.fields.next_action_at'))
-                                ->default(today()->addDays(2)),
-                        ])
-                        ->visible(fn (JobApplication $record): bool => in_array($record->status, [
-                            ApplicationStatus::Sent,
-                            ApplicationStatus::FollowUpSent,
-                        ], true))
-                        ->modalSubmitAction(
-                            fn (Action $action): Action => $action->color('primary'),
-                        )
-                        ->action(function (JobApplication $record, array $data): void {
-                            $previousStatus = $record->status;
-                            $locale = app()->getLocale();
-
-                            $message = trim((string) $data['communication_detail']);
-                            $nextStep = trim((string) $data['next_step']);
-                            $nextActionAt = $data['next_action_at'] ?? null;
-                            $contactId = $data['contact_id'] ?? null;
-                            $communicationChannel = CommunicationChannel::from(
-                                $data['communication_channel'],
-                            );
-
-                            $record->forceFill([
-                                'status' => ApplicationStatus::Responded->value,
-                                'next_step' => $nextStep,
-                                'next_action_at' => $nextActionAt,
-                            ])->save();
-
-                            self::createApplicationEvent(
-                                $record,
-                                JobApplicationEventType::ResponseReceived,
-                                __(
-                                    'job-application-events.types.response_received',
-                                    [],
-                                    $locale,
-                                ),
-                                $message,
-                                $previousStatus,
-                                ApplicationStatus::Responded,
-                                $nextActionAt,
-                                $contactId,
-                                false,
-                                $communicationChannel,
                             );
                         }),
 

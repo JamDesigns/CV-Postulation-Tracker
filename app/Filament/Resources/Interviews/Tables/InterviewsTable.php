@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Interviews\Tables;
 
+use App\Enums\InterviewModality;
 use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use Filament\Actions\ActionGroup;
@@ -49,6 +50,14 @@ class InterviewsTable
                     ->badge()
                     ->sortable(),
 
+                TextColumn::make('interview_modality')
+                    ->label(__('interviews.fields.interview_modality'))
+                    ->formatStateUsing(fn (InterviewModality|string|null $state): ?string => $state instanceof InterviewModality
+                            ? $state->label()
+                            : InterviewModality::tryFrom($state ?? '')?->label() ?? $state)
+                    ->badge()
+                    ->sortable(),
+
                 TextColumn::make('result')
                     ->label(__('interviews.fields.result'))
                     ->formatStateUsing(fn (InterviewResult|string|null $state): ?string => $state instanceof InterviewResult
@@ -76,6 +85,10 @@ class InterviewsTable
                 SelectFilter::make('interview_type')
                     ->label(__('interviews.fields.interview_type'))
                     ->options(InterviewType::options()),
+
+                SelectFilter::make('interview_modality')
+                    ->label(__('interviews.fields.interview_modality'))
+                    ->options(InterviewModality::options()),
 
                 SelectFilter::make('result')
                     ->label(__('interviews.fields.result'))

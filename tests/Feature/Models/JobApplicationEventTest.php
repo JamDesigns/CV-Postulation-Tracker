@@ -2,12 +2,22 @@
 
 use App\Enums\ApplicationStatus;
 use App\Enums\CommunicationChannel;
+use App\Enums\InterviewResult;
 use App\Enums\InterviewType;
 use App\Enums\JobApplicationEventType;
 use App\Models\Contact;
 use App\Models\CvVersion;
 use App\Models\JobApplication;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
+
+beforeEach(function (): void {
+    Carbon::setTestNow('2026-08-01 09:00:00');
+});
+
+afterEach(function (): void {
+    Carbon::setTestNow();
+});
 
 test('it synchronizes the application when an event is created', function () {
     $jobApplication = JobApplication::query()->create([
@@ -287,6 +297,7 @@ test('it does not synchronize the application when a newer interview exists', fu
     $jobApplication->interviews()->create([
         'interview_at' => '2026-08-20 10:30:00',
         'interview_type' => InterviewType::Hr,
+        'result' => InterviewResult::Pending,
     ]);
 
     $historicalEvent = $jobApplication->events()->create([

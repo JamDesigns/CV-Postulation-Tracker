@@ -64,6 +64,21 @@ class EventsRelationManager extends RelationManager
                     ->label(__('job-application-events.fields.occurred_at'))
                     ->default(now())
                     ->required()
+                    ->rules([
+                        function (): \Closure {
+                            return function (string $attribute, mixed $value, \Closure $fail): void {
+                                $createdAt = $this->getOwnerRecord()->created_at;
+
+                                if (
+                                    filled($value)
+                                    && $createdAt !== null
+                                    && Carbon::parse($value)->startOfDay()->lt($createdAt->startOfDay())
+                                ) {
+                                    $fail(__('job-application-events.validation.occurred_at_min_date'));
+                                }
+                            };
+                        },
+                    ])
                     ->seconds(false)
                     ->live()
                     ->afterStateUpdated(function (Set $set, $state): void {
@@ -119,9 +134,11 @@ class EventsRelationManager extends RelationManager
                                 || $previousInterview->interview_at->gt($previousEvent->occurred_at)
                             )
                         ) {
-                            $status = $previousInterview->result === InterviewResult::Rejected
-                                ? ApplicationStatus::Rejected
-                                : ApplicationStatus::Interview;
+                            $status = match ($previousInterview->result) {
+                                InterviewResult::Rejected => ApplicationStatus::Rejected,
+                                InterviewResult::WaitingFeedback => ApplicationStatus::WaitingFeedback,
+                                default => ApplicationStatus::Interview,
+                            };
                         } else {
                             $status = $previousEvent?->status_to;
                         }

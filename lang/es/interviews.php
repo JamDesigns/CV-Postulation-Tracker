@@ -25,8 +25,9 @@ return [
 
     'fields' => [
         'job_application_id' => 'Postulación',
-        'interview_at' => 'Fecha de entrevista',
-        'interview_type' => 'Tipo de entrevista',
+        'interview_at' => 'Fecha',
+        'interview_type' => 'Tipo',
+        'interview_modality' => 'Modalidad',
         'people' => 'Personas',
         'expected_questions' => 'Preguntas esperadas',
         'strengths_to_defend' => 'Fortalezas a defender',

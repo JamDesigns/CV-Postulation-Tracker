@@ -14,6 +14,7 @@ class Attachment extends Model
 {
     protected $fillable = [
         'job_application_id',
+        'technical_assessment_id',
         'name',
         'category',
         'category_other',
@@ -117,5 +118,10 @@ class Attachment extends Model
     public function jobApplication(): BelongsTo
     {
         return $this->belongsTo(JobApplication::class);
+    }
+
+    public function technicalAssessment(): BelongsTo
+    {
+        return $this->belongsTo(TechnicalAssessment::class);
     }
 }

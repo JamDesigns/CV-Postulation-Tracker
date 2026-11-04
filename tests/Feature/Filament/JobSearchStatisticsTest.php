@@ -54,7 +54,7 @@ test('it calculates statistics percentages safely', function () {
 });
 
 test('it calculates statistics for applications sent in the selected period', function () {
-    Carbon::setTestNow('2026-09-12 10:00:00');
+    Carbon::setTestNow('2026-08-01 10:00:00');
 
     $companyId = companyId('Statistics Company');
 
@@ -146,6 +146,8 @@ test('it calculates statistics for applications sent in the selected period', fu
         'status' => ApplicationStatus::Responded,
         'sent_at' => null,
     ]);
+
+    Carbon::setTestNow('2026-09-12 10:00:00');
 
     $page = new JobSearchStatistics;
     $page->period = 'month';

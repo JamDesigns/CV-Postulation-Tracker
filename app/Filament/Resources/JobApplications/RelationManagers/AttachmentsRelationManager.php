@@ -5,6 +5,7 @@ namespace App\Filament\Resources\JobApplications\RelationManagers;
 use App\Enums\AttachmentCategory;
 use App\Enums\AttachmentDirection;
 use App\Models\Attachment;
+use App\Models\TechnicalAssessment;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -52,7 +53,11 @@ class AttachmentsRelationManager extends RelationManager
                     ->label(__('attachments.fields.file_path'))
                     ->disk('local')
                     ->directory(
-                        fn (): string => 'attachments/job-applications/'.$this->getOwnerRecord()->getKey(),
+                        fn (): string => 'attachments/job-applications/'.(
+                            $this->getOwnerRecord() instanceof TechnicalAssessment
+                                ? $this->getOwnerRecord()->job_application_id
+                                : $this->getOwnerRecord()->getKey()
+                        ),
                     )
                     ->visibility('private')
                     ->storeFileNamesIn('original_name')
@@ -106,38 +111,33 @@ class AttachmentsRelationManager extends RelationManager
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                Grid::make(2)
+                Grid::make(3)
                     ->schema([
-                        Grid::make(1)
-                            ->schema([
-                                Select::make('direction')
-                                    ->label(__('attachments.fields.direction'))
-                                    ->options(AttachmentDirection::options())
-                                    ->default(AttachmentDirection::NotSpecified->value)
-                                    ->required(),
+                        Select::make('direction')
+                            ->label(__('attachments.fields.direction'))
+                            ->options(AttachmentDirection::options())
+                            ->default(AttachmentDirection::NotSpecified->value)
+                            ->required(),
 
-                                DatePicker::make('document_date')
-                                    ->label(__('attachments.fields.document_date')),
-                            ]),
+                        Select::make('category')
+                            ->label(__('attachments.fields.category'))
+                            ->options(AttachmentCategory::options())
+                            ->required()
+                            ->live(),
 
-                        Grid::make(1)
-                            ->schema([
-                                Select::make('category')
-                                    ->label(__('attachments.fields.category'))
-                                    ->options(AttachmentCategory::options())
-                                    ->required()
-                                    ->live(),
+                        DatePicker::make('document_date')
+                            ->label(__('attachments.fields.document_date')),
 
-                                TextInput::make('category_other')
-                                    ->label(__('attachments.fields.category_other'))
-                                    ->maxLength(255)
-                                    ->visible(
-                                        fn (Get $get): bool => $get('category') === AttachmentCategory::Other->value,
-                                    )
-                                    ->required(
-                                        fn (Get $get): bool => $get('category') === AttachmentCategory::Other->value,
-                                    ),
-                            ]),
+                        TextInput::make('category_other')
+                            ->label(__('attachments.fields.category_other'))
+                            ->maxLength(255)
+                            ->visible(
+                                fn (Get $get): bool => $get('category') === AttachmentCategory::Other->value,
+                            )
+                            ->required(
+                                fn (Get $get): bool => $get('category') === AttachmentCategory::Other->value,
+                            )
+                            ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
 

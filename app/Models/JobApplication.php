@@ -295,6 +295,11 @@ class JobApplication extends Model
         return $this->hasMany(Interview::class);
     }
 
+    public function technicalAssessments(): HasMany
+    {
+        return $this->hasMany(TechnicalAssessment::class);
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(JobApplicationEvent::class);
