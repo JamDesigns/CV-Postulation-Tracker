@@ -58,6 +58,7 @@ class TechnicalAssessmentForm
                                         'job_applications.job_title',
                                     ])
                                     ->preload()
+                                    ->autofocus()
                                     ->required()
                                     ->columnSpanFull(),
                             ] : []),
@@ -203,6 +204,9 @@ class TechnicalAssessmentForm
                             Textarea::make('notes')
                                 ->label(__('technical-assessments.fields.notes'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize()
                                 ->columnSpanFull(),
                         ])

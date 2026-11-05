@@ -30,6 +30,7 @@ class CvVersionForm
                                     ->validationMessages([
                                         'unique' => __('cv-versions.validation.name_unique'),
                                     ])
+                                    ->autofocus()
                                     ->columnSpanFull(),
 
                                 Select::make('language')
@@ -124,17 +125,26 @@ class CvVersionForm
                                 Textarea::make('highlighted_stack')
                                     ->label(__('cv-versions.fields.highlighted_stack'))
                                     ->rows(3)
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ]),
 
                                 Textarea::make('highlighted_experience')
                                     ->label(__('cv-versions.fields.highlighted_experience'))
                                     ->rows(3)
-                                    ->autosize(),
+                                    ->autosize()
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ]),
 
                                 Textarea::make('adaptation_notes')
                                     ->label(__('cv-versions.fields.adaptation_notes'))
                                     ->rows(3)
                                     ->autosize()
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->columnSpanFull(),
                             ])
                             ->columns(2),

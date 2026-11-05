@@ -28,8 +28,8 @@ class CompanyForm
                         ->label(__('companies.fields.name'))
                         ->required()
                         ->maxLength(255)
-                        ->unique(ignoreRecord: true)
-                        ->columnSpanFull(),
+                        ->autofocus()
+                        ->unique(ignoreRecord: true),
 
                     TextInput::make('website')
                         ->label(__('companies.fields.website'))
@@ -45,9 +45,12 @@ class CompanyForm
                         ->label(__('companies.fields.notes'))
                         ->rows(4)
                         ->autosize()
+                        ->extraAttributes([
+                            'style' => 'max-height: 7rem; overflow-y: auto;',
+                        ])
                         ->columnSpanFull(),
                 ])
-                ->columns(2)
+                ->columns(3)
                 ->columnSpanFull(),
         ];
     }

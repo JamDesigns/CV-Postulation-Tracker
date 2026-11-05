@@ -53,6 +53,7 @@ class EventsRelationManager extends RelationManager
                     ->options(JobApplicationEventType::options())
                     ->default(JobApplicationEventType::ManualNote->value)
                     ->required()
+                    ->autofocus()
                     ->live()
                     ->afterStateUpdated(function (Set $set, $state): void {
                         if (! self::supportsCommunicationChannel($state)) {
@@ -226,6 +227,9 @@ class EventsRelationManager extends RelationManager
                 Textarea::make('body')
                     ->label(__('job-application-events.fields.body'))
                     ->rows(6)
+                    ->extraAttributes([
+                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                    ])
                     ->autosize()
                     ->columnSpanFull(),
             ])
