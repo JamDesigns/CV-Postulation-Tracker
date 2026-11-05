@@ -148,6 +148,7 @@ class ContactsRelationManager extends RelationManager
                             ->schema([
                                 Select::make('role')
                                     ->label(__('contacts.fields.role'))
+                                    ->autofocus()
                                     ->options(ApplicationContactRole::options()),
 
                                 Select::make('source')
@@ -162,6 +163,9 @@ class ContactsRelationManager extends RelationManager
                                 Textarea::make('context')
                                     ->label(__('contacts.fields.context'))
                                     ->rows(3)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
                             ])
@@ -215,6 +219,9 @@ class ContactsRelationManager extends RelationManager
                                 Textarea::make('context')
                                     ->label(__('contacts.fields.context'))
                                     ->rows(3)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
                             ])
@@ -254,6 +261,9 @@ class ContactsRelationManager extends RelationManager
                                     Textarea::make('context')
                                         ->label(__('contacts.fields.context'))
                                         ->rows(3)
+                                        ->extraAttributes([
+                                            'style' => 'max-height: 7rem; overflow-y: auto;',
+                                        ])
                                         ->autosize()
                                         ->columnSpanFull(),
                                 ]),

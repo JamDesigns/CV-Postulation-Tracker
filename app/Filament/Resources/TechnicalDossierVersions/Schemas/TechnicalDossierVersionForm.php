@@ -29,7 +29,7 @@ class TechnicalDossierVersionForm
                                     ->label(__('technical-dossier-versions.fields.name'))
                                     ->required()
                                     ->maxLength(255)
-                                    ->columnSpanFull(),
+                                    ->columnSpan(2),
 
                                 TextInput::make('version_label')
                                     ->label(__('technical-dossier-versions.fields.version_label'))
@@ -50,14 +50,15 @@ class TechnicalDossierVersionForm
                                     ->required()
                                     ->default(CvLanguage::Spanish->value),
 
-                                Toggle::make('is_active')
-                                    ->label(__('technical-dossier-versions.fields.is_active'))
-                                    ->required(),
-
                                 DatePicker::make('published_at')
                                     ->label(__('technical-dossier-versions.fields.published_at')),
+
+                                Toggle::make('is_active')
+                                    ->label(__('technical-dossier-versions.fields.is_active'))
+                                    ->inline(false)
+                                    ->required(),
                             ])
-                            ->columns(2),
+                            ->columns(3),
 
                         Tabs\Tab::make(__('technical-dossier-versions.sections.files'))
                             ->schema([
@@ -126,12 +127,18 @@ class TechnicalDossierVersionForm
                                 Textarea::make('content_snapshot')
                                     ->label(__('technical-dossier-versions.fields.content_snapshot'))
                                     ->rows(5)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 10rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
 
                                 Textarea::make('notes')
                                     ->label(__('technical-dossier-versions.fields.notes'))
                                     ->rows(3)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
                             ]),

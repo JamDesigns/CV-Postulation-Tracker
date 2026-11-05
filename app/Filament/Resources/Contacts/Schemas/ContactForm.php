@@ -26,6 +26,7 @@ class ContactForm
                     TextInput::make('name')
                         ->label(__('contacts.fields.name'))
                         ->maxLength(255)
+                        ->autofocus()
                         ->requiredWithoutAll('organization,url,email')
                         ->validationMessages([
                             'required_without_all' => __('contacts.validation.at_least_one_detail'),

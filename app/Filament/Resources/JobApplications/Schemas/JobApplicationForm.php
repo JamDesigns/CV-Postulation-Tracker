@@ -50,6 +50,7 @@ class JobApplicationForm
                                     ->searchable()
                                     ->preload()
                                     ->createOptionForm(CompanyForm::components())
+                                    ->autofocus()
                                     ->required(),
 
                                 TextInput::make('job_title')
@@ -212,6 +213,9 @@ class JobApplicationForm
                                     ->label(__('job-applications.fields.main_stack'))
                                     ->rows(3)
                                     ->autosize()
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
@@ -224,6 +228,9 @@ class JobApplicationForm
                                             ->label(__('job-applications.fields.offer_snapshot'))
                                             ->rows(3)
                                             ->autosize()
+                                            ->extraAttributes([
+                                                'style' => 'max-height: 10rem; overflow-y: auto;',
+                                            ])
                                             ->columnSpanFull(),
                                     ])
                                     ->columnSpanFull(),
@@ -310,12 +317,18 @@ class JobApplicationForm
                                                     ->rows(1)
                                                     ->autosize()
                                                     ->required()
+                                                    ->extraAttributes([
+                                                        'style' => 'max-height: 6rem; overflow-y: auto;',
+                                                    ])
                                                     ->live(onBlur: true),
 
                                                 Textarea::make('answer')
                                                     ->label(__('job-applications.fields.application_form_answer'))
                                                     ->rows(1)
                                                     ->autosize()
+                                                    ->extraAttributes([
+                                                        'style' => 'max-height: 6rem; overflow-y: auto;',
+                                                    ])
                                                     ->required(),
                                             ])
                                             ->columns(2)
@@ -347,6 +360,7 @@ class JobApplicationForm
                                                         TextInput::make('name')
                                                             ->label(__('cv-versions.fields.name'))
                                                             ->required()
+                                                            ->autofocus()
                                                             ->maxLength(255)
                                                             ->rule(Rule::unique('cv_versions', 'name'))
                                                             ->validationMessages([
@@ -405,16 +419,25 @@ class JobApplicationForm
                                                         Textarea::make('highlighted_stack')
                                                             ->label(__('cv-versions.fields.highlighted_stack'))
                                                             ->rows(3)
+                                                            ->extraAttributes([
+                                                                'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                            ])
                                                             ->autosize(),
 
                                                         Textarea::make('highlighted_experience')
                                                             ->label(__('cv-versions.fields.highlighted_experience'))
                                                             ->rows(3)
+                                                            ->extraAttributes([
+                                                                'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                            ])
                                                             ->autosize(),
 
                                                         Textarea::make('adaptation_notes')
                                                             ->label(__('cv-versions.fields.adaptation_notes'))
                                                             ->rows(3)
+                                                            ->extraAttributes([
+                                                                'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                            ])
                                                             ->autosize()
                                                             ->columnSpanFull(),
                                                     ])
@@ -469,6 +492,9 @@ class JobApplicationForm
                                 Textarea::make('adaptation_summary')
                                     ->label(__('job-applications.fields.adaptation_summary'))
                                     ->rows(3)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
                             ])
@@ -482,6 +508,9 @@ class JobApplicationForm
                                 Textarea::make('next_step')
                                     ->label(__('job-applications.fields.next_step'))
                                     ->rows(3)
+                                    ->extraAttributes([
+                                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                                    ])
                                     ->autosize()
                                     ->columnSpanFull(),
                             ])

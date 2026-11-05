@@ -83,6 +83,7 @@ class AttachmentsRelationManager extends RelationManager
                     ->downloadable()
                     ->openable()
                     ->preventFilePathTampering()
+                    ->autofocus()
                     ->live()
                     ->afterStateUpdated(function (Set $set, mixed $state): void {
                         $files = is_array($state) ? $state : [$state];
@@ -144,6 +145,9 @@ class AttachmentsRelationManager extends RelationManager
                 Textarea::make('notes')
                     ->label(__('attachments.fields.notes'))
                     ->rows(4)
+                    ->extraAttributes([
+                        'style' => 'max-height: 7rem; overflow-y: auto;',
+                    ])
                     ->columnSpanFull(),
             ])
             ->columns(2);

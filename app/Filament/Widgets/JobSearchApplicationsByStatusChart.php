@@ -41,6 +41,7 @@ class JobSearchApplicationsByStatusChart extends ChartWidget
                 ApplicationStatus::Responded => '#14b8a6',
                 ApplicationStatus::Interview => '#8b5cf6',
                 ApplicationStatus::TechnicalTest => '#6366f1',
+                ApplicationStatus::WaitingFeedback => '#fbbf24',
                 ApplicationStatus::FollowUpSent => '#f59e0b',
                 ApplicationStatus::Rejected => '#f43f5e',
                 ApplicationStatus::Paused => '#475569',

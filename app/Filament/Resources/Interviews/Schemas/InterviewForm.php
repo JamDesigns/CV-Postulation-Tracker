@@ -56,12 +56,13 @@ class InterviewForm
                                         'job_applications.job_title',
                                     ])
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->autofocus()
+                                    ->columnSpan(2),
                             ] : []),
 
                             DateTimePicker::make('interview_at')
                                 ->label(__('interviews.fields.interview_at'))
-                                ->seconds(false)
                                 ->rules([
                                     fn (Get $get, $record, $livewire): Closure => function (
                                         string $attribute,
@@ -113,7 +114,7 @@ class InterviewForm
                                 ->default(InterviewResult::Pending->value)
                                 ->required(),
                         ])
-                        ->columns(2),
+                        ->columns(3),
 
                     Tabs\Tab::make(__('interviews.sections.preparation'))
                         ->schema([
@@ -121,24 +122,35 @@ class InterviewForm
                                 ->label(__('interviews.fields.people'))
                                 ->rows(3)
                                 ->autosize()
-                                ->columnSpanFull(),
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ]),
 
                             Textarea::make('expected_questions')
                                 ->label(__('interviews.fields.expected_questions'))
                                 ->rows(3)
-                                ->autosize(),
+                                ->autosize()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ]),
 
                             Textarea::make('strengths_to_defend')
                                 ->label(__('interviews.fields.strengths_to_defend'))
                                 ->rows(3)
-                                ->autosize(),
+                                ->autosize()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ]),
 
                             Textarea::make('risks_to_clarify')
                                 ->label(__('interviews.fields.risks_to_clarify'))
                                 ->rows(3)
                                 ->autosize()
-                                ->columnSpanFull(),
-                        ]),
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ]),
+                        ])
+                        ->columns(2),
 
                     Tabs\Tab::make(__('interviews.sections.result'))
                         ->schema([
@@ -146,6 +158,9 @@ class InterviewForm
                                 ->label(__('interviews.fields.notes'))
                                 ->rows(4)
                                 ->autosize()
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->columnSpanFull(),
                         ]),
                 ])
