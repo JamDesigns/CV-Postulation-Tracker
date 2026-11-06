@@ -285,6 +285,9 @@ class JobApplicationsTable
                                             Textarea::make('context')
                                                 ->label(__('contacts.fields.context'))
                                                 ->rows(3)
+                                                ->extraAttributes([
+                                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                ])
                                                 ->autosize()
                                                 ->columnSpanFull(),
                                         ])
@@ -302,12 +305,18 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.communication_detail'))
                                 ->required()
                                 ->rows(6)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             Textarea::make('next_step')
                                 ->label(__('job-applications.quick_actions.fields.next_step'))
                                 ->default(fn (): ?string => $record->next_step)
                                 ->rows(3)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             DatePicker::make('next_action_at')
@@ -428,6 +437,9 @@ class JobApplicationsTable
                                                     Textarea::make('context')
                                                         ->label(__('contacts.fields.context'))
                                                         ->rows(3)
+                                                        ->extraAttributes([
+                                                            'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                        ])
                                                         ->autosize()
                                                         ->columnSpanFull(),
                                                 ])
@@ -452,6 +464,9 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.communication_detail'))
                                 ->required()
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize()
                                 ->columnSpanFull(),
 
@@ -464,6 +479,9 @@ class JobApplicationsTable
                                 ))
                                 ->required()
                                 ->rows(3)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             DatePicker::make('next_action_at')
@@ -473,6 +491,9 @@ class JobApplicationsTable
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
@@ -566,6 +587,9 @@ class JobApplicationsTable
                                                     Textarea::make('context')
                                                         ->label(__('contacts.fields.context'))
                                                         ->rows(3)
+                                                        ->extraAttributes([
+                                                            'style' => 'max-height: 7rem; overflow-y: auto;',
+                                                        ])
                                                         ->autosize()
                                                         ->columnSpanFull(),
                                                 ])
@@ -590,6 +614,9 @@ class JobApplicationsTable
                                 ->label(__('job-applications.quick_actions.fields.communication_detail'))
                                 ->required()
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize()
                                 ->columnSpanFull(),
 
@@ -602,6 +629,9 @@ class JobApplicationsTable
                                 ))
                                 ->required()
                                 ->rows(3)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             DatePicker::make('next_action_at')
@@ -668,6 +698,9 @@ class JobApplicationsTable
                                 ))
                                 ->required()
                                 ->rows(3)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             DatePicker::make('next_action_at')
@@ -676,6 +709,9 @@ class JobApplicationsTable
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
@@ -729,6 +765,9 @@ class JobApplicationsTable
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
@@ -775,6 +814,9 @@ class JobApplicationsTable
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [
@@ -836,6 +878,9 @@ class JobApplicationsTable
                                 ))
                                 ->required()
                                 ->rows(3)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 7rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
 
                             DatePicker::make('next_action_at')
@@ -845,6 +890,9 @@ class JobApplicationsTable
                             Textarea::make('notes_to_append')
                                 ->label(__('job-applications.quick_actions.fields.notes_to_append'))
                                 ->rows(5)
+                                ->extraAttributes([
+                                    'style' => 'max-height: 10rem; overflow-y: auto;',
+                                ])
                                 ->autosize(),
                         ])
                         ->visible(fn ($record): bool => in_array($record->status, [

@@ -229,7 +229,7 @@ class JobApplicationForm
                                             ->rows(3)
                                             ->autosize()
                                             ->extraAttributes([
-                                                'style' => 'max-height: 10rem; overflow-y: auto;',
+                                                'style' => 'max-height: 7rem; overflow-y: auto;',
                                             ])
                                             ->columnSpanFull(),
                                     ])
@@ -241,6 +241,9 @@ class JobApplicationForm
                                             ->label(__('job-applications.fields.application_form_import'))
                                             ->helperText(__('job-applications.application_form_import.helper'))
                                             ->rows(3)
+                                            ->extraAttributes([
+                                                'style' => 'max-height: 7rem; overflow-y: auto;',
+                                            ])
                                             ->autosize()
                                             ->dehydrated(false)
                                             ->afterContent(
